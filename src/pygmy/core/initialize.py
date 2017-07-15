@@ -1,0 +1,38 @@
+import sys
+import os
+
+from pygmy.config import config
+from pygmy.database.factory import DatabaseFactory
+
+_CONFIG_ENV_VAR = 'PYGMY_CONFIG_FILE'
+_CFG_PATHS = ['pygmy/config/pygmy.cfg', 'pygmy.cfg',
+              '$HOME/.pygmy.cfg', '/etc/pygmy.cfg']
+
+
+def load_config_path():
+    for cfg_path in _CFG_PATHS:
+        if os.path.exists(cfg_path):
+            os.environ[_CONFIG_ENV_VAR] = cfg_path
+            break
+
+
+def initialize_config(config_path=None):
+    # TODO: initialie from cfg file
+    if config_path and os.path.exists(config_path):
+        os.environ[_CONFIG_ENV_VAR] = config_path
+        return
+    load_config_path()
+    # If config not found, exit the program. Else call config initialize.
+    if os.environ.get(_CONFIG_ENV_VAR) is None:
+        sys.exit(1)
+    config.initialize()
+
+
+def initialize_db():
+    database = DatabaseFactory()
+    config.db = database.create()
+
+
+def initialize(config_path=None):
+    initialize_config(config_path)
+    initialize_db()
