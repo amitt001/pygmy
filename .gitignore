@@ -1,0 +1,7 @@
+# Files
+*.pyc
+
+# Directory
+env
+.idea
+dist
