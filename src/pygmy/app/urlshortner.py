@@ -1,41 +1,26 @@
-from urllib.parse import urljoin, urlparse
-
-from pygmy.config import config
+from pygmy.utilities.urls import make_short_url, get_short_path
 from pygmy.core.hashdigest import HashDigest
 from pygmy.exception.invalidurl import URLNotFound
-from pygmy.model.url import URLManager
+from pygmy.model.link import LinkManager
 
 
-def make_short_url(short_path):
-    base_url = "{0}://{1}:{2}".format(
-        config.schema, config.host, config.port)
-    short_url = urljoin(base_url, short_path)
-    return short_url
-
-
-def get_short_path(short_url):
-    parts = urlparse(short_url)
-    short_path = parts.path.lstrip('/')
-    return short_path
-
-
-def shorten(full_url):
+def shorten(long_url):
     """Helper class that has been delicated the task of inserting the
     passed url in DB, base 62 encoding from db id and return the short
     url value.
 
-    :param full_url: Fully qualified url
-    :type full_url: string
+    :param long_url: Fully qualified url
+    :type long_url: string
     :return: The short url.
     :rtype: string
     """
 
     hashdigest = HashDigest()
-    url_manager = URLManager()
-    urlobj = url_manager.find(full_url=full_url)
+    url_manager = LinkManager()
+    urlobj = url_manager.find(long_url=long_url)
     if urlobj is not None:
-        return urlobj.short_url
-    url_manager.add(full_url=full_url)
+        return make_short_url(urlobj.short_url)
+    url_manager.add(long_url=long_url)
     short_path = hashdigest.shorten(url_manager.url.id)
     url_manager.update(short_url=short_path)
     pygmy_link = make_short_url(short_path)
@@ -55,11 +40,11 @@ def unshorten(short_url):
     short_path = get_short_path(short_url)
     hashdigest = HashDigest()
     _id = hashdigest.decode(short_path)
-    url_manager = URLManager()
-    url = url_manager.find(id=_id)
-    if url is None:
+    url_manager = LinkManager()
+    link = url_manager.find(id=_id)
+    if link is None:
         raise URLNotFound(short_url)
-    return url.full_url
+    return link.long_url
 
 
 def dummy():

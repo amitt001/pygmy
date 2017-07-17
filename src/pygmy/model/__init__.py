@@ -1,4 +1,4 @@
-__all__ = ['URL', 'URLManager', 'User', 'UserManager']
+__all__ = ['Link', 'LinkManager', 'User', 'UserManager']
 
-from pygmy.model.url import URL, URLManager
+from pygmy.model.link import Link, LinkManager
 from pygmy.model.user import User, UserManager

@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from pygmy.config import config
 
-from flask_script import Shell
+
 class BaseDatabase:
     """Use this as a base databse for other databases"""
 

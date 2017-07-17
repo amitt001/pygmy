@@ -10,6 +10,7 @@ class SqliteDatabase(BaseDatabase):
         """Touch sqlite file."""
         urlp = urlparse(url)
         path = os.path.normpath(urlp.path)
-        with open(path, 'w') as _:
-            pass
+        if not os.path.exists(path):
+            with open(path, 'w') as _:
+                pass
 
