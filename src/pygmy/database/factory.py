@@ -15,7 +15,7 @@ class DatabaseFactory:
             database = SqliteDatabase()
         if config.database['engine'] == 'postgresql':
             database = PostgreSQLDatabase()
-        database.initialize()
+        database.initialize(config.debug)
         # Create all tables, if not already exists.
         Model.metadata.create_all(database.engine)
         # TODO DB: Run migrations

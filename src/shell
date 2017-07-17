@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import pygmy
+
+from IPython.terminal.embed import embed
+from pygmy.core.initialize import initialize
+from pygmy.config import config
+from pygmy.app.urlshortner import shorten, unshorten
+from pygmy.model import *
+
+initialize()
+
+banner = """
+        ***********************************
+       * Pygmy: Open Source Link Shortner *
+      ***********************************
+      """
+
+pygmy_context = dict(pygmy=pygmy, config=config, db=config.db.store,
+                     Link=Link, LinkManager=LinkManager,
+                     User=User, UserManager=UserManager,
+                     shorten=shorten, unshorten=unshorten)
+
+embed(banner1=banner, local_ns=pygmy_context)
