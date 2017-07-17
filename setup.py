@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name            = 'pygmy',
-    description     = 'Pygmy - URL Shortner',
+    description     = 'Pygmy - Link Shortner',
     author          = 'amit',
     author_email    = '',
     url             = 'iamit.xyz',
@@ -13,6 +13,7 @@ setuptools.setup(
     package_dir     = {'': 'src'},
     include_package_data = True,
     install_requires ={
-        'sqlalchemy'
+        'sqlalchemy',
+        'passlib',
     }
 )
