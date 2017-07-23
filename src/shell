@@ -11,9 +11,9 @@ from pygmy.model import *
 initialize()
 
 banner = """
-        ***********************************
+        ************************************
        * Pygmy: Open Source Link Shortner *
-      ***********************************
+      ************************************
       """
 
 pygmy_context = dict(pygmy=pygmy, config=config, db=config.db.store,
