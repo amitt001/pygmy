@@ -1,20 +1,25 @@
-from sqlalchemy import Column, String, Boolean
-
 from passlib.hash import bcrypt
 from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection
+from sqlalchemy.sql import func
+from sqlalchemy import (
+    Integer, Column, String, Boolean, DateTime)
 
 
 class User(Model):
     __tablename__ = 'user'
 
     email = Column(String(120), primary_key=True)
+    user_id = Column(Integer, autoincrement=True)
     f_name = Column(String(30), nullable=False)
     m_name = Column(String(30), default='')
     l_name = Column(String(30), nullable=False)
     username = Column(String(120), nullable=False)
     password = Column(String(300), nullable=False)
     is_deleted = Column(Boolean, default=False)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class UserManager:
