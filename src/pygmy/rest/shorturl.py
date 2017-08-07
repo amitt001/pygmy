@@ -1,11 +1,11 @@
 from flask import request, redirect, abort, jsonify
 from flask.views import MethodView
+
 from pygmy.app.urlshortner import shorten, unshorten
 from pygmy.exception import URLNotFound, URLAuthFailed
 from pygmy.model import LinkManager
 from pygmy.validator import LinkSchema
 from pygmy.utilities.urls import make_short_url, validate_url
-from sqlalchemy.exc import IntegrityError
 
 
 class LongUrlApi(MethodView):
@@ -20,6 +20,8 @@ class LongUrlApi(MethodView):
         if is_valid is False:
             return jsonify(dict(error='Invalid URL.')), 400
         link = self.manager.get(long_url)
+        if self.manager.has_expired():
+            return jsonify(dict(message="Link has expired")), 404
         if link is None:
             abort(404)
         result = self.schema.dump(link)
@@ -34,18 +36,23 @@ class LongUrlApi(MethodView):
         is_valid = validate_url(long_url)
         if is_valid is False:
             return jsonify(dict(error='Not a valid URL.')), 400
-        try:
+        link = self.manager.get(long_url)
+        if link is None or (
+                        data.get('is_custom') or
+                        data.get('is_protected') or
+                        data.get('owner') or
+                        data.get('expire_after')):
             link = self.manager.add(long_url, **data)
-        except IntegrityError:
-            return jsonify(dict(error='URL already exists.')), 400
         result = self.schema.dump(link)
         return jsonify(result.data), 201
 
 
 class ShortURLApi(MethodView):
-    """Short url view."""
+    """Short url view. The initial approach was to get `id` out of short url
+    and query the db with primary key `id` but due to custom link the approach
+    now is to simply query the db with short url code.
+    Check how to improve this."""
     schema = LinkSchema()
-    manager = LinkManager()
 
     def get(self):
         short_url = request.args.get('url')
@@ -53,7 +60,9 @@ class ShortURLApi(MethodView):
         if is_valid is False:
             return jsonify(dict(error='Invalid URL.')), 400
         try:
-            long_url = unshorten(short_url, api_call=True)
+            long_url = unshorten(short_url, api_call=True, query_by_code=True)
+            if LinkManager(long_url).has_expired():
+                return jsonify(dict(message="Link has expired")), 404
         except URLAuthFailed:
             abort(403)
         except URLNotFound:
@@ -70,7 +79,10 @@ def resolve(code):
     # TODO not needed
     short_url = make_short_url(code)
     try:
-        long_url = unshorten(short_url, api_call=True, hit=True)
+        long_url = unshorten(short_url, api_call=True,
+                             hit=True, query_by_code=True)
+        if LinkManager(long_url).has_expired():
+            return jsonify(dict(message="Link has expired")), 404
     except URLAuthFailed:
         abort(403)
     except URLNotFound:

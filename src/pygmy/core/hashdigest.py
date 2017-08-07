@@ -16,6 +16,10 @@ class HashDigest:
         self.short_str = ''
 
     def encode(self, j):
+        """
+        :param j:
+        :return: list
+        """
         r = []
         dividend = j
         while dividend > 0:
