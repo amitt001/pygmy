@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script type="text/javascript">
+</script>
+<h1 class="vcenter">Pygmy</h1>
+<form id="urlshortenform" action="/shorten" method="post">
+    {% csrf_token %}
+    <div class="col-lg-12 url-form">
+        <!--Url shortener input-->
+        <div class="input-group has-success">
+            <input type="text" class="form-control input-lg" placeholder="http://example.com" value="http://" name="long_url" autofocus onfocus="var temp_value=this.value; this.value=''; this.value=temp_value">
+            <span class="input-group-btn">
+                <button class="btn btn-success btn-lg" type="submit">Go!</button>
+            </span>
+        </div>
+        <br><br><br>
+        <!--Link options-->
+        <div class="form-group" style="display: none;" id="linkOptions">
+            <!--Custom input-->
+            <div class="row">
+                <!--<div class="input-group">-->
+                    <label for="customUrl">127.0.0.1:8000/</label>
+                    <!--<div class="input-group-addon">127.0.0.1:8000/</div>-->
+                    <input name="custom_url" id="customUrl">
+                <input type="button" value="Check Available" id="checkAvailable" onclick="UpdateStatus()">
+                <!--</div>-->
+            </div><br>
+            <!--Secret and expire options-->
+            <div class="row">
+                <div class="col-xs-1">
+                    <input type="checkbox" tabindex="3" name="secret_check" id="remember" onclick="readOnlyToggle('secretKey')">
+                    <label for="remember"> Secret </label>
+                </div>
+                <div class="col-xs-2">
+                    <input class="form-control" name="secret_key" id="secretKey" placeholder="Secret key..." readonly>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-xs-1">
+                    <input type="checkbox" tabindex="3" name="remember_check" id="secret" onclick="readOnlyToggle('expireTime')">
+                    <label for="remember"> Expire </label>
+                </div>
+                <div class="col-xs-2">
+                    <input class="form-control" name="remember_time" id="expireTime" placeholder="Expire time in minutes." readonly>
+                </div>
+            </div><br>
+        </div>
+    </div>
+</form>
+<div class="text-center">
+    <input type="submit" class="btn btn-lg btn-danger" value="Link Options" onclick="displayToggle('linkOptions')">
+</div>
+{% endblock content %}

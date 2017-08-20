@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    var secret_key = prompt("Protected Link. Please enter secret Key:");
+    var page_path = window.location.pathname + window.location.search
+    if(secret_key != null) {
+        $.ajax(
+        {
+            type: "POST",
+            url: window.location.pathname,
+            dataType: 'json',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: JSON.stringify({
+                code: window.location.search.split('=')[1],
+                secret_key: secret_key,
+                }),
+            success: function(data, textStatus, jqXHR){
+            console.log(data)
+                if(data.long_url){
+                    window.location.replace(data.long_url);
+                } else {
+                    window.location.replace(page_path);
+                }
+            }
+        }
+        )
+    }
+});
+</script>
+</head>
+<body>
+<!--This page is loaded for protected links-->
+</body>
+</html>

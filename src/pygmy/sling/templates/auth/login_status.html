@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+    <h3 style="color: red;">Invalid/Wrong Input</h3>
+    {% for form_elem in form %}
+        {% if form_elem.errors %}
+            <strong>{{ form_elem.label }}</strong>
+                {{ form_elem.errors}}
+        {% endif %}
+    {% endfor %}
+{% elif login_success == True %}
+    <div>
+        <h3 class="vcenter">Successfully Logged in.</h3>
+        <h3 class="vcenter">Go to<a href="/"> Home</a></h3>
+        <div class="vcenter">
+            <textarea id="access_token_text" readonly>{{ access_token }}
+            </textarea>
+        </div>
+    </div>
+{% endif %}
+<script>
+    var input = document.getElementById('access_token_text');
+    input.focus();
+    input.select();
+</script>
+
+{% endblock content %}

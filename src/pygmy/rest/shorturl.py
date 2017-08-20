@@ -1,7 +1,7 @@
 from flask import request, redirect, abort, jsonify
 from flask.views import MethodView
 
-from pygmy.app.urlshortner import shorten, unshorten
+from pygmy.app.urlshortner import unshorten
 from pygmy.exception import URLNotFound, URLAuthFailed
 from pygmy.model import LinkManager
 from pygmy.validator import LinkSchema
@@ -30,6 +30,7 @@ class LongUrlApi(MethodView):
     def post(self):
         payload = request.get_json()
         data, errors = self.schema.load(payload)
+        print(data)
         if errors:
             return jsonify(errors), 400
         long_url = data.pop('long_url')
@@ -40,7 +41,6 @@ class LongUrlApi(MethodView):
         if link is None or (
                         data.get('is_custom') or
                         data.get('is_protected') or
-                        data.get('owner') or
                         data.get('expire_after')):
             link = self.manager.add(long_url, **data)
         result = self.schema.dump(link)
@@ -56,17 +56,19 @@ class ShortURLApi(MethodView):
 
     def get(self):
         short_url = request.args.get('url')
+        secret = request.headers.get('secret_key')
         is_valid = validate_url(short_url)
         if is_valid is False:
             return jsonify(dict(error='Invalid URL.')), 400
         try:
-            long_url = unshorten(short_url, api_call=True, query_by_code=True)
+            long_url = unshorten(short_url, secret_key=secret,
+                                 api_call=True, query_by_code=True)
             if LinkManager(long_url).has_expired():
                 return jsonify(dict(message="Link has expired")), 404
         except URLAuthFailed:
-            abort(403)
+            return jsonify(dict(message="Secret key not provided")), 403
         except URLNotFound:
-            abort(404)
+            return jsonify(dict(message="Invalid/Expired url")), 404
         result = self.schema.dump(long_url)
         return jsonify(result.data), 200
 
@@ -84,9 +86,9 @@ def resolve(code):
         if LinkManager(long_url).has_expired():
             return jsonify(dict(message="Link has expired")), 404
     except URLAuthFailed:
-        abort(403)
+        return jsonify({'error': 'Access to URL forbidden'}), 404
     except URLNotFound:
-        abort(404)
+        return jsonify({'error': 'URL not found or disabled'}), 404
     return redirect(long_url.long_url, code=301)
 
 

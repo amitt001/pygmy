@@ -15,6 +15,7 @@ class Configuration:
         self.schema = None
         self.host = None
         self.port = None
+        self.secret = None
         self.webservice_url = None
 
     def _read_cfg(self):
@@ -31,6 +32,7 @@ class Configuration:
         self.schema = self.cfg['pygmy']['schema']
         self.host = self.cfg['pygmy']['host']
         self.port = self.cfg['pygmy']['port']
+        self.secret = self.cfg['rest']['flask_secret']
         self.webservice_url = "{0}://{1}:{2}".format(
             self.schema, self.host, self.port)
 

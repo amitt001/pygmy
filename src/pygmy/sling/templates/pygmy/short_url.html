@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if form.errors %}
+    <div id="errorBlock" class="text-center">
+    <h3 style="color: red;">Invalid/Wrong Input</h3>
+        {% for form_element in form %}
+            {% if form_element.errors %}
+            <strong>{{form_element.label}}</strong>:
+                {{form_element.errors}}
+            {% endif %}
+        {% endfor %}
+        <a style="color: red;" href="/">Retry?</a>
+    </div>
+{%  else %}
+
+<h1 class="vcenter">Pygmy</h1>
+<div class="col-lg-12 url-form">
+    <div class="has-success">
+        <div class="input-group">
+            <input type="text" class="form-control input-lg" placeholder="XXX"
+                value="{{short_url}}" readonly autofocus id="short_url_blocked">
+            <span class="input-group-btn">
+            <button class="btn btn-info btn-lg copyButton" id="copyButtonId" onclick="copyToClipboard('copyButton')"
+                data-clipboard-action="copy" data-clipboard-target="input#short_url_blocked">
+            <span class="glyphicon glyphicon-copy"></span>
+            </button>
+            </span>
+        </div>
+        <br><br><br>
+        <a class="vcenter btn btn-lg btn-danger" style="display: inline" href="/">
+        Shorten Another Link
+        </a>
+    </div>
+</div>
+{% endif %}
+<script>
+    var input = document.getElementById('short_url_blocked');
+    input.focus();
+    input.select();
+</script>
+{% endblock content %}

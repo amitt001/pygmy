@@ -34,6 +34,13 @@ TODO
 
 * On link option fold do not post data
 
+* ALL errors from api should be in json format
+
+* Rest client and shell api should match
+
+* Make PygmyApiClient signleton
+
+* Link title on mouse hover dashboard
 
 
 Changelog

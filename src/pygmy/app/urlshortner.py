@@ -27,7 +27,7 @@ def shorten(long_url):
     return pygmy_link
 
 
-def unshorten(short_url, secret=None, api_call=False, hit=False,
+def unshorten(short_url, secret_key=None, api_call=False, hit=False,
               query_by_code=False):
     """For performance benefit its better to calculate id out of short url and
     query long url from the db. Also increments hits counter.
@@ -36,7 +36,7 @@ def unshorten(short_url, secret=None, api_call=False, hit=False,
 
     :param short_url: The shortened url.
     :type short_url: string
-    :param secret: secret key for url
+    :param secret_key: secret key for url
     :type api_call: string
     :param api_call: is an api call?
     :type api_call: bool
@@ -60,7 +60,7 @@ def unshorten(short_url, secret=None, api_call=False, hit=False,
     if link is None:
         raise URLNotFound(short_url)
     if link.is_protected:
-        if not secret or link.secret != secret:
+        if not secret_key or link.secret_key != secret_key:
             raise URLAuthFailed(short_url)
     if hit:
         url_manager.click_counter()
