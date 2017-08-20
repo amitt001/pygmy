@@ -9,12 +9,11 @@ from sqlalchemy import (
 class User(Model):
     __tablename__ = 'user'
 
-    email = Column(String(120), primary_key=True)
-    user_id = Column(Integer, autoincrement=True)
+    email = Column(String(120), unique=True, index=True)
+    id = Column(Integer, autoincrement=True, primary_key=True)
     f_name = Column(String(30), nullable=False)
     m_name = Column(String(30), default='')
     l_name = Column(String(30), nullable=False)
-    username = Column(String(120), nullable=False)
     password = Column(String(300), nullable=False)
     is_deleted = Column(Boolean, default=False)
 
@@ -23,26 +22,48 @@ class User(Model):
 
 
 class UserManager:
+    # TODO 1: make an abstract class for managers
+    # TODO 2: A seperate directory for all ABC
+    # TODO 3: Make attr of Model accessible from manager class
+    # Override __getattr__ and __setattr__
+    def __init__(self, user=None):
+        self.user = user
+
+    @staticmethod
+    def build_query(**kwargs):
+        query_dict = dict()
+        if kwargs.get('email'):
+            query_dict['email'] = kwargs.get('email')
+        if kwargs.get('id'):
+            query_dict['id'] = kwargs.get('id')
+        return query_dict
 
     @dbconnection
-    def add(self, db, email, f_name, l_name, password,
-            username=None, m_name=None):
-        if username is None:
-            username = email
-        password = bcrypt.encrypt(password)
-        user = User(f_name=f_name, m_name=m_name, l_name=l_name,
-                    email=email, password=password, username=username)
-        db.add(user)
-        db.commit()
-        return user
-
-    @dbconnection
-    def find(self, db, email):
-        user = db.query(User).filter(
-                    User.email == email, User.is_deleted == False)
-        if user.count() < 1:
+    def get(self, db, id):
+        user_obj = db.query(User).filter_by(id=id)
+        if user_obj.count() < 1:
             return None
-        return user.one()
+        self.user = user_obj.one()
+        return self.user
+
+    @dbconnection
+    def add(self, db, email, f_name, l_name, password, m_name=None):
+        password = bcrypt.encrypt(password)
+        self.user = User(f_name=f_name, m_name=m_name, l_name=l_name,
+                         email=email, password=password)
+        db.add(self.user)
+        db.commit()
+        return self.user
+
+    @dbconnection
+    def find(self, db, email, **kwargs):
+        kwargs['email'] = email
+        query_dict = self.build_query(**kwargs)
+        user_obj = db.query(User).filter_by(**query_dict)
+        if user_obj.count() < 1:
+            return None
+        self.user = user_obj.one()
+        return self.user
 
     @dbconnection
     def remove(self, db, email):

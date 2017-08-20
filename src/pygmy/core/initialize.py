@@ -17,6 +17,7 @@ def load_config_path():
 
 
 def initialize_config(config_path=None):
+    os.environ['TZ'] = 'UTC'
     # TODO: initialie from cfg file
     if config_path and os.path.exists(config_path):
         os.environ[_CONFIG_ENV_VAR] = config_path

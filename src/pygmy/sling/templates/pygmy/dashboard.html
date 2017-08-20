@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+table { table-layout: fixed; }
+ table th, table td { overflow: hidden; word-wrap:break-word}
+</style>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="col-md-3">Long Link</th>
+            <th>Short Link</th>
+            <th>Created On</th>
+            <th>Secret</th>
+            <th>Expired</th>
+          </tr>
+        </thead>
+        <tbody>
+{% for link in links %}
+          <tr>
+            <td>{{ link.long_url }}</td>
+            <td><a href="{{ link.short_url }}" target="_blank">{{ link.short_url }}</a></td>
+            <td>{{ link.created_at }}</td>
+            <td>{{ link.secret_key|default:"--" }}</td>
+            <td>{{ link.is_disabled }}</td>
+          </tr>
+{% endfor %}
+        </tbody>
+    </table>
+
+<a href="/" class="vcenter">Go Back</a>
+{% endblock content %}

@@ -35,8 +35,8 @@ class Link(Model):
     is_disabled = Column(Boolean, default=False)
     is_custom = Column(Boolean, default=False)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime(), server_default=func.now())
+    updated_at = Column(DateTime(), onupdate=func.now())
 
     @staticmethod
     def generate_short_code(_, connection, target):
@@ -101,8 +101,11 @@ class LinkManager:
 
     def has_expired(self):
         """Check if the link has expired."""
-        print(time.time(), self.expire_at_epoch)
-        if not self.link.is_disabled and time.time() >= self.expire_at_epoch:
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(self.expire_at_epoch)))
+        print(time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time())))
+        if self.link.is_disabled:
+            return True
+        if self.link and (time.time() >= self.expire_at_epoch):
             self.disable()
             return True
         return False
@@ -142,7 +145,8 @@ class LinkManager:
             query_dict['id'] = kwargs.get('id')
         if kwargs.get('short_code'):
             query_dict['short_code'] = kwargs.get('short_code')
-        query_dict['is_disabled'] = False
+        if kwargs.get('owner'):
+            query_dict['owner'] = kwargs.get('owner')
         return query_dict
 
     @dbconnection
@@ -157,10 +161,19 @@ class LinkManager:
         query_dict = dict(long_url_hash=self.crc32(long_url),
                           long_url=long_url,
                           is_default=is_default)
-        link = db.query(Link).filter_by(**query_dict)
-        if link.count() < 1:
+        url = db.query(Link).filter_by(**query_dict)
+        if url.count() < 1:
             return None
-        return link.one()
+        self.link = url.one()
+        return self.link
+
+    @dbconnection
+    def get_by_onwer(self, db, owner, order_by=None):
+        url = db.query(Link).filter_by(owner=owner)
+        if url.count() < 1:
+            return None
+        self.link = url.all()
+        return self.link
 
     @dbconnection
     def latest_default_link(self, db):
