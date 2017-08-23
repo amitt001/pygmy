@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_NAME = 'sessionid'
 
 # Internationalization

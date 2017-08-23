@@ -55,16 +55,19 @@ class ShortURLApi(MethodView):
     schema = LinkSchema()
 
     def get(self):
-        short_url = request.args.get('url')
         secret = request.headers.get('secret_key')
+        short_url = request.args.get('url')
+        hit_counter = bool(request.args.get('hit_counter'))
         is_valid = validate_url(short_url)
+        print(request.args)
         if is_valid is False:
             return jsonify(dict(error='Invalid URL.')), 400
         try:
             long_url = unshorten(short_url, secret_key=secret,
-                                 api_call=True, query_by_code=True)
+                                 api_call=True, query_by_code=True,
+                                 hit=hit_counter)
             if LinkManager(long_url).has_expired():
-                return jsonify(dict(message="Link has expired")), 404
+                return jsonify(dict(message="Link has expired")), 410
         except URLAuthFailed:
             return jsonify(dict(message="Secret key not provided")), 403
         except URLNotFound:

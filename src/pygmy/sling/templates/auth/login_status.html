@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if form.errors %}
-    <h3 style="color: red;">Invalid/Wrong Input</h3>
+    <h3>Invalid Input</h3>
     {% for form_elem in form %}
         {% if form_elem.errors %}
             <strong>{{ form_elem.label }}</strong>

@@ -24,24 +24,57 @@ function displayToggle(elementId) {
     element.style.display = displayProperty;
 }
 
+function validInput(input){
+    // if invalid characters return false and change colour
+    if (input != input.replace(/[^a-zA-Z0-9]/g, '')){
+        var respText = "Invalid characters in input.";
+        var checkButtonClass = "btn btn-sm btn-danger";
+        var boxColor = 'red';
+        document.getElementById('availableStatus').innerHTML = respText;
+        document.getElementById('availableStatus').style.color = boxColor;
+        document.getElementById('checkAvailable').className = checkButtonClass;
+        return false;
+    }
+    return true;
+}
 
-function UpdateStatus(){
 
-//make an ajax call and get status value using the same 'id'
-var var1= document.getElementById("status").value;
-$.ajax({
-
-        type:"GET",//or POST
-        url:'http://localhost:7080/ajaxforjson/Testajax',
-                           //  (or whatever your url is)
-        data:{data1:var1},
-        //can send multipledata like {data1:var1,data2:var2,data3:var3
-        //can use dataType:'text/html' or 'json' if response type expected
-        success:function(responsedata){
-               // process on data
-               alert("got response as "+"'"+responsedata+"'");
-
-        }
-     })
-
+function CheckLinkAvailability(){
+    var customCodeInput = document.getElementById("customUrl");
+    var customFormParentDiv = document.getElementById('customFormParentDiv');
+    var customCode = customCodeInput.value.trim();
+    document.getElementById('availableStatus').innerHTML = '';
+    if(validInput(customCode) && customCode) {
+        $.ajax({
+            type: "GET",
+            url: '/check',
+            data: {custom_code: customCode},
+            dataType: 'json',
+            success:function(responsedata){
+                var status = responsedata['ok'];
+                var respText = 'Available!';
+                var boxColor = 'green';
+                var checkButtonClass = "btn btn-sm btn-primary";
+                //var checkStatusIconClass = "glyphicon glyphicon-ok form-control-feedback";
+                if(status == false) {
+                    var respText = 'Not available!';
+                    var boxColor = 'red';
+                    //var checkStatusIconClass = "glyphicon glyphicon-remove form-control-feedback";
+                    var checkButtonClass = "btn btn-sm btn-danger";
+                    // If not available focus and select
+                    customFormParentDiv.className = 'form-group has-error';
+                    customCodeInput.focus();
+                    customCodeInput.select();
+                } else {
+                    customFormParentDiv.className = 'form-group has-success';
+                    var checkButtonClass = "btn btn-sm btn-success";
+                }
+                document.getElementById('availableStatus').innerHTML = respText;
+                document.getElementById('availableStatus').style.color = boxColor;
+                document.getElementById('checkAvailable').className = checkButtonClass;
+                //customCode.className = ''
+                //document.getElementById('checkStatusIcon').className = checkStatusIconClass
+            }
+        })
+    }
 }

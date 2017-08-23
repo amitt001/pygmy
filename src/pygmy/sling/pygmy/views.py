@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django import forms
 from django.conf import settings
 from restclient.pygmy import PygmyApiClient
-from restclient.errors import ObjectNotFound, UnAuthorized
+from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired
 from restclient.error_msg import *
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
@@ -73,11 +73,14 @@ def link_unshorten(request, code):
     pygmy_client = PygmyApiClient(settings)
     if request.method == 'GET':
         try:
-            url_obj = pygmy_client.unshorten(code)
+            url_obj = pygmy_client.unshorten(code, hit_counter=True)
         except UnAuthorized:
             return redirect('/link/secret?next={}'.format(code))
+        except LinkExpired:
+            return render(request, 'pygmy/404.html')
         except ObjectNotFound as e:
-            return render(request, 'pygmy/404.html', context=API_ERROR(e.args[0]))
+            return render(request, 'pygmy/404.html',
+                          context=API_ERROR(e.args[0]))
         long_url = url_obj['long_url']
         return redirect(long_url, permanent=True)
 
@@ -124,3 +127,12 @@ def dashboard(request):
         return render(request, 'pygmy/404.html', context=API_ERROR(e.args[0]))
     context = dict(links=links)
     return render(request, 'pygmy/dashboard.html', context=context)
+
+
+def check_available(request):
+    custom_code = request.GET.get('custom_code')
+    if not custom_code:
+        return JsonResponse(dict(ok=False))
+    pygmy_client = PygmyApiClient(settings)
+    is_available = pygmy_client.is_available(custom_code)
+    return JsonResponse(dict(ok=is_available))
