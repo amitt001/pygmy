@@ -3,14 +3,16 @@
 {% block content %}
 {% if form.errors %}
     <div id="errorBlock" class="text-center">
-    <h3 style="color: red;">Invalid/Wrong Input</h3>
+    <h2>Invalid Input</h2>
+        <div style="font-size: 20px">Followig Error Occurred</div><br><br>
         {% for form_element in form %}
             {% if form_element.errors %}
+        <div class="vcenter">
             <strong>{{form_element.label}}</strong>:
-                {{form_element.errors}}
+                {{form_element.errors.as_text}}<br>
+        </div>
             {% endif %}
         {% endfor %}
-        <a style="color: red;" href="/">Retry?</a>
     </div>
 {%  else %}
 

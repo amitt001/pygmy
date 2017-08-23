@@ -5,50 +5,23 @@
     <meta charset="UTF-8">
     <meta lang="en">
     {% if title %}
-    <title>{{ title }} - Code with Buddy</title>
+    <title>{{ title }} | URL Shortner</title>
     {% else %}
-    <title>Pygmy - Code with Buddy</title>
+    <title>Pygmy | URL Shortner </title>
     {% endif %}
     <!--Mobile Friendly-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
     <script src="/static/js/app.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style type="text/css">
-      * {
-        border-radius: 0 !important;
-      }
-      body {
-      padding-top: 90px;
-      }
-      a {
-      }
-      ul.dropdown-lr {
-      width: 300px;
-      }
-      /* mobile fix */
-      @media (max-width: 768px) {
-      .dropdown-lr h3 {
-      color: #eee;
-      }
-      .dropdown-lr label {
-      color: #eee;
-      }
-      }
-      .vcenter {
-      display: flex;
-      justify-content: center; /* align horizontal */
-      align-items: center; /* align vertical */
-      }
-      .url-form {
-      margin-top: 3%;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   </head>
   <body>
-    <nav class="navbar navbar-light navbar-fixed-top" role="navigation" style="background-color: #00FA9A;">
+    <nav class="navbar navbar-light navbar-fixed-top" role="navigation" style="background-color:#6FBF46">
+    <!--#00FA9A;">-->
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -57,12 +30,12 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">Pygmy</a>
+          <a class="navbar-brand" href="/" style="color: white">Pygmy</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="">Github</a></li>
-            <li><a href="">About</a></li>
+            <li class="active"><a href="https://github.com/amitt001">Github</a></li>
+            <li><a href="/about">About</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
 {% if not request.COOKIES.sessionid %}
