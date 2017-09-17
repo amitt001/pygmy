@@ -51,6 +51,14 @@ margin-top: 3%;
     border:1px solid #444;
 }
 
+.big-text {
+    font-family: Georgia, Times, "Times New Roman", serif;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 21px;
+}
+
 /* Responsive toggle navbar start*/
 
 

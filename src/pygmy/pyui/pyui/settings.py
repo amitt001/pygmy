@@ -32,25 +32,27 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.sessions',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.response.ResponseMiddleware',
+    'middleware.exception.ExceptionMiddleware'
 ]
 
-ROOT_URLCONF = 'sling.urls'
+ROOT_URLCONF = 'pyui.urls'
 
 TEMPLATES = [
     {
@@ -76,11 +78,8 @@ STATICFILES_FINDERS = (
 
 PROJECT_DIR = os.path.dirname(__file__)
 
-TEMPLATE_DIRS = (
 
-)
-
-WSGI_APPLICATION = 'sling.wsgi.application'
+WSGI_APPLICATION = 'pyui.wsgi.application'
 
 
 # Database
@@ -112,9 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_NAME = 'sessionid'
+AUTH_COOKIE_NAME = 'access_token'
+REFRESH_COOKIE_NAME = 'refresh_token'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

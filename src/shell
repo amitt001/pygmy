@@ -5,7 +5,7 @@ import pygmy
 from IPython.terminal.embed import embed
 from pygmy.core.initialize import initialize
 from pygmy.config import config
-from pygmy.app.urlshortner import shorten, unshorten
+from pygmy.app.link import shorten, unshorten
 from pygmy.model import *
 
 initialize()

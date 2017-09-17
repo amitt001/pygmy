@@ -1,13 +1,18 @@
+import datetime
+
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from pygmy.config import config
 
 app = Flask(__name__)
-jwt = JWTManager(app)
 CORS(app)
 app.config['DEBUG'] = True
+app.config.setdefault('JWT_ACCESS_TOKEN_EXPIRES', datetime.timedelta(minutes=1))
+app.config.setdefault('JWT_REFRESH_TOKEN_EXPIRES', datetime.timedelta(days=7))
 app.secret_key = config.secret
+
+jwt = JWTManager(app)
 
 # This import is required. Removing this will break all hell loose.
 import pygmy.rest.urls as _

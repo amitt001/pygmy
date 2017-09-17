@@ -16,10 +16,13 @@ class HashDigest:
         self.short_str = ''
 
     def encode(self, j):
-        """
-        :param j:
+        """Returns the repeated div mod of the number.
+
+        :param j: int
         :return: list
         """
+        if j == 0:
+            return [j]
         r = []
         dividend = j
         while dividend > 0:
@@ -29,6 +32,11 @@ class HashDigest:
         return r
 
     def decode(self, short_str):
+        """
+
+        :param short_str:
+        :return:
+        """
         # slow
         val_hash = []
         for shrt in short_str:
@@ -40,10 +48,18 @@ class HashDigest:
         return _id
 
     def shorten(self, i):
+        """
+        :param i:
+        :return: str
+        """
         encoded_list = self.encode(i)
         for val in encoded_list:
             self.short_str += self.base[val]
         return self.short_str
+
+    def unshorten(self, s):
+        """Just for shorten/unshorten naming convention."""
+        return self.decode(s)
 
 
 if __name__ == '__main__':

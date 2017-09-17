@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if error %}
+    <h3 class="vcenter">{{error}}</h3>
+{% else %}
+    <h3 class="vcenter">Please login again to continue</h3>
+{% endif %}
+{% endblock content %}

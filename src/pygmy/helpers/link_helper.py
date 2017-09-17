@@ -14,7 +14,6 @@ def next_short_code():
         base_id = HashDigest().decode(link.short_code) + 1
         base_str = HashDigest().shorten(base_id)
         while link_manager.find(short_code=base_str):
-            print(base_str)
             base_id += 1
             base_str = HashDigest().shorten(base_id)
     return base_str

@@ -1,4 +1,4 @@
-"""sling URL Configuration
+"""scree URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+import pyui.generic_views as views
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^favicon.ico', views.dummy),
+    url(r'^about', views.about),
     url(r'', include('user_auth.urls')),
     url(r'', include('pygmy.urls')),
 ]
