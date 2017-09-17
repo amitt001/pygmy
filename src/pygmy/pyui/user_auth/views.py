@@ -6,9 +6,10 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from restclient.pygmy import PygmyApiClient
 from restclient.error_msg import API_ERROR
-from restclient.errors import ObjectNotFound
+from restclient.errors import ObjectNotFound, InvalidInput
 
-_SESSION_COOKIE_NAME = settings.SESSION_COOKIE_NAME
+AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
+REFRESH_COOKIE_NAME = settings.REFRESH_COOKIE_NAME
 
 
 class LoginForm(forms.Form):
@@ -35,25 +36,29 @@ class SignUpForm(forms.Form):
 
 def login(request):
     if request.method == 'POST':
-        pygmy_client = PygmyApiClient(settings)
+        pygmy_client = PygmyApiClient(settings, request)
         form = LoginForm(request.POST)
         context = dict(form=form)
         if form.is_valid():
             context['login_success'] = True
             try:
-                context = pygmy_client.login(
+                user_obj = pygmy_client.login(
                     email=form.cleaned_data['email'],
                     password=form.cleaned_data['password'])
-            except ObjectNotFound as e:
-                return render(request, 'pygmy/404.html',
+                context = {'email': user_obj['email'],
+                           'f_name': user_obj['f_name'],
+                           AUTH_COOKIE_NAME: user_obj['access_token'],
+                           REFRESH_COOKIE_NAME: user_obj['refresh_token']}
+            except InvalidInput as e:
+                return render(request, 'unauthorized.html',
                               context=API_ERROR(e.args[0]))
-            request.session[_SESSION_COOKIE_NAME] = context.get('access_token')
-            # response = render(
-            #     request, "auth/login_status.html", context=context)
+            except ObjectNotFound as e:
+                return render(request, '404.html',
+                              context=API_ERROR(e.args[0]))
             response = redirect('dashboard')
-            request.session['user'] = context
+            _ = [response.set_cookie(k, v) for k, v in context.items()]
         else:
-            response = render(request, "pygmy/400.html")
+            response = render(request, "400.html")
         return response
 
     if request.method == 'GET':
@@ -63,7 +68,9 @@ def login(request):
 def logout(request):
     if request.method == 'GET':
         response = redirect('/')
-        response.delete_cookie(key=_SESSION_COOKIE_NAME)
+        cookie_keys = ['f_name', 'email', AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME]
+        _ = [response.delete_cookie(key=k) for k in cookie_keys]
+        response.delete_cookie(key=AUTH_COOKIE_NAME)
         return response
 
 
@@ -72,17 +79,21 @@ def signup(request):
         return redirect('/')
 
     if request.method == 'POST':
-        pygmy_client = PygmyApiClient(settings)
+        pygmy_client = PygmyApiClient(settings, request)
         form = SignUpForm(request.POST)
         context = dict(form=form)
         if not form.is_valid():
-            return render(request, "pygmy/400.html")
+            return render(request, "400.html")
         context['signup_success'] = True
         try:
-            context = pygmy_client.signup(form.cleaned_data)
+            user_obj = pygmy_client.signup(form.cleaned_data)
+            context = {'email': user_obj['email'],
+                       'f_name': user_obj['f_name'],
+                       AUTH_COOKIE_NAME: user_obj['access_token'],
+                       REFRESH_COOKIE_NAME: user_obj['refresh_token']}
         except ObjectNotFound as e:
-            return render(request, 'pygmy/400.html',
+            return render(request, '400.html',
                           context=API_ERROR(e.args[0]))
-        request.session[_SESSION_COOKIE_NAME] = context.get('access_token')
-        request.session['user'] = context
-        return redirect('/')
+        response = redirect('/')
+        _ = [response.set_cookie(k, v) for k, v in context.items()]
+        return response

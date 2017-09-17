@@ -7,7 +7,7 @@ from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired
 from restclient.error_msg import *
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
-_SESSION_COOKIE_NAME = settings.SESSION_COOKIE_NAME
+AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
 
 
 class URLForm(forms.Form):
@@ -22,24 +22,23 @@ class URLForm(forms.Form):
 
 
 def link_shortener(request):
-    pygmy_client = PygmyApiClient(settings)
+    pygmy_client = PygmyApiClient(settings, request)
     if request.method == 'POST':
         form = URLForm(request.POST)
         context = dict(form=form)
         if form.is_valid():
-            owner = request.session.get('user', {}).get('id')
-            if owner:
-                owner = owner.split('/')[-1]
             try:
                 resp = pygmy_client.shorten(
                     long_url=form.cleaned_data['long_url'],
                     custom_url=form.cleaned_data['custom_url'],
                     secret=form.cleaned_data['secret_key'],
-                    expire_after=form.cleaned_data['remember_time'],
-                    owner=owner
+                    expire_after=form.cleaned_data['remember_time']
                 )
+            except UnAuthorized as e:
+                return render(
+                    request, 'unauthorized.html', context=API_ERROR(e.args[0]))
             except ObjectNotFound as e:
-                return render(request, 'pygmy/400.html',
+                return render(request, '400.html',
                               context=API_ERROR(e.args[0]))
             short_code = resp['short_code']
         else:
@@ -47,25 +46,27 @@ def link_shortener(request):
         return redirect('get_short_link', code=short_code)
 
     if request.method == 'GET':
-        return render(request, 'pygmy/400.html')
+        return render(request, '40.html')
 
 
 def get_short_link(request, code):
     """TODO: Validate code"""
-    pygmy_client = PygmyApiClient(settings)
+    pygmy_client = PygmyApiClient(settings, request)
     if request.method == 'GET':
         try:
-            url_obj = pygmy_client.unshorten(code)
+            # url_obj = pygmy_client.unshorten(code)
+            url_obj = {}
             url_obj['short_url'] = (
-                request.META['HTTP_HOST'] + '/' + url_obj['short_code'])
+                request.META['HTTP_HOST'] + '/' + url_obj.get(
+                    'short_code', code))
         except ObjectNotFound as e:
-            return render(request, 'pygmy/404.html',
+            return render(request, '404.html',
                           context=API_ERROR(e.args[0]))
         context = dict(
-            short_url=url_obj['short_url'],
-            long_url=url_obj['long_url'])
+            short_url=url_obj['short_url'])
+            # long_url=url_obj['long_url'])
         return render(request, 'pygmy/short_url.html', context=context)
-    return render(request, 'pygmy/400.html')
+    return render(request, '400.html')
 
 
 def link_unshorten(request, code):
@@ -77,9 +78,9 @@ def link_unshorten(request, code):
         except UnAuthorized:
             return redirect('/link/secret?next={}'.format(code))
         except LinkExpired:
-            return render(request, 'pygmy/404.html')
+            return render(request, '404.html')
         except ObjectNotFound as e:
-            return render(request, 'pygmy/404.html',
+            return render(request, '404.html',
                           context=API_ERROR(e.args[0]))
         long_url = url_obj['long_url']
         return redirect(long_url, permanent=True)
@@ -90,7 +91,7 @@ def link_auth(request):
     if request.method == 'GET':
         code = request.GET.get('next')
         if not code:
-            return redirect('pygmy/400.html')
+            return redirect('400.html')
         return render(request, 'auth/link_auth.html')
 
     if request.method == 'POST':
@@ -99,7 +100,7 @@ def link_auth(request):
         code = data['code']
         secret_key = data['secret_key']
         if not code or not secret_key:
-            return render(request, 'pygmy/400.html')
+            return render(request, '400.html')
         try:
             url_obj = pygmy_client.unshorten(code, secret_key=secret_key)
             response = dict(long_url=url_obj['long_url'])
@@ -107,24 +108,24 @@ def link_auth(request):
             response = dict(message='Wrong secret key.')
         except ObjectNotFound as e:
             return render(
-                request, 'pygmy/404.html', context=API_ERROR(e.args[0]))
+                request, '404.html', context=API_ERROR(e.args[0]))
         # return redirect(long_url, permanent=True)
         return JsonResponse(response)
 
 
 def dashboard(request):
     """Returns the list of signed up user links"""
-    access_token = request.session.get(_SESSION_COOKIE_NAME)
+    access_token = request.COOKIES.get(AUTH_COOKIE_NAME)
     if not access_token:
-        return render(request, 'pygmy/404.html', context=INVALID_TOKEN)
-    pygmy_client = PygmyApiClient(settings)
-    user_link = request.session.get('user').get('id')
-    user_id = user_link.split('/')[-1]
+        return render(request, '400.html', context=INVALID_TOKEN)
+    pygmy_client = PygmyApiClient(settings, request)
     try:
-        links = pygmy_client.list_links(
-            user_id=user_id, access_token=access_token)
+        links = pygmy_client.list_links(access_token=access_token)
+    except UnAuthorized as e:
+        return render(
+            request, 'unauthorized.html', context=API_ERROR(e.args[0]))
     except ObjectNotFound as e:
-        return render(request, 'pygmy/404.html', context=API_ERROR(e.args[0]))
+        return render(request, '404.html', context=API_ERROR(e.args[0]))
     context = dict(links=links)
     return render(request, 'pygmy/dashboard.html', context=context)
 

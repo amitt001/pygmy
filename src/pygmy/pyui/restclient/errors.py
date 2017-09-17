@@ -18,3 +18,7 @@ class LinkExpired(RestClientException):
 
 class RestAPIConnectionError(RestClientException):
     pass
+
+
+class InvalidInput(RestClientException):
+    pass

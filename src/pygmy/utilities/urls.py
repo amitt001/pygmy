@@ -17,6 +17,7 @@ def validate_url(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return regex.match(url) is not None
 
+
 def make_short_url(short_path):
     base_url = "{0}://{1}:{2}".format(
         config.schema, config.host, config.port)

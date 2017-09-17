@@ -39,8 +39,16 @@ class UserManager:
         return query_dict
 
     @dbconnection
-    def get(self, db, id):
-        user_obj = db.query(User).filter_by(id=id)
+    def get(self, db, _id):
+        user_obj = db.query(User).filter_by(id=_id)
+        if user_obj.count() < 1:
+            return None
+        self.user = user_obj.one()
+        return self.user
+
+    @dbconnection
+    def get_by_email(self, db, email):
+        user_obj = db.query(User).filter_by(email=email)
         if user_obj.count() < 1:
             return None
         self.user = user_obj.one()
@@ -70,7 +78,3 @@ class UserManager:
         user = self.find(email=email)
         user.is_deleted = True
         db.commit()
-
-
-
-

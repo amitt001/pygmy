@@ -1,5 +1,6 @@
 # Files
 *.pyc
+bootstrap.min.css
 
 # Directory
 *.egg-info/

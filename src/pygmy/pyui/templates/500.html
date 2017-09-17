@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="vcenter">500</h1><br>
+{% if error %}
+    <h3 class="vcenter">{{error}}</h3>
+{% else %}
+    <h3 class="vcenter">Something Went Wrong</h3>
+{% endif %}
+{% endblock content %}

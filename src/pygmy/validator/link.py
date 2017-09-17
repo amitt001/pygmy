@@ -16,7 +16,7 @@ class LinkSchema(Schema):
     is_disabled = fields.Bool(default=False, required=False)
     is_custom = fields.Bool(default=False, required=False)
     owner = fields.Str(required=False, allow_none=True)
-    created_at = fields.DateTime(dump_only=True)
+    created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime()
 
     # @pre_load
@@ -36,7 +36,8 @@ class LinkSchema(Schema):
         if data and data.get('owner'):
             data['owner'] = make_url_from_id(data['owner'], 'user')
         return data
-                    # @pre_dump
+
+    # @pre_dump
     # def format_short_url(self, data):
     #     if link and link.short_code:
         # if isinstance(data, dict):

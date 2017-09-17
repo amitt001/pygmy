@@ -4,9 +4,12 @@ import time
 from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection
 from sqlalchemy import event
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import func
 from sqlalchemy import (Column, String, Integer,
                         Boolean, BigInteger, Unicode, DateTime)
+
+from pygmy.exception.error import ShortURLUnavailable
 
 
 class Link(Model):
@@ -19,7 +22,7 @@ class Link(Model):
     # TODO pull values from long url
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
-    long_url_hash = Column(String(32), index=True)
+    long_url_hash = Column(Integer, index=True)
     short_code = Column(Unicode, unique=True, index=True)
     description = Column(String(1000), default=None)
     hits_counter = Column(BigInteger, default=0)
@@ -72,10 +75,16 @@ class LinkManager:
         self._BIG_INT = 999999999999919
 
     def __del__(self):
-        if self.db:
+        # Not working
+        if not self.db or 1:
             return
         self.db.commit()
         self.db.close()
+
+    @dbconnection
+    def __iter__(self, db):
+        """Loop over object."""
+        yield from db.query(Link).order_by(Link.id).all()
 
     @dbconnection
     def init_db_obj(self, db):
@@ -92,6 +101,18 @@ class LinkManager:
             return self.created_at_epoch + (self.link.expire_after * 60)
         return self._BIG_INT
 
+    @staticmethod
+    def build_query_dict(**kwargs):
+        """Build a dictionary from kwargs"""
+        query_dict = dict()
+        if kwargs.get('id'):
+            query_dict['id'] = kwargs.get('id')
+        if kwargs.get('short_code'):
+            query_dict['short_code'] = kwargs.get('short_code')
+        if kwargs.get('owner'):
+            query_dict['owner'] = kwargs.get('owner')
+        return query_dict
+
     @dbconnection
     def disable(self, db):
         """Disable a link."""
@@ -101,9 +122,7 @@ class LinkManager:
 
     def has_expired(self):
         """Check if the link has expired."""
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(self.expire_at_epoch)))
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time())))
-        if self.link.is_disabled:
+        if self.link and self.link.is_disabled:
             return True
         if self.link and (time.time() >= self.expire_at_epoch):
             self.disable()
@@ -114,13 +133,21 @@ class LinkManager:
     def crc32(long_url):
         return binascii.crc32(str.encode(long_url))
 
+    @property
+    @dbconnection
+    def short_links(self, db):
+        yield from db.query(Link).order_by(Link.id).all()
+
     @dbconnection
     def add(self, db, long_url, **kwargs):
         # TODO: verify/escape input
         self.link = Link(long_url=long_url,
                          long_url_hash=self.crc32(long_url), **kwargs)
         db.add(self.link)
-        db.commit()
+        try:
+            db.commit()
+        except IntegrityError:
+            raise ShortURLUnavailable('Short URL already taken or unavailable')
         return self.link
 
     @dbconnection
@@ -137,18 +164,6 @@ class LinkManager:
         db.commit()
         return self.link
 
-    @staticmethod
-    def build_query_dict(**kwargs):
-        """Build a dictionary from kwargs"""
-        query_dict = dict()
-        if kwargs.get('id'):
-            query_dict['id'] = kwargs.get('id')
-        if kwargs.get('short_code'):
-            query_dict['short_code'] = kwargs.get('short_code')
-        if kwargs.get('owner'):
-            query_dict['owner'] = kwargs.get('owner')
-        return query_dict
-
     @dbconnection
     def click_counter(self, db):
         if self.link is None:
@@ -164,24 +179,51 @@ class LinkManager:
         url = db.query(Link).filter_by(**query_dict)
         if url.count() < 1:
             return None
-        self.link = url.one()
+        self.link = url.first()
         return self.link
 
     @dbconnection
-    def get_by_onwer(self, db, owner, order_by=None):
-        url = db.query(Link).filter_by(owner=owner)
-        if url.count() < 1:
-            return None
-        self.link = url.all()
+    def get_by_code(self, db, short_code):
+        self.link = db.query(Link).filter(
+                        Link.short_code == short_code).first()
         return self.link
+
+    @dbconnection
+    def get_by_id(self, db, link_id):
+        return db.query(Link).filter_by(id=link_id).first()
+
+    @dbconnection
+    def get_by_owner(self, db, owner_id):
+        yield from db.query(Link).filter(
+            Link.owner == owner_id).order_by(Link.id).all()
+
+    @property
+    @dbconnection
+    def short_codes_list(self, db):
+        """Return all short codes list"""
+        result_set = db.query(Link)
+        for r in result_set.values(Link.short_code):
+            yield r[0]
+
+    @property
+    @dbconnection
+    def long_links_list(self, db):
+        """Return all long links list"""
+        result_set = db.query(Link)
+        for r in result_set.values(Link.long_url):
+            yield r[0]
+
+    @property
+    @dbconnection
+    def disabled_links(self, db):
+        result_set = db.query(Link).filter(Link.is_disabled == 1)
+        yield from result_set.order_by(Link.id).all()
 
     @dbconnection
     def latest_default_link(self, db):
         """Returns latest non custom link"""
-        return db.query(Link
-                    ).filter_by(is_custom=False
-                    ).order_by(Link.created_at.desc()
-                    ).first()
+        return db.query(Link).filter_by(
+                is_custom=False).order_by(Link.created_at.desc()).first()
 
     @dbconnection
     def find(self, db, **kwargs):
