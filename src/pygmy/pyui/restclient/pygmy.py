@@ -105,6 +105,8 @@ class PygmyApiClient:
         if int(r.status_code // 100) != 2:
             if r.status_code == 401:
                 raise UnAuthorized('Please login again to continue')
+            if r.status_code == 400:
+                raise InvalidInput(r.json())
             raise ObjectNotFound(r.json())
         resp = r.json()
         if resp.get('short_url'):

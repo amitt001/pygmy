@@ -2,33 +2,17 @@
 TODO
 ====
 
-* URL startes from b/1 instead of 0
-
 * Disable url by owner
 
-* If secret generate a new URL even if already exists.
+* Improved cfg read
 
 * Option to commit lazily instead of up front commit
 
-* Protected Link
-
-* Add cli shell and start support
-
 * Alembic migrations
-
-* Rest api
-
-* UI
 
 * Add logging
 
 * Make module installable
-
-* Hits counter logic
-
-* Handle/understand CORS
-
-* JWT auth
 
 * On back button remove link options
 
@@ -40,13 +24,21 @@ TODO
 
 * Make PygmyApiClient signleton
 
-* Link title on mouse hover dashboard
-
 * Show expire time left
+
+* Logout automatically on access token and refresh token not found
+
+* Link analytics ( hits done)
 
 
 Changelog
 =========
+
+* Rest api
+
+* UI
+
+* Add cli shell and start support
 
 * Read from pygmy.cfg
 
@@ -54,3 +46,21 @@ Changelog
   In case user is logged in use hash and username to get result(coz chnaces of collision
   is very low for a user)
 
+* Hits counter logic
+
+* Validation of short code on both rest api and ui level
+
+* If secret generate a new URL even if already exists.
+
+* Protected Link by secret key
+
+* Handle/understand CORS
+
+* JWT based auth
+
+* Link title on mouse hover dashboard
+
+Deployment Issues:
+------------------
+
+SQlite db path not found create dir
