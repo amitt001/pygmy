@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if form.errors %}
+{% if form.errors or input_error %}
     <div id="errorBlock" class="text-center">
     <h2>Invalid Input</h2>
         <div style="font-size: 20px">Followig Error Occurred</div><br><br>
-        {% for form_element in form %}
-            {% if form_element.errors %}
-        <div class="vcenter">
-            <strong>{{form_element.label}}</strong>:
-                {{form_element.errors.as_text}}<br>
-        </div>
-            {% endif %}
-        {% endfor %}
+        {% if form.errors %}
+            {% for form_element in form %}
+                {% if form_element.errors %}
+                    <div class="vcenter">
+                        <strong>{{form_element.label}}</strong>:
+                            {{form_element.errors.as_text}}<br>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% elif input_error %}
+            {% for key, val in input_error.items %}
+                <div class="vcenter">
+                    <strong>{{key}}</strong>:
+                        {{val}}<br>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
+
 {%  else %}
 
 <h1 class="vcenter">Pygmy</h1>
@@ -35,10 +45,13 @@
         </a>
     </div>
 </div>
+
 {% endif %}
+
 <script>
     var input = document.getElementById('short_url_blocked');
     input.focus();
     input.select();
 </script>
+
 {% endblock content %}

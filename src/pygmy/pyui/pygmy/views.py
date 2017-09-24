@@ -1,13 +1,20 @@
+import string
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django import forms
 from django.conf import settings
 from restclient.pygmy import PygmyApiClient
-from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired
+from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired, \
+    InvalidInput
 from restclient.error_msg import *
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
 AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
+MAX_SHORT_CODE_LEN = 8
+INVALID_CUSTOM_CODE_ERROR = "Invalid value. Length should be <= 8 and should" \
+                            " be a valid alphabat, digit or a mix of both"
+VALID_INPUT_CHARS = string.ascii_letters + string.digits
 
 
 class URLForm(forms.Form):
@@ -19,6 +26,18 @@ class URLForm(forms.Form):
     remember_check = forms.BooleanField(required=False)
     secret_key = forms.CharField(required=False, label='Secret Key')
     secret_check = forms.BooleanField(required=False)
+
+    def clean(self):
+        data = self.cleaned_data
+        secret_key, custom_url = data.get('secret_key'), data.get('custom_url')
+        validation_items = dict(secret_key=secret_key, custom_url=custom_url)
+        for k, val in validation_items.items():
+            if len(val) > MAX_SHORT_CODE_LEN:
+                self.add_error(k, INVALID_CUSTOM_CODE_ERROR)
+            for c in val:
+                if c not in VALID_INPUT_CHARS:
+                    self.add_error(k, INVALID_CUSTOM_CODE_ERROR)
+                    break
 
 
 def link_shortener(request):
@@ -37,7 +56,10 @@ def link_shortener(request):
             except UnAuthorized as e:
                 return render(
                     request, 'unauthorized.html', context=API_ERROR(e.args[0]))
-            except ObjectNotFound as e:
+            except InvalidInput as e:
+                context.update(dict(input_error=e.args[0]))
+                return render(request, 'pygmy/short_url.html', context=context)
+            except (ObjectNotFound, InvalidInput) as e:
                 return render(request, '400.html',
                               context=API_ERROR(e.args[0]))
             short_code = resp['short_code']
@@ -46,15 +68,13 @@ def link_shortener(request):
         return redirect('get_short_link', code=short_code)
 
     if request.method == 'GET':
-        return render(request, '40.html')
+        return render(request, '400.html')
 
 
 def get_short_link(request, code):
     """TODO: Validate code"""
-    pygmy_client = PygmyApiClient(settings, request)
     if request.method == 'GET':
         try:
-            # url_obj = pygmy_client.unshorten(code)
             url_obj = {}
             url_obj['short_url'] = (
                 request.META['HTTP_HOST'] + '/' + url_obj.get(
@@ -62,9 +82,7 @@ def get_short_link(request, code):
         except ObjectNotFound as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]))
-        context = dict(
-            short_url=url_obj['short_url'])
-            # long_url=url_obj['long_url'])
+        context = dict(short_url=url_obj['short_url'])
         return render(request, 'pygmy/short_url.html', context=context)
     return render(request, '400.html')
 

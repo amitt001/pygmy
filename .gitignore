@@ -7,3 +7,5 @@ bootstrap.min.css
 env
 .idea
 dist
+.DS_Store
+

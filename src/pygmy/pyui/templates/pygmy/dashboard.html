@@ -11,8 +11,9 @@ table { table-layout: fixed; }
             <th class="col-md-3">Long Link</th>
             <th>Short Link</th>
             <th>Created On</th>
-            <th>Secret</th>
-            <th>Expired</th>
+            <th><span title="Secret key">Secret Key</span></th>
+            <th><span title="Link expire status">Expired</span></th>
+            <th><span title="URL unique hits">Hits</span></th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@ table { table-layout: fixed; }
             <td>{{ link.created_at }}</td>
             <td>{{ link.secret_key|default:"--" }}</td>
             <td>{{ link.is_disabled }}</td>
+            <td>{{ link.hits_counter }}</td>
           </tr>
 {% endfor %}
         </tbody>
