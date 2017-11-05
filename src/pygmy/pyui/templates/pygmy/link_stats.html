@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <div class="item-detail-created-date">{{clickmeta.created_at}}</div>
+    <div class="item-detail-title">{{clickmeta.long_url}}</div>
+    <div>
+        <a href="{{clickmeta.long_url}}" target="_blank">{{clickmeta.long_url}}</a>
+    </div>
+    <div>
+        <a href="{{clickmeta.short_code}}" target="_blank">
+            <script type="text/javascript">
+                document.write(window.location.hostname+':'+window.location.port+'/{{clickmeta.short_code}}')
+            </script>
+        </a>
+    </div>
+    <div>Total Hits: {{clickmeta.total_hits}}</div>
+</div>
+<hr>
+<!--Country Stats-->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="col-md-9"><span title="Country">Country</span></th>
+            <th><span title="Link Hits">Hits</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for country_code, country_hits in clickmeta.country_stats.items %}
+        <tr>
+            <td>{{country_code}}</td>
+            <td>{{country_hits}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!--Referrer Stats-->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="col-md-9"><span title="Country">Referrer</span></th>
+            <th><span title="Link Hits">Hits</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for referrer, referrer_hits in clickmeta.referrer.items %}
+        <tr>
+            <td>{{referrer}}</td>
+            <td>{{referrer_hits}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!--Time specific stats-->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="col-md-9"><span title="Country">Timestamp</span></th>
+            <th><span title="Link Hits">Hits</span></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for time, hits in clickmeta.time_stats.items %}
+        <tr>
+            <td>{{time}}</td>
+            <td>{{hits}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    <i>* Timestamp data is of last 30 days only</i><br>
+    <i>* Time is in GMT</i>
+</div>
+
+{% endblock content %}

@@ -1,9 +1,11 @@
-from pygmy.utilities.urls import make_short_url, get_short_path
+from pygmy.config import config
 from pygmy.core.hashdigest import HashDigest
 from pygmy.exception import URLNotFound, URLAuthFailed
+from pygmy.exception.error import LinkExpired
 from pygmy.helpers.link_helper import next_short_code
 from pygmy.model.link import LinkManager
-from pygmy.exception.error import LinkExpired
+from pygmy.model.clickmeta import ClickMetaManager
+from pygmy.utilities.urls import make_short_url, get_short_path
 
 
 def shorten(long_url):
@@ -27,8 +29,8 @@ def shorten(long_url):
     return pygmy_link
 
 
-def unshorten(short_url, secret_key=None, hit=False,
-              query_by_code=False):
+def unshorten(short_url, secret_key=None,
+              query_by_code=False, request=None):
     """For performance benefit its better to calculate id out of short url and
     query long url from the db. Also increments hits counter.
 
@@ -37,10 +39,9 @@ def unshorten(short_url, secret_key=None, hit=False,
     :param short_url: The shortened url.
     :type short_url: string
     :param secret_key: secret key for url
-    :param hit: increment hit counter
-    :type hit: bool
     :param query_by_code: bool to query directly with short url string
-    :type hit: bool
+    :param request: http request object. When request is not None parse the
+        request object and get stats out of it.
     :return: The full url
     :rtype: string"""
     url_manager = LinkManager()
@@ -59,22 +60,84 @@ def unshorten(short_url, secret_key=None, hit=False,
     if link.is_protected:
         if not secret_key or link.secret_key != secret_key:
             raise URLAuthFailed(short_url)
-    if hit:
-        url_manager.click_counter()
+    if request:
+        save_clickmeta(request, link)
     return link
 
 
-def resolve_short(short_url, click_counter=False):
+def resolve_short(short_code, request=None):
     """Returns the unshortened long url from short url
-    :param short_url: str
-    :param click_counter: bool
+
+    :param short_code: str
+    :param request: http request object. When request is not None parse the
+        request object and get stats out of it.
     :return: str
     """
     manager = LinkManager()
-    link = manager.get_by_code(short_code=short_url)
+    link = manager.get_by_code(short_code=short_code)
     assert link is not None
     if manager.has_expired() is True:
         raise LinkExpired('Link has expired')
-    if click_counter:
-        link.click_counter()
+    # put stats
+    if request:
+        save_clickmeta(request, link)
     return link.long_url
+
+
+def link_stats(short_code):
+    """Get short link stats"""
+    manager = LinkManager()
+    short_code = short_code.strip('+')
+    link = manager.get_by_code(short_code=short_code)
+    if link is None:
+        return None
+    formatted_stats = formatted_link_stats(link)
+    return formatted_stats
+
+
+def formatted_link_stats(link):
+    """Pass link and clickmeta model objects ans returns a formatted dict.
+
+    :param link:
+    :param clickmeta:
+    :return:
+    """
+    manager = ClickMetaManager()
+    click_meta = manager.click_stats(link.id)
+    link_info = dict(
+            long_url=link.long_url,
+            short_code=link.short_code,
+            created_at=link.created_at
+    )
+    """
+    If month:
+        30 Days
+    If hour:
+        24 hours
+    if minutes:
+        60 minutes
+    """
+    click_info = {
+        'total_hits': click_meta.get('hits', 0),
+        'country_stats': click_meta.get('country_hits', 0),
+        'referrer': click_meta.get('referrer_hits', 0),
+        'time_series_base': click_meta.get('time_base'),
+        'time_stats': click_meta.get('timestamp_hits', 0),
+    }
+    return {**link_info, **click_info}
+
+
+def save_clickmeta(request, link):
+    """Save public access info of short link.
+
+    :param request:
+    :param link:
+    :return: ClickMeta
+    """
+    from pygmy.core.request_parser import parse_request, parse_header
+    pygmy_header_key = config.pygmy_internal['pygmy_header_key']
+    if request.headers.get('Pygmy-Header-Key') == pygmy_header_key:
+        data = parse_header(request)
+    else:
+        data = parse_request(request)
+    return ClickMetaManager().add(link_id=link.id, **data)

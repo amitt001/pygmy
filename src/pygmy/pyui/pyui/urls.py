@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^favicon.ico', views.dummy),
     url(r'^about', views.about),
+    url(r'^contact', views.contact),
     url(r'', include('user_auth.urls')),
     url(r'', include('pygmy.urls')),
 ]

@@ -1,8 +1,8 @@
 import json
 
 
-INVALID_TOKEN = dict(error="Please log in again to continue")
-INTERNAL_SERVER_ERROR_API = "Something went wrong"
+INVALID_TOKEN = dict(error="Please log in again to continue.")
+INTERNAL_SERVER_ERROR_API = "Something went wrong."
 
 
 def API_ERROR(error_message):

@@ -14,17 +14,19 @@ table { table-layout: fixed; }
             <th><span title="Secret key">Secret Key</span></th>
             <th><span title="Link expire status">Expired</span></th>
             <th><span title="URL unique hits">Hits</span></th>
+            <th><span title="Click stats">Stats</span></th>
           </tr>
         </thead>
         <tbody>
 {% for link in links %}
           <tr>
             <td>{{ link.long_url }}</td>
-            <td><a href="{{ link.short_url }}" target="_blank">{{ link.short_url }}</a></td>
+            <td><a href="/{{ link.short_code }}" target="_blank">{{ link.short_url }}</a></td>
             <td>{{ link.created_at }}</td>
             <td>{{ link.secret_key|default:"--" }}</td>
             <td>{{ link.is_disabled }}</td>
             <td>{{ link.hits_counter }}</td>
+            <td><a href="/{{ link.short_code }}+">{{ link.short_code }}+</a></td>
           </tr>
 {% endfor %}
         </tbody>

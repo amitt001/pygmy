@@ -1,13 +1,13 @@
 from flask import request, redirect, abort, jsonify
 from flask.views import MethodView
 
-from pygmy.app.link import unshorten, resolve_short
 from pygmy.app.auth import APITokenAuth
+from pygmy.app.link import unshorten, resolve_short, link_stats
 from pygmy.exception import URLNotFound, URLAuthFailed
+from pygmy.exception.error import LinkExpired, ShortURLUnavailable
 from pygmy.model import LinkManager, UserManager
 from pygmy.validator import LinkSchema
-from pygmy.utilities.urls import make_short_url, validate_url
-from pygmy.exception.error import LinkExpired, ShortURLUnavailable
+from pygmy.utilities.urls import validate_url
 
 
 class LongUrlApi(MethodView):
@@ -69,14 +69,12 @@ class ShortURLApi(MethodView):
     def get(self):
         secret = request.headers.get('secret_key')
         short_url = request.args.get('url')
-        hit_counter = bool(request.args.get('hit_counter'))
         is_valid = validate_url(short_url)
         if is_valid is False:
             return jsonify(dict(error='Invalid URL.')), 400
         try:
             long_url = unshorten(short_url, secret_key=secret,
-                                 query_by_code=True,
-                                 hit=hit_counter)
+                                 query_by_code=True, request=request)
             result = self.schema.dump(long_url)
         except LinkExpired:
             return jsonify(dict(message="Link has expired")), 410
@@ -86,19 +84,21 @@ class ShortURLApi(MethodView):
             return jsonify(dict(message="Invalid/Expired url")), 404
         return jsonify(result.data), 200
 
-    def post(self):
-        pass
-
 
 @APITokenAuth.token_optional
 def resolve(code):
     """Resolve the short url. code=301 PERMANENT REDIRECTION"""
     # TODO not needed
     user_email = APITokenAuth.get_jwt_identity()
-    short_url = make_short_url(code)
     try:
-        long_url = resolve_short(short_url, click_counter=True)
-        response = redirect(long_url, code=301)
+        if code.startswith('+') or code.endswith('+'):
+            stats = link_stats(code)
+            response = jsonify(stats)
+            if stats is None:
+                response = jsonify({'error': 'URL not found or disabled'}), 404
+        else:
+            long_url = resolve_short(code, request=request)
+            response = redirect(long_url, code=301)
     except LinkExpired:
         response = jsonify(dict(message="Link has expired")), 404
     except URLAuthFailed:

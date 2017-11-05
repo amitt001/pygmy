@@ -1,7 +1,10 @@
 import string
 
+from datetime import datetime
 from marshmallow import (
     Schema, fields, post_dump, validate, ValidationError)
+
+from pygmy.model.clickmeta import ClickMetaManager
 from pygmy.utilities.urls import make_short_url
 from pygmy.utilities.utils import make_url_from_id
 
@@ -38,7 +41,7 @@ class LinkSchema(Schema):
     secret_key = fields.Str(required=False,
                             allow_none=True,
                             validate=is_valid_custom_code_or_secret)
-    hits_counter = fields.Int(dump_only=True)
+    hits_counter = fields.Method('get_hits_counter', dump_only=True)
     expire_after = fields.Int(required=False, allow_none=True)
     is_protected = fields.Bool(default=False, required=False, allow_none=True)
     is_disabled = fields.Bool(default=False, required=False)
@@ -47,9 +50,6 @@ class LinkSchema(Schema):
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime()
 
-    # @pre_load
-    # def process_short_url(self, data):
-    #     custom_url = data.get('short_url')
 
     def short_url_path(self, link):
         if link and link.short_code:
@@ -59,15 +59,17 @@ class LinkSchema(Schema):
         if link and link.id:
             return make_url_from_id(link.id, 'link')
 
+    def get_hits_counter(self, link):
+        click_manager = ClickMetaManager()
+        if link and link.id:
+            return click_manager.link_hit_count(dict(link_id=link.id))
+
     @post_dump
-    def make_user_id(self, data):
+    def format_data(self, data):
         if data and data.get('owner'):
             data['owner'] = make_url_from_id(data['owner'], 'user')
+        if data and data.get('created_at'):
+            data['created_at'] = datetime.strptime(
+                data['created_at'], '%Y-%m-%d %H:%M:%S'
+            ).strftime('%d %b, %Y %H:%M:%S')
         return data
-
-    # @pre_dump
-    # def format_short_url(self, data):
-    #     if link and link.short_code:
-        # if isinstance(data, dict):
-        #     data['short_url'] = make_short_url(data['short_url'])
-        # return data

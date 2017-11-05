@@ -13,4 +13,3 @@ class SqliteDatabase(BaseDatabase):
         if not os.path.exists(path):
             with open(path, 'w') as _:
                 pass
-

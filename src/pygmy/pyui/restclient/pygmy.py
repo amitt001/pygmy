@@ -43,9 +43,16 @@ class PygmyApiClient:
 
     @property
     def header(self):
+        _header = dict()
         if self.cookies and self.cookies.get(AUTH_COOKIE_NAME):
-            return dict(Authorization='Bearer {}'.format(
+            _header = dict(Authorization='Bearer {}'.format(
                 self.cookies.get(AUTH_COOKIE_NAME)))
+        _header['Pygmy-App-User-Ip'] = self.request.META.get('REMOTE_ADDR')
+        _header['Pygmy-Http-Rreferrer'] = self.request.META.get('HTTP_REFERER')
+        _header['Pygmy-Http-User-Agent'] = self.request.META.get(
+            'HTTP_USER_AGENT')
+        _header['Pygmy-Header-Key'] = 'KJ*57*6)(*&^dh'
+        return _header
 
     @property
     def refresh_header(self):
@@ -53,7 +60,9 @@ class PygmyApiClient:
             return dict(Authorization='Bearer {}'.format(
                 self.cookies.get(REFRESH_COOKIE_NAME)))
 
+    @catch_connection_error
     def refresh_access_token(self):
+        access_token = None
         url_path = self.rest_url + '/token/refresh'
         resp = requests.post(url_path, headers=self.refresh_header)
         if resp.status_code == 401:
@@ -63,10 +72,11 @@ class PygmyApiClient:
             access_token = resp.json()[AUTH_COOKIE_NAME]
             self.cookies[AUTH_COOKIE_NAME] = access_token
             self.request.COOKIES[AUTH_COOKIE_NAME] = access_token
+        return {AUTH_COOKIE_NAME: access_token}
 
     @catch_connection_error
     def ping(self):
-        r = requests.get(self.rest_url)
+        r = requests.get(self.rest_url, headers=self.header)
         if r.status_code // 100 == 2:
             return 'PONG'
 
@@ -126,17 +136,17 @@ class PygmyApiClient:
         return r.json()
 
     @catch_connection_error
-    def unshorten(self, short_url_code, secret_key=None, hit_counter=False):
+    def unshorten(self, short_url_code, secret_key=None):
         """
         :param short_url_code:
         :param secret_key:
-        :param hit_counter:
         :return:
         """
         url_path = '/api/unshorten?url=' + self.rest_url + '/' + short_url_code
-        url_path += '&hit_counter={}'.format(True)
+        headers = self.header
+        headers.update(dict(secret_key=secret_key))
         r = requests.get(self.rest_url + url_path,
-                         headers=dict(secret_key=secret_key))
+                         headers=headers)
         if r.status_code == 403:
             raise UnAuthorized(r.json())
         if r.status_code == 410:
@@ -192,7 +202,8 @@ class PygmyApiClient:
         :return: dict
         """
         user_path = '/api/user/links'
-        headers = dict(Authorization='Bearer {}'.format(access_token))
+        headers = self.header
+        headers.update(dict(Authorization='Bearer {}'.format(access_token)))
         r = requests.get(self.rest_url + user_path, headers=headers)
         resp_obj = r.json()
         if int(r.status_code) == 401:
@@ -229,3 +240,32 @@ class PygmyApiClient:
         except ObjectNotFound:
             available = True
         return available
+
+    @catch_connection_error
+    def link_stats(self, short_code):
+        """Pass a short url code and it returns the stats of of the url.
+
+        :param short_code:
+        :return: dict
+        """
+        # make sure + is added in code
+        short_code = short_code.strip('+') + '+'
+        r = requests.get(self.rest_url + '/' + short_code, headers=self.header)
+        resp = r.json()
+        if int(r.status_code) == 401:
+            if resp['sub_status'] == 101:
+                self.refresh_access_token()
+                if self.header is None:
+                    raise UnAuthorized('Please login again to continue')
+                r = requests.get(self.rest_url + '/' + short_code,
+                                 headers=self.header)
+        if r.status_code == 403:
+            raise UnAuthorized(r.json())
+        if r.status_code == 410:
+            raise LinkExpired(r.json())
+        if r.status_code // 100 != 2:
+            raise ObjectNotFound(r.json())
+        resp = r.json()
+        if resp.get('short_url'):
+            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+        return resp

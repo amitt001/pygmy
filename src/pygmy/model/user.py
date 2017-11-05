@@ -1,9 +1,10 @@
+import datetime
+
 from passlib.hash import bcrypt
+from sqlalchemy import Integer, Column, String, Boolean, DateTime
+
 from pygmy.database.base import Model
-from pygmy.database.dbutil import dbconnection
-from sqlalchemy.sql import func
-from sqlalchemy import (
-    Integer, Column, String, Boolean, DateTime)
+from pygmy.database.dbutil import dbconnection, utcnow
 
 
 class User(Model):
@@ -17,8 +18,8 @@ class User(Model):
     password = Column(String(300), nullable=False)
     is_deleted = Column(Boolean, default=False)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime(timezone=False), server_default=utcnow())
+    updated_at = Column(DateTime(timezone=False), onupdate=utcnow())
 
 
 class UserManager:
@@ -57,8 +58,12 @@ class UserManager:
     @dbconnection
     def add(self, db, email, f_name, l_name, password, m_name=None):
         password = bcrypt.encrypt(password)
-        self.user = User(f_name=f_name, m_name=m_name, l_name=l_name,
-                         email=email, password=password)
+        insert_values = dict(f_name=f_name, m_name=m_name, l_name=l_name,
+                             email=email, password=password)
+        if db.bind.name == 'mysql':
+            insert_values['created_at'] = datetime.datetime.utcnow()
+            insert_values['updated_at'] = datetime.datetime.utcnow()
+        self.user = User(**insert_values)
         db.add(self.user)
         db.commit()
         return self.user

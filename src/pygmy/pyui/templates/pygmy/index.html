@@ -1,59 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
-<script type="text/javascript">
-</script>
-<h1 class="vcenter">Pygmy</h1>
-<form id="urlshortenform" action="/shorten" method="post">
-    {% csrf_token %}
-    <div class="col-lg-12 url-form">
-        <!--Url shortener input-->
-        <div class="input-group has-success">
-            <input type="text" class="form-control input-lg" placeholder="http://example.com" value="http://" name="long_url" autofocus onfocus="var temp_value=this.value; this.value=''; this.value=temp_value">
-            <span class="input-group-btn">
-                <button class="btn btn-success btn-lg" type="submit">Go!</button>
-            </span>
-        </div>
-        <br><br><br>
-        <!--Link options-->
-        <div class="form-group" style="display: none;" id="linkOptions">
-            <!--Custom input-->
-            <div class="row vcenter">
-                    <div style="">
+<div class="vcenter">
+    <h1>Pygmy</h1>
+</div>
+<div>
+    <form id="urlshortenform" action="/shorten" method="post">
+        {% csrf_token %}
+        <div class="col-lg-12 url-form">
+            <!--Url shortener input-->
+            <div class="input-group has-success centered">
+                <input type="text" class="form-control input-lg" placeholder="http://example.com" value="http://" name="long_url" autofocus onfocus="var temp_value=this.value; this.value=''; this.value=temp_value">
+                <span class="input-group-btn">
+                    <button class="btn btn-success btn-lg" type="submit">Go!</button>
+                </span>
+            </div>
+            <br><br><br>
+            <!--Link options-->
+            <div class="form-group" style="display: none;" id="linkOptions">
+                <!--Custom input-->
+                <div class="row vcenter" style="margin-left: 2%;">
+                    <div>
                         <div style="display:inline">
                             <div style="display:inline; font-size: 20px;color: green">pygmy.link/</div>
                         </div>
                         <div style="display:inline;" class="form-group" id="customFormParentDiv">
-                        <input name="custom_url" id="customUrl" placeholder="Custom URL">
+                            <input name="custom_url" id="customUrl" placeholder="Custom URL">
                         </div>
                         <input type="button" class="btn btn-sm btn-primary" value="Check" id="checkAvailable" onclick="CheckLinkAvailability()"><br>
-                        <div class="vcenter" id="availableStatus"></div><br>
+                        <div class="vcenter" id="availableStatus">
+                        </div><br>
                     </div>
-            </div>
+                </div>
 
-            <!--Secret and expire options-->
-            <div class="row vcenter">
-                <div class="col-xs-1">
-                    <input type="checkbox" tabindex="3" name="secret_check" id="remember" onclick="readOnlyToggle('secretKey')">
-                    <label for="remember"> Secret </label>
-                </div>
-                <div class="col-xs-2">
-                    <input class="form-control" name="secret_key" id="secretKey" placeholder="Secret key..." readonly>
-                </div>
-            </div><br>
-            <div class="row vcenter">
-                <div class="col-xs-1">
-                    <input type="checkbox" tabindex="3" name="remember_check" id="secret" onclick="readOnlyToggle('expireTime')">
-                    <label for="remember"> Expire </label>
-                </div>
-                <div class="col-xs-2">
-                    <input class="form-control" name="remember_time" id="expireTime" placeholder="Expire time in minutes." readonly>
-                </div>
-            </div><br>
+                <!--Secret and expire options-->
+                <div class="row vcenter">
+                    <div class="col-xs-1">
+                        <input type="checkbox" tabindex="3" name="secret_check" id="remember" onclick="readOnlyToggle('secretKey')">
+                        <label for="remember"> Secret </label>
+                    </div>
+                    <div class="col-xs-2">
+                        <input class="form-control input-sm" name="secret_key" id="secretKey" placeholder="Secret key..." readonly>
+                    </div>
+                </div><br>
+
+                <div class="row vcenter">
+                    <div class="col-xs-1">
+                        <input type="checkbox" tabindex="3" name="remember_check" id="secret" onclick="readOnlyToggle('expireTime')">
+                        <label for="remember"> Expire </label>
+                    </div>
+                    <div class="col-xs-2">
+                        <input class="form-control input-sm" name="remember_time" id="expireTime" placeholder="Expire time in minutes." readonly>
+                    </div>
+                </div><br>
+
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 <div class="text-center">
-    <input type="submit" class="btn btn-lg btn-danger" value="Link Options" onclick="displayToggle('linkOptions')">
+    <input type="submit"  class="btn btn-lg btn-warning element-border" value="Link Options" onclick="displayToggle('linkOptions')">
 </div>
 {% endblock content %}

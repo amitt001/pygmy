@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+
 from django import forms
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -13,25 +15,27 @@ REFRESH_COOKIE_NAME = settings.REFRESH_COOKIE_NAME
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(help_text='Long Link To Shorten',
-                             label='Long URL')
+    email = forms.EmailField(label='Long URL', required=True,
+                             help_text='Please include a valid email address.')
     password = forms.CharField(max_length=24, required=True)
     remember = forms.BooleanField(required=False)
 
 
 class SignUpForm(forms.Form):
-    f_name = forms.CharField(required=True)
-    l_name = forms.CharField(required=True)
-    email = forms.EmailField(help_text='Long Link To Shorten',
-                             label='Long URL', required=True)
+    f_name = forms.CharField(required=True, label='First Name')
+    l_name = forms.CharField(required=True, label='Last Name')
+    email = forms.EmailField(
+        required=True, label='Email ID',
+        help_text='Please include a valid email address.')
     password = forms.CharField(max_length=24, required=True)
-    confirm_password = forms.CharField(max_length=24, required=True)
+    confirm_password = forms.CharField(max_length=24, required=True,
+                                       label='Password')
 
     def clean(self):
         p1 = self.cleaned_data.get('password')
         p2 = self.cleaned_data.get('confirm_password')
         if p1 and p1 != p2:
-            raise forms.ValidationError('Password mismatch')
+            raise forms.ValidationError(dict(password='Password mismatch'))
 
 
 def login(request):
@@ -47,18 +51,22 @@ def login(request):
                     password=form.cleaned_data['password'])
                 context = {'email': user_obj['email'],
                            'f_name': user_obj['f_name'],
-                           AUTH_COOKIE_NAME: user_obj['access_token'],
                            REFRESH_COOKIE_NAME: user_obj['refresh_token']}
             except InvalidInput as e:
                 return render(request, 'unauthorized.html',
                               context=API_ERROR(e.args[0]))
             except ObjectNotFound as e:
                 return render(request, '404.html',
-                              context=API_ERROR(e.args[0]))
+                              context=API_ERROR(e.args[0]), status=404)
             response = redirect('dashboard')
-            _ = [response.set_cookie(k, v) for k, v in context.items()]
+            expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
+            _ = [response.set_cookie(
+                    k, v, expires=expires) for k, v in context.items()]
+            # access token lifetime till browser session
+            response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])
         else:
-            response = render(request, "400.html")
+            response = render(
+                request, "invalid_form.html", context=context, status=400)
         return response
 
     if request.method == 'GET':
@@ -82,18 +90,22 @@ def signup(request):
         pygmy_client = PygmyApiClient(settings, request)
         form = SignUpForm(request.POST)
         context = dict(form=form)
+        print(form.errors)
         if not form.is_valid():
-            return render(request, "400.html")
+            return render(request, "invalid_form.html", context=context, status=400)
         context['signup_success'] = True
         try:
             user_obj = pygmy_client.signup(form.cleaned_data)
             context = {'email': user_obj['email'],
                        'f_name': user_obj['f_name'],
-                       AUTH_COOKIE_NAME: user_obj['access_token'],
                        REFRESH_COOKIE_NAME: user_obj['refresh_token']}
         except ObjectNotFound as e:
             return render(request, '400.html',
-                          context=API_ERROR(e.args[0]))
+                          context=API_ERROR(e.args[0]), status=400)
         response = redirect('/')
-        _ = [response.set_cookie(k, v) for k, v in context.items()]
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        _ = [response.set_cookie(
+                k, v, expires=expires) for k, v in context.items()]
+        # access token lifetime till browser session
+        response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])
         return response
