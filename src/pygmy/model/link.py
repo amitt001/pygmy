@@ -1,15 +1,17 @@
-import binascii
 import time
+import binascii
+import datetime
 
-from pygmy.database.base import Model
-from pygmy.database.dbutil import dbconnection
 from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql import func
-from sqlalchemy import (Column, String, Integer,
-                        Boolean, BigInteger, Unicode, DateTime)
+from sqlalchemy.orm import relationship
+from sqlalchemy import (Column, String, Integer, Boolean,
+                        BigInteger, Unicode, DateTime)
 
+from pygmy.database.base import Model
+from pygmy.database.dbutil import dbconnection, utcnow
 from pygmy.exception.error import ShortURLUnavailable
+from pygmy.model.clickmeta import ClickMeta
 
 
 class Link(Model):
@@ -18,15 +20,16 @@ class Link(Model):
     __tablename__ = 'link'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    long_url = Column(Unicode, index=True)
+    long_url = Column(Unicode(1000), index=True)
     # TODO pull values from long url
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
-    long_url_hash = Column(Integer, index=True)
-    short_code = Column(Unicode, unique=True, index=True)
+    long_url_hash = Column(BigInteger, index=True)
+    short_code = Column(Unicode(6), unique=True, index=True)
     description = Column(String(1000), default=None)
-    hits_counter = Column(BigInteger, default=0)
-    owner = Column(Integer, default='')
+    owner = Column(Integer, default=None)
+    clickmeta = relationship(
+        ClickMeta, back_populates='link', cascade='delete')
     # Not a password, just secret key. Its stored as plain text.
     secret_key = Column(String(12), default='')
     expire_after = Column(Integer, default=None)
@@ -38,8 +41,8 @@ class Link(Model):
     is_disabled = Column(Boolean, default=False)
     is_custom = Column(Boolean, default=False)
 
-    created_at = Column(DateTime(), server_default=func.now())
-    updated_at = Column(DateTime(), onupdate=func.now())
+    created_at = Column(DateTime(), server_default=utcnow())
+    updated_at = Column(DateTime(), onupdate=utcnow())
 
     @staticmethod
     def generate_short_code(_, connection, target):
@@ -141,6 +144,9 @@ class LinkManager:
     @dbconnection
     def add(self, db, long_url, **kwargs):
         # TODO: verify/escape input
+        if db.bind.name == 'mysql':
+            kwargs['created_at'] = datetime.datetime.utcnow()
+            kwargs['updated_at'] = datetime.datetime.utcnow()
         self.link = Link(long_url=long_url,
                          long_url_hash=self.crc32(long_url), **kwargs)
         db.add(self.link)
@@ -155,21 +161,14 @@ class LinkManager:
         if self.link is None:
             self.link = self.find(**kwargs)
         # Get update fields.
+        if db.bind.name == 'mysql':
+            kwargs['updated_at'] = datetime.datetime.utcnow()
         if kwargs.get('short_code'):
             self.link.short_code = kwargs.get('short_code')
         if kwargs.get('description'):
             self.link.description = kwargs.get('description')
-        if kwargs.get('hits_counter'):
-            self.link.hits_counter = kwargs.get('hits_counter')
         db.commit()
         return self.link
-
-    @dbconnection
-    def click_counter(self, db):
-        if self.link is None:
-            return
-        self.link.hits_counter += 1
-        db.commit()
 
     @dbconnection
     def get(self, db, long_url, is_default=True):
@@ -196,6 +195,10 @@ class LinkManager:
     def get_by_owner(self, db, owner_id):
         yield from db.query(Link).filter(
             Link.owner == owner_id).order_by(Link.id).all()
+
+    @dbconnection
+    def link_clickmeta(self, db):
+        return self.link.clickmeta
 
     @property
     @dbconnection

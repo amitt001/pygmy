@@ -1,28 +1,60 @@
 * {
-border-radius: 0 !important;
+    border-radius: 0 !important;
 }
+
 body {
-padding-top: 90px;
+    padding-top: 90px;
 }
+
+.bg-color-dark {
+    background-color: #6FCC48;
+    /*rgb(10, 25, 34);*/
+}
+
+.element-border {
+    list-style-position:inside;
+    border: 1px solid black;
+    margin-right: .2px;
+}
+
 a {
 }
+
 ul.dropdown-lr {
-width: 300px;
+    width: 300px;
 }
 /* mobile fix */
 @media (max-width: 768px) {
-.dropdown-lr h3 {
-color: #eee;
+    .dropdown-lr h3 {
+        color: #eee;
+    }
+    .dropdown-lr label {
+        color: #eee;
+    }
 }
-.dropdown-lr label {
-color: #eee;
+
+.centered {
+    margin: 0 auto;
+    width: 90%;
 }
+
+.horizontal-center {
+  width: 90%;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
 }
+
 .vcenter {
-display: flex;
-justify-content: center; /* align horizontal */
-align-items: center; /* align vertical */
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
 }
+
+.stylish-title {
+    margin-left: 7%;
+}
+
 .url-form {
 margin-top: 3%;
 }
@@ -51,6 +83,15 @@ margin-top: 3%;
     border:1px solid #444;
 }
 
+.error-text {
+    font-family: Georgia, Times, "Times New Roman", serif;
+	font-size: 22px;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 21px;
+	margin-top: 1%;
+}
+
 .big-text {
     font-family: Georgia, Times, "Times New Roman", serif;
 	font-size: 18px;
@@ -72,4 +113,21 @@ margin-top: 3%;
 .navbar .nav > li > a:active,
 .navbar .nav > li > a:visited {
     background-color: #3F7829;
+}
+
+.item-detail-title {
+    color: #464c50;
+    font: normal normal 2.4rem/3.4rem "Proxima Nova";
+    margin-top: .4rem;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-detail-created-date {
+    color: #8f989d;
+    letter-spacing: .3px;
+    font: 1.1rem/1.5rem "Proxima Nova";
+    text-transform: uppercase;
 }

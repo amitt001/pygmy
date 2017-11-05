@@ -15,6 +15,10 @@ class DatabaseFactory:
             database = SqliteDatabase()
         if config.database['engine'] == 'postgresql':
             database = PostgreSQLDatabase()
+        else:
+            raise Exception(
+                "Unsupported DB type. Supported types are "
+                "postgresql/sqlite3 and mysql")
         database.initialize(config.debug)
         # Create all tables, if not already exists.
         Model.metadata.create_all(database.engine)

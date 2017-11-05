@@ -16,7 +16,7 @@ banner = """
       ************************************
       """
 
-pygmy_context = dict(pygmy=pygmy, config=config, db=config.db.store,
+pygmy_context = dict(c=pygmy, config=config, db=config.db.store,
                      Link=Link, LinkManager=LinkManager,
                      User=User, UserManager=UserManager,
                      shorten=shorten, unshorten=unshorten)

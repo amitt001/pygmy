@@ -1,11 +1,14 @@
 
 from functools import wraps
-from pygmy.config import config
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql import expression
+from sqlalchemy.types import DateTime
+
+from pygmy.config import config
 
 
 def dbconnection(func):
-
     @wraps(func)
     def _wrapped(*args, **kwargs):
         try:
@@ -17,3 +20,22 @@ def dbconnection(func):
             config.db.store.rollback()
             raise
     return _wrapped
+
+
+class utcnow(expression.FunctionElement):
+    type = DateTime()
+
+
+@compiles(utcnow)
+def __utcnow_default(element, compiler, **kw):
+    return 'CURRENT_TIMESTAMP'
+
+
+# @compiles(utcnow, 'mysql')
+# def __utcnow_mysql(element, compiler, **kw):
+#     return 'UTC_TIMESTAMP()'
+
+
+@compiles(utcnow, 'postgresql')
+def __utcnow_pg(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
