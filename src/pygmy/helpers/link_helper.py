@@ -3,7 +3,10 @@ from pygmy.model import LinkManager
 
 
 def next_short_code():
-    """Pass a long link and it returns a base62 short code."""
+    """Pass a long link and it returns the next available
+    base62 short code.
+    :return: str
+    """
     link_manager = LinkManager()
     link = link_manager.latest_default_link()
     # First link
@@ -20,6 +23,11 @@ def next_short_code():
 
 
 def long_url_exists(long_url):
+    """Pass a long link, check and return if link exists or not.
+
+    :param long_url: str
+    :return: bool
+    """
     link_manager = LinkManager()
     link = link_manager.find(long_url=long_url)
     if link is None:

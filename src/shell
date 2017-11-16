@@ -5,7 +5,7 @@ import pygmy
 from IPython.terminal.embed import embed
 from pygmy.core.initialize import initialize
 from pygmy.config import config
-from pygmy.app.link import shorten, unshorten
+from pygmy.app.link import shorten, unshorten, link_stats
 from pygmy.model import *
 
 initialize()
@@ -15,10 +15,11 @@ banner = """
        * Pygmy: Open Source Link Shortner *
       ************************************
       """
-
-pygmy_context = dict(c=pygmy, config=config, db=config.db.store,
+db = config.db.store
+pygmy_context = dict(pygmy=pygmy, config=config,
                      Link=Link, LinkManager=LinkManager,
                      User=User, UserManager=UserManager,
-                     shorten=shorten, unshorten=unshorten)
+                     shorten=shorten, unshorten=unshorten,
+                     link_stats=link_stats, db=db)
 
 embed(banner1=banner, local_ns=pygmy_context)

@@ -2,6 +2,8 @@
 TODO
 ====
 
+* Remove incode created_at updated_at utc date fro mysql
+
 * Disable url by owner
 
 * Improved cfg read
@@ -59,6 +61,16 @@ Changelog
 * JWT based auth
 
 * Link title on mouse hover dashboard
+
+* Add + to url to get stats
+
+- Links Stats
+
+    * Total clicks
+
+    * Country wise clicks
+
+    * Source of clicks from referrer
 
 Deployment Issues:
 ------------------

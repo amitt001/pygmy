@@ -6,27 +6,40 @@ from pygmy.helpers.link_helper import next_short_code
 from pygmy.model.link import LinkManager
 from pygmy.model.clickmeta import ClickMetaManager
 from pygmy.utilities.urls import make_short_url, get_short_path
+from pygmy.validator.link import LinkSchema
 
 
-def shorten(long_url):
+def shorten(long_url, short_code=None, expire_after=None, description=None,
+            secret_key=None, owner=None, request=None):
     """Helper class that has been delicated the task of inserting the
     passed url in DB, base 62 encoding from db id and return the short
     url value.
 
-    :param long_url: Fully qualified url
-    :type long_url: string
-    :return: The short url.
-    :rtype: string
+    :param long_url:
+    :param short_code:
+    :param description:
+    :param expire_after:
+    :param secret_key:
+    :param owner:
+    :return:
     """
     url_manager = LinkManager()
-    urlobj = url_manager.find(long_url=long_url)
-    if urlobj is not None:
-        return make_short_url(urlobj.short_code)
-    url_manager.add(long_url=long_url)
-    short_path = next_short_code()
-    url_manager.update(short_code=short_path)
-    pygmy_link = make_short_url(short_path)
-    return pygmy_link
+    query_dict = dict(long_url=long_url, is_custom=False, is_protected=False)
+    insert_dict = query_dict
+    if short_code:
+        query_dict.update(dict(short_code=short_code, is_custom=True))
+        insert_dict = query_dict
+    if secret_key:
+        query_dict.update(secret_key=secret_key, is_protected=True)
+        insert_dict = query_dict
+    if expire_after:
+        insert_dict['expire_after'] = expire_after
+    urlobj = url_manager.find(**query_dict)
+    if urlobj is None:
+        url_manager.add(**insert_dict)
+    if request:
+        return url_manager.link
+    return LinkSchema().dump(url_manager.link).data
 
 
 def unshorten(short_url, secret_key=None,
@@ -62,7 +75,8 @@ def unshorten(short_url, secret_key=None,
             raise URLAuthFailed(short_url)
     if request:
         save_clickmeta(request, link)
-    return link
+        return link
+    return LinkSchema().dump(link).data
 
 
 def resolve_short(short_code, request=None):
@@ -89,10 +103,7 @@ def link_stats(short_code):
     manager = LinkManager()
     short_code = short_code.strip('+')
     link = manager.get_by_code(short_code=short_code)
-    if link is None:
-        return None
-    formatted_stats = formatted_link_stats(link)
-    return formatted_stats
+    return link if link is None else formatted_link_stats(link)
 
 
 def formatted_link_stats(link):
@@ -109,14 +120,6 @@ def formatted_link_stats(link):
             short_code=link.short_code,
             created_at=link.created_at
     )
-    """
-    If month:
-        30 Days
-    If hour:
-        24 hours
-    if minutes:
-        60 minutes
-    """
     click_info = {
         'total_hits': click_meta.get('hits', 0),
         'country_stats': click_meta.get('country_hits', 0),

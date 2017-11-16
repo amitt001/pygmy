@@ -150,4 +150,4 @@ PYGMY_API_USER = 'admin'
 
 PYGMY_API_PASSWORD = 'admin'
 
-HOSTNAME = 'http://127.0.0.1:8000'
+HOSTNAME = 'pygy.co'

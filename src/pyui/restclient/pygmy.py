@@ -47,7 +47,9 @@ class PygmyApiClient:
         if self.cookies and self.cookies.get(AUTH_COOKIE_NAME):
             _header = dict(Authorization='Bearer {}'.format(
                 self.cookies.get(AUTH_COOKIE_NAME)))
-        _header['Pygmy-App-User-Ip'] = self.request.META.get('REMOTE_ADDR')
+        remote_addr = self.request.META.get('REMOTE_ADDR')
+        _header['Pygmy-App-User-Ip'] = self.request.META.get(
+                                            'HTTP_X_REAL_IP', remote_addr)
         _header['Pygmy-Http-Rreferrer'] = self.request.META.get('HTTP_REFERER')
         _header['Pygmy-Http-User-Agent'] = self.request.META.get(
             'HTTP_USER_AGENT')
