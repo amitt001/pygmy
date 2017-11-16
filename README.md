@@ -173,3 +173,13 @@ Docstring:
     passed url in DB, base 62 encoding from db id and return the short
     url value.
 ```
+
+Link stats:
+===========
+
+For getting geo location stats from IP maxminds's GeoLite2-Country.mmd database is used. Its in src/pygmy/app folder.
+
+License
+=======
+
+The MIT license (MIT)
