@@ -2,7 +2,7 @@ import time
 import binascii
 import datetime
 
-from sqlalchemy import event
+from sqlalchemy import event, and_, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 from sqlalchemy import (Column, String, Integer, Boolean,
@@ -25,7 +25,7 @@ class Link(Model):
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
     long_url_hash = Column(BigInteger, index=True)
-    short_code = Column(Unicode(6), unique=True, index=True)
+    short_code = Column(Unicode(6), unique=True, index=True, default=None)
     description = Column(String(1000), default=None)
     owner = Column(Integer, default=None)
     clickmeta = relationship(
@@ -62,6 +62,7 @@ class Link(Model):
                     is_default=is_default
                 )
             )
+
 
 event.listen(Link, 'after_insert', Link.generate_short_code)
 
@@ -114,6 +115,8 @@ class LinkManager:
             query_dict['short_code'] = kwargs.get('short_code')
         if kwargs.get('owner'):
             query_dict['owner'] = kwargs.get('owner')
+        if kwargs.get('short_code'):
+            query_dict['short_code'] = kwargs.get('short_code')
         return query_dict
 
     @dbconnection
@@ -225,8 +228,11 @@ class LinkManager:
     @dbconnection
     def latest_default_link(self, db):
         """Returns latest non custom link"""
-        return db.query(Link).filter_by(
-                is_custom=False).order_by(Link.created_at.desc()).first()
+        return db.query(Link).filter(and_(
+            Link.is_custom.is_(False),
+            Link.short_code.isnot(None),
+            Link.short_code != ''
+        )).order_by(Link.created_at.desc()).first()
 
     @dbconnection
     def find(self, db, **kwargs):
@@ -239,7 +245,9 @@ class LinkManager:
             query_dict['long_url_hash'] = self.crc32(kwargs.get('long_url'))
             query_dict['long_url'] = kwargs.get('long_url')
         query_dict.update(self.build_query_dict(**kwargs))
-        url = db.query(Link).filter_by(**query_dict)
+        # build sqlalchmey and query
+        query = [getattr(Link, k) == v for k, v in query_dict.items()]
+        url = db.query(Link).filter(and_(*query))
         # q = str(
         # url.statement.compile(compile_kwargs={"literal_binds": True}))
         if url.count() < 1:

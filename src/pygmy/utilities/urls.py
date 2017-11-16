@@ -19,9 +19,7 @@ def validate_url(url):
 
 
 def make_short_url(short_path):
-    base_url = "{0}://{1}:{2}".format(
-        config.schema, config.host, config.port)
-    short_url = urljoin(base_url, short_path)
+    short_url = urljoin(config.pygmy['url'], short_path)
     return short_url
 
 
