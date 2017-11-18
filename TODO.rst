@@ -2,6 +2,8 @@
 TODO
 ====
 
+* If url pattern doesn't match. Show a 404 page
+
 * Remove incode created_at updated_at utc date fro mysql
 
 * Disable url by owner
