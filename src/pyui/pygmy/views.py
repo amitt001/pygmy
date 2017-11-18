@@ -78,10 +78,13 @@ def get_short_link(request, code):
     """TODO: Validate code"""
     if request.method == 'GET':
         try:
+            # TODO: use urljoin
+            schema = 'https://' if request.is_secure() else 'http://'
             url_obj = {}
             url_obj['short_url'] = (
-                request.META['HTTP_HOST'] + '/' + url_obj.get(
-                    'short_code', code))
+                schema + request.META['HTTP_HOST'] + '/' + url_obj.get(
+                    'short_code', code)
+            )
         except ObjectNotFound as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
