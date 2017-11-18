@@ -44,5 +44,7 @@ def ip_country(ip):
         reader = geoip2.database.Reader('pygmy/app/GeoLite2-Country.mmdb')
         c = reader.country(ip)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return None
     return c.country.iso_code

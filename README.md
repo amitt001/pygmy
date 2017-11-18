@@ -1,7 +1,7 @@
 Pygmy
 =====
 
-Live version of this project: [138.68.13.55](http://138.68.13.55)
+Live version of this project: [https://pygy.co](https://pygy.co)
 
 Open-source, extensible & easy-to-use URL shortener. Pygmy is a feature-rich, easy-to-use, extensible and easy to deploy and host url shortener. It's created keeping in mind that it should be easy to deploy and extend.
 
@@ -25,20 +25,21 @@ Its written in Python 3 and it doesn't support/not tested with python 2
 Setup:
 ======
 
-- git clone this repo and cd into this repo
-- easy_install pip
-- pip install virtualenv
-- virtualenv env
-- source env/bin/activate
-- pip install -r requiremets.txt
+- Clone `git clone https://github.com/amitt001/pygmy.git & cd pygmy`
+- Install pip `easy_install pip` or `apt-get install python3-pip`
+- Install virtualenv (optional but recommended)
+    - `pip install virtualenv`
+    - `virtualenv env`
+    - `source env/bin/activate`
+- Install dependencies `pip install -r requirements.txt` (if you are using mysql or postgresql check db setup section)
 - cd src
-- ./run or ./shell for shell
-- To run UI cd src/pyui
-- python manage.py runserver 127.0.0.1:8000
+- To run the rest api `./run` to run UI `python pyui/manage.py runserver 127.0.0.1:8000`
+- Visit 127.0.0.1:8000 to use the app
 
 Note:
 1. if you are using postgresql or mysql with this project, make sure they are installe into the system.
 2. To modify config settings vim src/pygmy/config/pygmy.cfg
+3. You can run pygmy shell present in src directory to run the program on terminal
 
 
 Using API
@@ -67,8 +68,10 @@ How Auth Token Works:
 
 It uses JWT. When user logs in using username and password a token is generated that is amrked as fresh and it has a time period of 30 minutes. After 30 minutes. When a request comes with the old token and new token is generated from the refresh token api. This refreshed token has a new field `fresh=False`. This new token can only shorten the url and refresh the token for further user. It CAN'T reset the password, disable the link and change the secret key of the url.
 
-Use MySQL:
-----------
+DB Setup:
+---------
+
+**Use MySQL:**
 
 `pip install pymysql`
 
@@ -85,8 +88,7 @@ Enter mysql url
 `CREATE DATABASE pygmy;`
 
 
-Use Postgresql
-==============
+**Use Postgresql**
 
 `pip install psycopg2`
 
