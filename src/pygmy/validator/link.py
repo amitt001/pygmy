@@ -5,7 +5,7 @@ from marshmallow import (
     Schema, fields, post_dump, validate, ValidationError)
 
 from pygmy.model.clickmeta import ClickMetaManager
-from pygmy.utilities.urls import make_short_url
+from pygmy.utilities.urls import make_short_url, validate_url
 from pygmy.utilities.utils import make_url_from_id
 
 
@@ -32,7 +32,7 @@ def is_valid_custom_code_or_secret(code):
 
 class LinkSchema(Schema):
     id = fields.Method('create_id_link', dump_only=True)
-    long_url = fields.URL(required=True)
+    long_url = fields.URL(required=True, validate=validate_url)
     short_code = fields.Str(required=False,
                             allow_none=True,
                             validate=is_valid_custom_code_or_secret)

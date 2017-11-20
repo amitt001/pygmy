@@ -43,9 +43,6 @@ class LongUrlApi(MethodView):
         if errors:
             return jsonify(errors), 400
         long_url = data.pop('long_url')
-        is_valid = validate_url(long_url)
-        if is_valid is False:
-            return jsonify(dict(error='Not a valid URL.')), 400
         link = self.manager.get(long_url)
         if link is None or (
                         data.get('is_custom') or
