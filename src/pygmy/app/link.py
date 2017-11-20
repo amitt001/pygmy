@@ -79,7 +79,7 @@ def unshorten(short_url, secret_key=None,
     return LinkSchema().dump(link).data
 
 
-def resolve_short(short_code, request=None):
+def resolve_short(short_code, request=None, secret_key=None):
     """Returns the unshortened long url from short url
 
     :param short_code: str
@@ -92,6 +92,9 @@ def resolve_short(short_code, request=None):
     assert link is not None
     if manager.has_expired() is True:
         raise LinkExpired('Link has expired')
+    if link.is_protected:
+        if not secret_key or link.secret_key != secret_key:
+            raise URLAuthFailed(short_code)
     # put stats
     if request:
         save_clickmeta(request, link)
