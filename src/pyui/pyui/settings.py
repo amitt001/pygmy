@@ -139,6 +139,7 @@ STATICFILES_DIRS = [
 
 ALLOWED_HOSTS = ['*']
 
+
 # Pygmy Settings
 PYGMY_API_HOST = '127.0.0.1'
 
