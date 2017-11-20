@@ -91,13 +91,15 @@ def resolve(code):
     try:
         # check if link is not a secret link
         long_url = resolve_short(
-            code.strip('+'), request=request, secret_key=secret_key)
+            code.strip('+'), secret_key=secret_key)
         if code.startswith('+') or code.endswith('+'):
             stats = link_stats(code)
             response = jsonify(stats)
             if stats is None:
                 response = jsonify({'error': 'URL not found or disabled'}), 404
         else:
+            long_url = resolve_short(
+                code.strip('+'), request=request, secret_key=secret_key)
             response = redirect(long_url, code=301)
     except LinkExpired:
         response = jsonify(dict(message="Link has expired")), 404

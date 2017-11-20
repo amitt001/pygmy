@@ -26,7 +26,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for country_code, country_hits in clickmeta.country_stats.items %}
+    {% for country_code, country_hits in clickmeta.country_stats %}
         <tr>
             <td>{{country_code}}</td>
             <td>{{country_hits}}</td>
@@ -44,7 +44,7 @@
         </tr>
     </thead>
     <tbody>
-    {% for referrer, referrer_hits in clickmeta.referrer.items %}
+    {% for referrer, referrer_hits in clickmeta.referrer %}
         <tr>
             <td>{{referrer}}</td>
             <td>{{referrer_hits}}</td>

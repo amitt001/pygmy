@@ -158,7 +158,7 @@ class ClickMetaManager:
                 FROM clickmeta
                 WHERE link_id=:link_id AND created_at >= :created_at
                 GROUP BY click_on
-                ORDER BY created_at DESC
+                ORDER BY click_on DESC
                 """.format(date_part))
             data = db.execute(qry, params).fetchall()
             if base == 'month':

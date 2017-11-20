@@ -1,4 +1,5 @@
 import string
+import operator
 
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -120,6 +121,14 @@ def short_link_stats(request, code):
     if request.method == 'GET':
         try:
             clickmeta = pygmy_client.link_stats(code)
+            clickmeta['country_stats'] = sorted(
+                clickmeta['country_stats'].items(),
+                key=operator.itemgetter(1),
+                reverse=True)
+            clickmeta['referrer'] = sorted(
+                clickmeta['referrer'].items(),
+                key=operator.itemgetter(1),
+                reverse=True)
             context = dict(clickmeta=clickmeta)
         except UnAuthorized:
             # return redirect('/link/secret?next={}'.format(code))
