@@ -60,14 +60,18 @@ def link_shortener(request):
                               status=401)
             except InvalidInput as e:
                 context.update(dict(input_error=e.args[0]))
-                return render(request, 'pygmy/short_url.html', context=context)
+                _ = [form.add_error(str(key), err)
+                     for key, err in e.args[0].items()]
+                # return render(request, 'pygmy/short_url.html', context=context)
+                return render(
+                    request, "invalid_form.html", context=context, status=400)
             except (ObjectNotFound, InvalidInput) as e:
                 return render(request, '400.html',
                               context=API_ERROR(e.args[0]), status=400)
             short_code = resp['short_code']
         else:
             return render(
-                request, "invalid_form.html", context = context, status=400)
+                request, "invalid_form.html", context=context, status=400)
         return redirect('get_short_link', code=short_code)
 
     if request.method == 'GET':
@@ -118,7 +122,11 @@ def short_link_stats(request, code):
             clickmeta = pygmy_client.link_stats(code)
             context = dict(clickmeta=clickmeta)
         except UnAuthorized:
-            return redirect('/link/secret?next={}'.format(code))
+            # return redirect('/link/secret?next={}'.format(code))
+            return render(request, '404.html',
+                          context=API_ERROR(dict(
+                              error='Secret link stats are not yet supported.')
+                          ), status=404)
         except LinkExpired:
             return render(request, '404.html', status=404)
         except ObjectNotFound as e:
@@ -143,9 +151,13 @@ def link_auth(request):
         if not code or not secret_key:
             return render(request, '400.html', status=400)
         try:
-            # TODO AMIT IMP: handle stats part also
-            url_obj = pygmy_client.unshorten(code, secret_key=secret_key)
-            response = dict(long_url=url_obj['long_url'])
+            if code.startswith('+') or code.endswith('+'):
+                clickmeta = pygmy_client.link_stats(
+                    code, secret_key=secret_key)
+                response = dict(clickmeta=clickmeta)
+            else:
+                url_obj = pygmy_client.unshorten(code, secret_key=secret_key)
+                response = dict(long_url=url_obj['long_url'])
         except UnAuthorized:
             response = dict(message='Wrong secret key.')
         except ObjectNotFound as e:
