@@ -43,9 +43,6 @@ class LongUrlApi(MethodView):
         if errors:
             return jsonify(errors), 400
         long_url = data.pop('long_url')
-        is_valid = validate_url(long_url)
-        if is_valid is False:
-            return jsonify(dict(error='Not a valid URL.')), 400
         link = self.manager.get(long_url)
         if link is None or (
                         data.get('is_custom') or
@@ -90,20 +87,25 @@ def resolve(code):
     """Resolve the short url. code=301 PERMANENT REDIRECTION"""
     # TODO not needed
     user_email = APITokenAuth.get_jwt_identity()
+    secret_key = request.headers.get('secret_key')
     try:
+        # check if link is not a secret link
+        long_url = resolve_short(
+            code.strip('+'), secret_key=secret_key)
         if code.startswith('+') or code.endswith('+'):
             stats = link_stats(code)
             response = jsonify(stats)
             if stats is None:
                 response = jsonify({'error': 'URL not found or disabled'}), 404
         else:
-            long_url = resolve_short(code, request=request)
+            long_url = resolve_short(
+                code.strip('+'), request=request, secret_key=secret_key)
             response = redirect(long_url, code=301)
     except LinkExpired:
         response = jsonify(dict(message="Link has expired")), 404
     except URLAuthFailed:
-        response = jsonify({'error': 'Access to URL forbidden'}), 404
-    except URLNotFound:
+        response = jsonify({'error': 'Access to URL forbidden'}), 403
+    except (URLNotFound, AssertionError):
         response = jsonify({'error': 'URL not found or disabled'}), 404
     return response
 

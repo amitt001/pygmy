@@ -123,7 +123,7 @@ class ClickMetaManager:
                 From clickmeta
                 WHERE link_id=:link_id
                 GROUP BY country
-                ORDER BY count(*)""")
+                ORDER BY count(*) DESC""")
             self._country_aggregate = dict(db.execute(qry, params).fetchall())
         return self._country_aggregate
 
@@ -139,7 +139,7 @@ class ClickMetaManager:
                 SELECT COALESCE(referrer, 'others'), COUNT(*) FROM clickmeta
                 WHERE link_id=:link_id
                 GROUP BY referrer
-                ORDER BY count(*)""")
+                ORDER BY count(*) DESC""")
             self._referrer_aggregate = dict(db.execute(qry, params).fetchall())
         return self._referrer_aggregate
 
@@ -158,7 +158,7 @@ class ClickMetaManager:
                 FROM clickmeta
                 WHERE link_id=:link_id AND created_at >= :created_at
                 GROUP BY click_on
-                ORDER BY click_on
+                ORDER BY click_on DESC
                 """.format(date_part))
             data = db.execute(qry, params).fetchall()
             if base == 'month':
