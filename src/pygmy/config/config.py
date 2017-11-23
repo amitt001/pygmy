@@ -27,6 +27,8 @@ class Configuration:
 
         TODO: config.host should be accessed as config.rest['host'].
         Remove initialize method."""
+        if self.cfg is None:
+            self._read_cfg()
         try:
             return dict(self.cfg[name].items())
         except KeyError:
