@@ -2,6 +2,8 @@
 TODO
 ====
 
+* For same netloc same url, forward stash same url
+
 * If url pattern doesn't match. Show a 404 page
 
 * Remove incode created_at updated_at utc date fro mysql

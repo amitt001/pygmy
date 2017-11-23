@@ -244,15 +244,18 @@ class PygmyApiClient:
         return available
 
     @catch_connection_error
-    def link_stats(self, short_code):
+    def link_stats(self, short_code, secret_key=None):
         """Pass a short url code and it returns the stats of of the url.
 
         :param short_code:
+        :param secret_key:
         :return: dict
         """
         # make sure + is added in code
         short_code = short_code.strip('+') + '+'
-        r = requests.get(self.rest_url + '/' + short_code, headers=self.header)
+        headers = self.header
+        headers.update(dict(secret_key=secret_key))
+        r = requests.get(self.rest_url + '/' + short_code, headers=headers)
         resp = r.json()
         if int(r.status_code) == 401:
             if resp['sub_status'] == 101:

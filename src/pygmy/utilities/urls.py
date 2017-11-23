@@ -1,5 +1,6 @@
 import re
 
+from marshmallow import ValidationError
 from pygmy.config import config
 from urllib.parse import urljoin, urlparse
 
@@ -15,7 +16,13 @@ def validate_url(url):
         r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # ...or ipv6
         r'(?::\d+)?'  # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    return regex.match(url) is not None
+    is_valid = regex.match(url) is not None
+    if is_valid:
+        url = urlparse(url)
+        allowed_path = ['contact', 'about', 'shorten', 'dashboard']
+        if url.netloc == 'pygy.co' and url.path.strip('/') not in allowed_path:
+            raise ValidationError('URL is already a pygmy shortened link.')
+    return is_valid
 
 
 def make_short_url(short_path):
