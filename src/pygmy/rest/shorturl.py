@@ -105,7 +105,7 @@ def resolve(code):
         response = jsonify(dict(message="Link has expired")), 404
     except URLAuthFailed:
         response = jsonify({'error': 'Access to URL forbidden'}), 403
-    except URLNotFound:
+    except (URLNotFound, AssertionError):
         response = jsonify({'error': 'URL not found or disabled'}), 404
     return response
 
