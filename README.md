@@ -1,11 +1,13 @@
 Pygmy
 =====
 
+[![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)  [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
+
 Live version of this project: [https://pygy.co](https://pygy.co)
 
-Open-source, extensible & easy-to-use URL shortener. Pygmy is a feature-rich, easy-to-use, extensible and easy to deploy and host url shortener. It's created keeping in mind that it should be easy to deploy and extend.
+Open-source, extensible & easy-to-use URL shortener. It's very easy to host and run. It's created keeping in mind that it should be easy to have your custom URL shortener up and running without much effort.
 
-Major Features:
+Major features are:
 - Custom URL
 - Auto expiry URL
 - Secret key protected URL
@@ -13,14 +15,22 @@ Major Features:
 - User dashboard
 - Link Analytics(add + to the tiny URL to get link stats)
 
-This is one of the most powerful, feature-rich open-source URL shortener available. The architecture is very loosely coupled which allows custom integrations very easily.
+The architecture is very loosely coupled which allows custom integrations very easily.
+
 The project has 3 major parts:
 - The core program for URL shortening
 - REST API on top. Uses Flask framework.
 - The UI layer for rendering the UI. It uses Django framework.
 
-Each part is independent of other part and it can function independently. The project is created keeping in mind that each of the parts can be used separately without any dependency on other part.
-Its written in Python 3 and it doesn't support/not tested with python 2
+Each part is independent of other part and it can function independently.
+
+Tech Stack:
+
+Python 3, Javascript, JQuery, HTML, CSS
+REST API: Flask
+Pyui: Django(It provides a web user interface.)
+DB: PostgreSQL/MySQL/SQLite
+
 
 Setup:
 ======
@@ -31,15 +41,19 @@ Setup:
     - `pip install virtualenv`
     - `virtualenv env`
     - `source env/bin/activate`
-- Install dependencies `pip install -r requirements.txt` (if you are using mysql or postgresql check db setup section)
+- Install dependencies `pip install -r requirements.txt` (if you are using MySQL or PostgreSQL check db setup section)
 - cd src
 - To run the rest api `./run` to run UI `python pyui/manage.py runserver 127.0.0.1:8000`
 - Visit 127.0.0.1:8000 to use the app
 
 Note:
-1. if you are using postgresql or mysql with this project, make sure they are installe into the system.
-2. To modify config settings vim src/pygmy/config/pygmy.cfg
-3. You can run pygmy shell present in src directory to run the program on terminal
+1. The project has two config files:
+    - pygmy.cfg: src/pygmy/config/pygmy.cfg rest API and pygmy core settings file
+    - settings.py: src/pyui/pyui/settings.py Django settings file
+2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
+3. To modify config settings vim src/pygmy/config/pygmy.cfg
+4. You can run pygmy shell present in src directory to run the program on terminal
+5. By default src/pyui/pyui/settings.py DEBUG is set to True set it to False in production
 
 
 Using API
@@ -66,7 +80,7 @@ Get Link:
 How Auth Token Works:
 =====================
 
-It uses JWT. When user logs in using username and password a token is generated that is amrked as fresh and it has a time period of 30 minutes. After 30 minutes. When a request comes with the old token and new token is generated from the refresh token api. This refreshed token has a new field `fresh=False`. This new token can only shorten the url and refresh the token for further user. It CAN'T reset the password, disable the link and change the secret key of the url.
+It uses JWT. When user logs in using username and password a token is generated that are marked as fresh and it has a time period of 30 minutes. After 30 minutes. When a request comes with the old token and a new token is generated from the refresh token API. This refreshed token has a new field `fresh=False`. This new token can only shorten the URL and refresh the token for the further user. It CAN'T reset the password, disable the link and change the secret key of the URL.
 
 DB Setup:
 ---------
@@ -83,7 +97,7 @@ Enter below line in src/pygmy/core/pygmy.cfg fro database->url value
 
 `mysql+pymysql://root:root@127.0.0.1:3306/pygmy`
 
-Enter mysql url
+Enter MySQL URL
 
 `CREATE DATABASE pygmy;`
 
@@ -97,14 +111,14 @@ Enter mysql url
 Use Sqlite
 ==========
 
-Sqlite is natively supported in Python
+SQLite is natively supported in Python
 
 `sqlite:////var/lib/pygmy/pygmy.db`
 
 Shell Usage
 ===========
 
-Open shell using ./pygmy/src/shell. Availbale context are pygmy, Config, db, etc. See all context by using pygmy_context.
+Open shell using ./pygmy/src/shell. Available context is pygmy, Config, DB, etc. See all context by using pygmy_context.
 
 Shorten a link:
 
@@ -160,7 +174,7 @@ Out[4]:
 In [5]: # check available context of the shell
 In [6]: pygmy_context
 
-In [7]: # Create custom short url
+In [7]: # Create custom short URL
 
 In [8]: shorten('http://iamit.xyz', short_code='amit')
 Out[8]:
@@ -171,15 +185,15 @@ Out[8]:
 In [9]: shorten?
 Signature: shorten(long_url, short_code=None, expire_after=None, description=None, secret_key=None, owner=None, request=None)
 Docstring:
-    Helper class that has been delicated the task of inserting the
-    passed url in DB, base 62 encoding from db id and return the short
-    url value.
+    Helper class that has been delegated the task of inserting the
+    passed url in DB, base 62 encoding from DB id and return the short
+    URL value.
 ```
 
 Link stats:
 ===========
 
-For getting geo location stats from IP maxminds's GeoLite2-Country.mmd database is used. Its in src/pygmy/app folder.
+For getting geo location stats from IP maxminds' GeoLite2-Country.mmd database is used. It's in src/pygmy/app folder.
 
 License
 =======
