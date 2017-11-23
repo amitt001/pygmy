@@ -125,10 +125,10 @@ def formatted_link_stats(link):
     )
     click_info = {
         'total_hits': click_meta.get('hits', 0),
-        'country_stats': click_meta.get('country_hits', 0),
-        'referrer': click_meta.get('referrer_hits', 0),
+        'country_stats': click_meta.get('country_hits', {}),
+        'referrer': click_meta.get('referrer_hits', {}),
         'time_series_base': click_meta.get('time_base'),
-        'time_stats': click_meta.get('timestamp_hits', 0),
+        'time_stats': click_meta.get('timestamp_hits', {}),
     }
     return {**link_info, **click_info}
 
