@@ -43,7 +43,7 @@ def shorten(long_url, short_code=None, expire_after=None, description=None,
 
 
 def unshorten(short_url, secret_key=None,
-              query_by_code=False, request=None):
+              query_by_code=True, request=None):
     """For performance benefit its better to calculate id out of short url and
     query long url from the db. Also increments hits counter.
 
