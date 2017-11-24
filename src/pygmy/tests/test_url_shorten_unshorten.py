@@ -20,8 +20,8 @@ class URLShortenUnshortenTestCases(TestCase):
         currdir = os.path.dirname(os.path.abspath(__file__))
         config_path = currdir + '/pygmy_test.cfg'
         db_path = tempfile.NamedTemporaryFile(suffix='.db').name
-        cls.DBPath = db_path
-        initialize_test(config_path, db_url=db_path)
+        cls.DBPath = "sqlite:///{}".format(db_path)
+        initialize_test(config_path, db_url=cls.DBPath)
 
     def test_config(self):
         assert config is not None
