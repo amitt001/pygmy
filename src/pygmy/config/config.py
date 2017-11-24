@@ -16,6 +16,7 @@ class Configuration:
         self.port = None
         self.secret = None
         self.webservice_url = None
+        self.database = None
 
     def _read_cfg(self):
         self.cfg = ConfigParser()
@@ -40,6 +41,7 @@ class Configuration:
         # TODO: handle automatic assignment
         self._read_cfg()
         self.debug = (self.cfg['pygmy']['debug'] == 'True')
+        self.database = dict(self.cfg['database'].items())
         self.schema = self.cfg['pygmy']['schema']
         self.host = self.cfg['pygmy']['host']
         self.port = self.cfg['pygmy']['port']
