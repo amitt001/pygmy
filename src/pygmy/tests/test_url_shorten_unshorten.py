@@ -1,7 +1,8 @@
 import os
+import tempfile
 from unittest import TestCase
 
-from pygmy.core.initialize import initialize
+from pygmy.core.initialize import initialize_test
 from pygmy.app.link import shorten, unshorten
 from pygmy.config import config
 
@@ -9,38 +10,27 @@ from pygmy.config import config
 class URLShortenUnshortenTestCases(TestCase):
     """Tests to shorten-unshorten a long url"""
 
-    DBDir = None
+    DBPath = None
 
-    @classmethod
     def setUp(self):
         self.long_url = 'https://github.com'
 
     @classmethod
-    def setupClass(cls):
-        # Do the real setup
+    def setUpClass(cls):
         currdir = os.path.dirname(os.path.abspath(__file__))
         config_path = currdir + '/pygmy_test.cfg'
-        initialize(config_path)
-        if config and config.database['engine'] == 'sqlite3':
-            from urllib.parse import urlparse
-            cls.DBDir = urlparse(config.database['url']).path
-
-    @classmethod
-    def tearDownClass(cls):
-        if cls.DBDir is None or not os.path.exists(cls.DBDir):
-            return
-        os.remove(cls.DBDir)
+        db_path = tempfile.NamedTemporaryFile(suffix='.db').name
+        cls.DBPath = db_path
+        initialize_test(config_path, db_url=db_path)
 
     def test_config(self):
         assert config is not None
         assert config.db is not None
-        # sqlite only test, remove it later
-        assert self.DBDir is not None
+        assert self.DBPath is not None
 
     def test_long_url_shorten(self):
         data = shorten(self.long_url)
         assert isinstance(data, dict) is True
-        print(data)
         assert data['short_code'] == 'b'
         assert data['is_disabled'] is False
         assert data['is_protected'] is False
