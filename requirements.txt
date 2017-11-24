@@ -34,6 +34,7 @@ pycrypto==2.6.1
 Pygments==2.2.0
 PyJWT==1.5.3
 pyparsing==2.2.0
+pytest==3.2.5
 pytz==2017.3
 requests==2.18.4
 simplegeneric==0.8.1

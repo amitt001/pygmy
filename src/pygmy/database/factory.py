@@ -13,7 +13,7 @@ class DatabaseFactory:
         # TODO: make a utli.mapping
         if config.database['engine'] == 'sqlite3':
             database = SqliteDatabase()
-        if config.database['engine'] == 'postgresql':
+        elif config.database['engine'] == 'postgresql':
             database = PostgreSQLDatabase()
         else:
             raise Exception(

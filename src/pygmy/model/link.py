@@ -117,6 +117,11 @@ class LinkManager:
             query_dict['owner'] = kwargs.get('owner')
         if kwargs.get('short_code'):
             query_dict['short_code'] = kwargs.get('short_code')
+        if kwargs.get('is_custom') is not None:
+            query_dict['is_custom'] = kwargs.get('is_custom')
+        if kwargs.get('is_protected') is not None:
+            query_dict['is_protected'] = kwargs.get('is_protected')
+        # TODO: handle disabled
         return query_dict
 
     @dbconnection

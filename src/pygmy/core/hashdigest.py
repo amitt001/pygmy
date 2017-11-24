@@ -52,6 +52,7 @@ class HashDigest:
         :param i:
         :return: str
         """
+        self.short_str = ""
         encoded_list = self.encode(i)
         for val in encoded_list:
             self.short_str += self.base[val]
