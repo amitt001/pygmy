@@ -41,3 +41,12 @@ def initialize_db():
 def initialize(config_path=None):
     initialize_config(config_path)
     initialize_db()
+
+
+def initialize_test(config_path=None, db_url=None):
+    """For handeling initialization while running tests"""
+    initialize_config(config_path)
+    # Handle sqlite file path
+    if config.database['engine'] == 'sqlite3':
+        config.database['url'] = db_url
+    initialize_db()
