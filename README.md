@@ -1,9 +1,11 @@
 Pygmy
 =====
 
-[![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)  [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
+[![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy) [![Coverage Status](https://coveralls.io/repos/github/amitt001/pygmy/badge.svg?branch=master)](https://coveralls.io/github/amitt001/pygmy?branch=master) [![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)
 
 Live version of this project: [https://pygy.co](https://pygy.co)
+
+Check link stats by adding + to url. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
 Open-source, extensible & easy-to-use URL shortener. It's very easy to host and run. It's created keeping in mind that it should be easy to have your custom URL shortener up and running without much effort.
 
