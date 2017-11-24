@@ -5,5 +5,9 @@ python:
 
 install:
     - pip install -r requirements.txt
+    - pip install coveralls
 
-script: pytest src/pygmy/tests
+script: coverage run --source src/pygmy -m py.test
+
+after_success:
+coveralls
