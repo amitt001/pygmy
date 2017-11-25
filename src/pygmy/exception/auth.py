@@ -8,5 +8,4 @@ class URLAuthFailed(PygmyExcpetion):
         self.url = url
 
     def __str__(self):
-        return ("Invalid/missing secret key for"
-                " protected url {0}.").format(self.url)
+        return "Invalid/missing secret key for protected url"

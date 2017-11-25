@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 from sqlalchemy import (Column, String, Integer, Boolean,
                         BigInteger, Unicode, DateTime)
+from urllib.parse import urlparse
 
 from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection, utcnow
@@ -142,6 +143,8 @@ class LinkManager:
 
     @staticmethod
     def crc32(long_url):
+        if not urlparse(long_url).scheme:
+            long_url = 'http://{}'.format(long_url)
         return binascii.crc32(str.encode(long_url))
 
     @property
@@ -155,6 +158,8 @@ class LinkManager:
         if db.bind.name == 'mysql':
             kwargs['created_at'] = datetime.datetime.utcnow()
             kwargs['updated_at'] = datetime.datetime.utcnow()
+        if not urlparse(long_url).scheme:
+            long_url = 'http://{}'.format(long_url)
         self.link = Link(long_url=long_url,
                          long_url_hash=self.crc32(long_url), **kwargs)
         db.add(self.link)
@@ -180,6 +185,8 @@ class LinkManager:
 
     @dbconnection
     def get(self, db, long_url, is_default=True):
+        if not urlparse(long_url).scheme:
+            long_url = 'http://{}'.format(long_url)
         query_dict = dict(long_url_hash=self.crc32(long_url),
                           long_url=long_url,
                           is_default=is_default)
@@ -246,9 +253,12 @@ class LinkManager:
         long_url query for performance optimization.
         """
         query_dict = dict()
-        if kwargs.get('long_url'):
-            query_dict['long_url_hash'] = self.crc32(kwargs.get('long_url'))
-            query_dict['long_url'] = kwargs.get('long_url')
+        long_url = kwargs.get('long_url')
+        if long_url:
+            if not urlparse(long_url).scheme:
+                long_url = 'http://{}'.format(long_url)
+            query_dict['long_url_hash'] = self.crc32(long_url)
+            query_dict['long_url'] = long_url
         query_dict.update(self.build_query_dict(**kwargs))
         # build sqlalchmey and query
         query = [getattr(Link, k) == v for k, v in query_dict.items()]

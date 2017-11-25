@@ -222,7 +222,7 @@ class PygmyApiClient:
             raise ObjectNotFound(resp_obj)
         links = resp_obj
         for link in links:
-            if link.get('short_url'):
+            if link.get('short_code'):
                 link['short_url'] = self.HOSTNAME + '/' + link['short_code']
         return links
 

@@ -36,7 +36,7 @@ class LinkSchema(Schema):
     short_code = fields.Str(required=False,
                             allow_none=True,
                             validate=is_valid_custom_code_or_secret)
-    short_url = fields.Method('short_url_path', load_only=True)
+    short_url = fields.Method('short_url_path', dump_only=True)
     description = fields.Str(required=False, allow_none=True)
     secret_key = fields.Str(required=False,
                             allow_none=True,

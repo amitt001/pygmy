@@ -26,7 +26,10 @@ def validate_url(url):
 
 
 def make_short_url(short_path):
-    short_url = urljoin(config.pygmy['url'], short_path)
+    short_url = urljoin(
+        config.pygmy['short_url_schema'],
+        config.pygmy['short_url'],
+        short_path)
     return short_url
 
 

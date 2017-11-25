@@ -30,7 +30,7 @@ def shorten(long_url, short_code=None, expire_after=None, description=None,
         query_dict.update(dict(short_code=short_code, is_custom=True))
         insert_dict = query_dict
     if secret_key:
-        query_dict.update(secret_key=secret_key, is_protected=True)
+        query_dict.update(secret_key=str(secret_key), is_protected=True)
         insert_dict = query_dict
     if expire_after:
         insert_dict['expire_after'] = expire_after
@@ -71,7 +71,7 @@ def unshorten(short_url, secret_key=None,
     if url_manager.has_expired():
         raise LinkExpired
     if link.is_protected:
-        if not secret_key or link.secret_key != secret_key:
+        if not secret_key or str(link.secret_key) != str(secret_key):
             raise URLAuthFailed(short_url)
     if request:
         save_clickmeta(request, link)
@@ -93,7 +93,7 @@ def resolve_short(short_code, request=None, secret_key=None):
     if manager.has_expired() is True:
         raise LinkExpired('Link has expired')
     if link.is_protected:
-        if not secret_key or link.secret_key != secret_key:
+        if not secret_key or str(link.secret_key) != str(secret_key):
             raise URLAuthFailed(short_code)
     # put stats
     if request:
@@ -147,3 +147,7 @@ def save_clickmeta(request, link):
     else:
         data = parse_request(request)
     return ClickMetaManager().add(link_id=link.id, **data)
+
+
+def click(short_code):
+    """Add method to mimic click url"""
