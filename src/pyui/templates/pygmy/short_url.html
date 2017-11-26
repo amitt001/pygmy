@@ -16,12 +16,17 @@
             </span>
         </div>
         <br><br><br>
-        <a class="vcenter btn btn-lg btn-danger" style="display: inline" href="/">
-        Shorten Another Link
-        </a>
     </div>
 </div>
-
+<div class="text-center">
+<a class="btn btn-lg btn-danger" href="/">
+    Shorten Another Link
+</a>
+<div style="margin-top:20%;" class="big-text">
+    <p class="horizontal-center">Check link stats by adding + to the URL</p>
+    <a href="{{short_url}}+" target="_blank">{{short_url}}+</a><br><br>
+</div>
+</div>
 <script>
     var input = document.getElementById('short_url_blocked');
     input.focus();

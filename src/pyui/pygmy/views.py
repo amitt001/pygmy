@@ -93,7 +93,7 @@ def get_short_link(request, code):
         except ObjectNotFound as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
-        context = dict(short_url=url_obj['short_url'])
+        context = dict(short_url=url_obj['short_url'], short_code=code)
         return render(request, 'pygmy/short_url.html', context=context)
     return render(request, '400.html', status=400)
 
