@@ -11,6 +11,7 @@ function copyToClipboard(className){
 
 function readOnlyToggle(elementId) {
     var element = document.getElementById(elementId);
+    element.value = '';
     element.readOnly = !element.readOnly;
 }
 

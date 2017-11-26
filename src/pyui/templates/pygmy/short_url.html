@@ -7,7 +7,7 @@
     <div class="has-success">
         <div class="input-group">
             <input type="text" class="form-control input-lg" placeholder="XXX"
-                value="{{short_url}}" readonly autofocus id="short_url_blocked">
+                value="{{short_url}}" readonly autofocus id="short_url_blocked" onclick="input.focus();input.select();">
             <span class="input-group-btn">
             <button class="btn btn-info btn-lg copyButton" id="copyButtonId" onclick="copyToClipboard('copyButton')"
                 data-clipboard-action="copy" data-clipboard-target="input#short_url_blocked">
