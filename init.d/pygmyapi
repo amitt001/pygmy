@@ -1,0 +1,59 @@
+#!/bin/bash
+# init.d script for pygmy rest api
+
+NAME=pygmyapi
+PIDFILE=/var/run/$NAME.pid
+
+PORT=9119
+APP_DIR=/opt/pygyco/src
+PYTHONPATH='/opt/pygyco/env/bin/gunicorn'
+APP_ARGS='--log-file /var/log/pygmy/error_logs.log --access-logfile /var/log/pygmy/acclogs.log --bind 127.0.0.1:9119 --workers 2 wsgi:app'
+APP_STOP_ARGS='--stop $PIDFILE'
+APP_RELOAD_ARGS='--reload $PIDFILE'
+
+. /lib/lsb/init-functions
+
+start() {
+    start-stop-daemon --start --background --make-pidfile --chdir $APP_DIR --pidfile $PIDFILE --exec $PYTHONPATH -- $APP_ARGS
+}
+
+stop() {
+    fuser -k $PORT/tcp
+    PID=`cat $PIDFILE`
+    kill -HUP $PID
+    rm -f $PIDFILE
+}
+
+case "$1" in
+start)
+	if ! [ -f $PIDFILE ]; then
+            echo "Starting $NAME"
+            start
+            echo "Done"
+        else
+            echo "$NAME is already running"
+        fi
+;;
+stop)
+	if [ -f $PIDFILE ]; then
+            echo "Stopping $NAME"
+            stop
+        else
+            echo "$NAME not running"
+        fi
+;;
+restart)
+        echo "Restarting "
+        echo "$NAME."
+;;
+status)
+        status_of_proc $NAME
+;;
+*)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|status}" >&2
+        exit 1
+;;
+esac
+
+exit 0
