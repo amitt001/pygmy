@@ -3,91 +3,87 @@ Pygmy
 
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy) [![Coverage Status](https://coveralls.io/repos/github/amitt001/pygmy/badge.svg?branch=master)](https://coveralls.io/github/amitt001/pygmy?branch=master) [![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)
 
-Live version of this project: [https://pygy.co](https://pygy.co)
+Live version of this project @ [https://pygy.co](https://pygy.co)
 
-Check link stats by adding + to url. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
+Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
-Open-source, extensible & easy-to-use URL shortener. It's very easy to host and run. It's created keeping in mind that it should be easy to have your custom URL shortener up and running without much effort.
+# Table of Contents
+- [Pygmy](#pygmy)
+- [Table of Contents](#table-of-contents)
+- [Features](#features)
+- [Technical Info](#tech-used)
+- [Installaton/Setup](#installatonsetup)
+- [DB Setup:](#db-setup)
+    - [Use MySQL](#use-mysql)
+    - [Use Postgresql](#use-postgresql)
+    - [Use SQLite](#use-sqlite)
+- [Using Pygmy API](#using-pygmy-api)
+    - [Create User:](#create-user)
+- [Shell Usage](#shell-usage)
+- [How Link Stats Are Generated?](#how-link-stats-are-generated)
+- [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
+- [File Issues](#file-issues)
+- [Development](#development)
+- [License](#license)
 
-Major features are:
-- Custom URL
-- Auto expiry URL
-- Secret key protected URL
-- User Login/Sign up
+Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
+
+The architecture is very loosely coupled which allows custom integrations easily.
+
+**The project has 3 major parts**
+
+- The core URL shortening code
+- A REST API on top. Uses Flask framework
+- The UI layer for rendering the UI. It uses Django framework
+
+Features
+========
+
+- URL shortner
+- Customized short URL's(ex: `pygy.co/pygmy`)
+- Support to create auto expiry URL after sometime.
+- Secret key protected URL's
+- User Login/Sign up to track shortned URL's and link stats
 - User dashboard
 - Link Analytics(add + to the tiny URL to get link stats)
 
-The architecture is very loosely coupled which allows custom integrations very easily.
+Technical Info
+==============
 
-The project has 3 major parts:
-- The core program for URL shortening
-- REST API on top. Uses Flask framework.
-- The UI layer for rendering the UI. It uses Django framework.
+- Python 3, Javascript, JQuery, HTML, CSS
+- REST API: Flask
+- Pyui: Django(It serves the web user interface)
+- DB: PostgreSQL/MySQL/SQLite
+- Others: SQLAlchmey, JWT
 
-Each part is independent of other part and it can function independently.
+Installaton/Setup
+=================
 
-Tech Stack:
-
-Python 3, Javascript, JQuery, HTML, CSS
-REST API: Flask
-Pyui: Django(It provides a web user interface.)
-DB: PostgreSQL/MySQL/SQLite
-
-
-Setup:
-======
-
-- Clone `git clone https://github.com/amitt001/pygmy.git & cd pygmy`
-- Install pip `easy_install pip` or `apt-get install python3-pip`
-- Install virtualenv (optional but recommended)
+1. Clone `git clone https://github.com/amitt001/pygmy.git & cd pygmy`
+2. (Optional) Install virtualenv (optional but recommended)
     - `pip install virtualenv`
     - `virtualenv env`
     - `source env/bin/activate`
-- Install dependencies `pip install -r requirements.txt` (if you are using MySQL or PostgreSQL check db setup section)
-- cd src
-- To run the rest api `./run` to run UI `python pyui/manage.py runserver 127.0.0.1:8000`
-- Visit 127.0.0.1:8000 to use the app
+3. Install dependencies: `pip install -r requirements.txt` (if you are using MySQL or PostgreSQL check [DB setup](#db-setup) section)
+4. `cd src`
+5. `python run.py` (It runs Flask and Django servers using gunicorn)
+6. Visit `127.0.0.1:8000` to use the app
 
 Note:
+
 1. The project has two config files:
-    - pygmy.cfg: src/pygmy/config/pygmy.cfg rest API and pygmy core settings file
-    - settings.py: src/pyui/pyui/settings.py Django settings file
+    - pygmy.cfg: `src/pygmy/config/pygmy.cfg` rest API and pygmy core settings file
+    - settings.py: `src/pyui/pyui/settings.py` Django settings file
 2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
-3. To modify config settings vim src/pygmy/config/pygmy.cfg
-4. You can run pygmy shell present in src directory to run the program on terminal
-5. By default src/pyui/pyui/settings.py DEBUG is set to True set it to False in production
-
-
-Using API
-=========
-
-Create User:
-
-    curl -XPOST http://127.0.0.1:9119/api/user/1 -H 'Content-Type: application/json' -d '{
-    "email": "00amit99@gmail.com",
-    "f_name": "Amit",
-    "l_name": "Tripathi",
-    "password": "amit@123"
-    }'
-
-
-Get User:
-
-Get All User Link:
-
-Create Link:
-
-Get Link:
-
-How Auth Token Works:
-=====================
-
-It uses JWT. When user logs in using username and password a token is generated that are marked as fresh and it has a time period of 30 minutes. After 30 minutes. When a request comes with the old token and a new token is generated from the refresh token API. This refreshed token has a new field `fresh=False`. This new token can only shorten the URL and refresh the token for the further user. It CAN'T reset the password, disable the link and change the secret key of the URL.
+3. To modify config settings vim `src/pygmy/config/pygmy.cfg`
+4. You can run pygmy shell present in src directory to run the program on terminal. `python shell`
+5. By default in `src/pyui/pyui/settings.py` DEBUG is set to True, set it to False in production
 
 DB Setup:
----------
+=========
 
-**Use MySQL:**
+Use MySQL
+---------
 
 `pip install pymysql`
 
@@ -104,18 +100,41 @@ Enter MySQL URL
 `CREATE DATABASE pygmy;`
 
 
-**Use Postgresql**
+Use Postgresql
+--------------
 
 `pip install psycopg2`
 
 `postgres://amit@127.0.0.1:5432/pygmy`
 
-Use Sqlite
-==========
+Use SQLite
+----------
 
 SQLite is natively supported in Python
 
 `sqlite:////var/lib/pygmy/pygmy.db`
+
+Using Pygmy API
+===============
+
+Create User:
+------------
+
+    curl -XPOST http://127.0.0.1:9119/api/user/1 -H 'Content-Type: application/json' -d '{
+    "email": "amit@gmail.com",
+    "f_name": "Amit",
+    "l_name": "Tripathi",
+    "password": "a_safe_one"
+    }'
+
+
+Get User:
+
+Get All User Link:
+
+Create Link:
+
+Get Link:
 
 Shell Usage
 ===========
@@ -192,12 +211,37 @@ Docstring:
     URL value.
 ```
 
-Link stats:
+How Link Stats Are Generated?
+=============================
+
+For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://pygy.co/cm) database is used. It's in `src/pygmy/app` directory.
+
+How Pygmy Auth Token Works?
+===========================
+
+It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auht token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
+
+File Issues
 ===========
 
-For getting geo location stats from IP maxminds' GeoLite2-Country.mmd database is used. It's in src/pygmy/app folder.
+Something is not working or you have question or you want to see a new feature?
+
+[Open a new issue](https://github.com/amitt001/pygmy/issues)
+
+Development
+===========
+
+Run tests and generate a coverage report:
+
+`coverage run --source src/pygmy -m py.test`
+
+See coverage report:
+
+`coverage report`
 
 License
 =======
 
 The MIT license (MIT)
+
+[Read License Terms](https://github.com/amitt001/pygmy/blob/master/LICENSE)

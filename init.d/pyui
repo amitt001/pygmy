@@ -1,13 +1,13 @@
 #!/bin/bash
-# init.d script for pygmy rest api
+# init.d script for pyui app
 
-NAME=pygmyapi
+NAME=pyui
 PIDFILE=/var/run/$NAME.pid
 
-PORT=9119
-APP_DIR=/opt/pygyco/src
+PORT=8000
+APP_DIR=/opt/pygyco/src/pyui
 PYTHONPATH='/opt/pygyco/env/bin/gunicorn'
-APP_ARGS='--log-file /var/log/pygmy/error_logs.log --access-logfile /var/log/pygmy/acclogs.log --bind 127.0.0.1:9119 --workers 2 pygmy.rest.wsgi:app'
+APP_ARGS='--log-file /var/log/pygmy/uierror_logs.log --access-logfile /var/log/pygmy/uiacclogs.log --bind 127.0.0.1:8000 --workers 2 pyui.wsgi'
 APP_STOP_ARGS='--stop $PIDFILE'
 APP_RELOAD_ARGS='--reload $PIDFILE'
 
