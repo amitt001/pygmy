@@ -5,7 +5,7 @@ cffi==1.11.2
 chardet==3.0.4
 click==6.7
 decorator==4.1.2
-Django==1.11.7
+Django==2.0
 Flask==0.12.2
 Flask-Cors==3.0.3
 Flask-JWT-Extended==3.3.4
@@ -30,7 +30,7 @@ ptyprocess==0.5.2
 pycparser==2.18
 Pygments==2.2.0
 PyJWT==1.5.3
-pytest==3.2.5
+pytest==3.3.1
 pytz==2017.3
 requests==2.18.4
 simplegeneric==0.8.1
@@ -39,4 +39,4 @@ SQLAlchemy==1.1.15
 traitlets==4.3.2
 urllib3==1.22
 wcwidth==0.1.7
-Werkzeug==0.12.2
+Werkzeug==0.13

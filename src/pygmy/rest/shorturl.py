@@ -23,7 +23,7 @@ class LongUrlApi(MethodView):
             return jsonify(dict(error='Invalid URL.')), 400
         link = self.manager.get(long_url)
         if self.manager.has_expired():
-            return jsonify(dict(message="Link has expired")), 404
+            return jsonify(dict(error="Link has expired")), 404
         if link is None:
             abort(404)
         result = self.schema.dump(link)
@@ -74,11 +74,11 @@ class ShortURLApi(MethodView):
                                  query_by_code=True, request=request)
             result = self.schema.dump(long_url)
         except LinkExpired:
-            return jsonify(dict(message="Link has expired")), 410
+            return jsonify(dict(error="Link has expired")), 410
         except URLAuthFailed:
-            return jsonify(dict(message="Secret key not provided")), 403
+            return jsonify(dict(error="Secret key not provided")), 403
         except URLNotFound:
-            return jsonify(dict(message="Invalid/Expired url")), 404
+            return jsonify(dict(error="Invalid/Expired URL")), 404
         return jsonify(result.data), 200
 
 
@@ -102,7 +102,7 @@ def resolve(code):
                 code.strip('+'), request=request, secret_key=secret_key)
             response = redirect(long_url, code=301)
     except LinkExpired:
-        response = jsonify(dict(message="Link has expired")), 404
+        response = jsonify(dict(error="Link has expired")), 404
     except URLAuthFailed:
         response = jsonify({'error': 'Access to URL forbidden'}), 403
     except (URLNotFound, AssertionError):

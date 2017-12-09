@@ -14,12 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from django.contrib import admin
 import pyui.generic_views as views
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^favicon.ico', views.dummy),
     url(r'^about', views.about),
     url(r'^contact', views.contact),

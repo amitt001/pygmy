@@ -106,9 +106,7 @@ def link_unshorten(request, code):
             url_obj = pygmy_client.unshorten(code)
         except UnAuthorized:
             return redirect('/link/secret?next={}'.format(code))
-        except LinkExpired:
-            return render(request, '404.html', status=404)
-        except ObjectNotFound as e:
+        except (LinkExpired, ObjectNotFound) as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
         long_url = url_obj['long_url']
@@ -136,9 +134,7 @@ def short_link_stats(request, code):
                           context=API_ERROR(dict(
                               error='Secret link stats are not yet supported.')
                           ), status=404)
-        except LinkExpired:
-            return render(request, '404.html', status=404)
-        except ObjectNotFound as e:
+        except (ObjectNotFound, LinkExpired) as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
         return render(request, 'pygmy/link_stats.html', context=context)
@@ -168,7 +164,7 @@ def link_auth(request):
                 url_obj = pygmy_client.unshorten(code, secret_key=secret_key)
                 response = dict(long_url=url_obj['long_url'])
         except UnAuthorized:
-            response = dict(message='Wrong secret key.')
+            response = dict(error='Wrong secret key.')
         except ObjectNotFound as e:
             return render(
                 request, '404.html', context=API_ERROR(e.args[0]), status=404)

@@ -20,7 +20,7 @@ class UserApi(MethodView):
             params['email'] = request.args.get('email')
             user = UserManager().find(**params)
         if user is None:
-            return jsonify(dict(message="User not found")), 404
+            return jsonify(dict(error="User not found")), 404
         result = self.schema.dump(user)
         return jsonify(result.data), 200
 
