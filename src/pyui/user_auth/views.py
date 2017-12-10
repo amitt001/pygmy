@@ -6,7 +6,7 @@ import datetime
 from django import forms
 from django.conf import settings
 from django.shortcuts import render, redirect
-from restclient.pygmy import PygmyApiClient
+from utils import pygmy_client_object
 from restclient.error_msg import API_ERROR
 from restclient.errors import ObjectNotFound, InvalidInput
 
@@ -40,7 +40,7 @@ class SignUpForm(forms.Form):
 
 def login(request):
     if request.method == 'POST':
-        pygmy_client = PygmyApiClient(settings, request)
+        pygmy_client = pygmy_client_object(settings, request)
         form = LoginForm(request.POST)
         context = dict(form=form)
         if form.is_valid():
@@ -87,10 +87,9 @@ def signup(request):
         return redirect('/')
 
     if request.method == 'POST':
-        pygmy_client = PygmyApiClient(settings, request)
+        pygmy_client = pygmy_client_object(settings, request)
         form = SignUpForm(request.POST)
         context = dict(form=form)
-        print(form.errors)
         if not form.is_valid():
             return render(request, "invalid_form.html", context=context, status=400)
         context['signup_success'] = True

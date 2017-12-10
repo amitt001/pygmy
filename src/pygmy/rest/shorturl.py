@@ -78,7 +78,8 @@ class ShortURLApi(MethodView):
         except URLAuthFailed:
             return jsonify(dict(error="Secret key not provided")), 403
         except URLNotFound:
-            return jsonify(dict(error="Invalid/Expired URL")), 404
+            return jsonify(
+                dict(error="URL Not Found Or Expired")), 404
         return jsonify(result.data), 200
 
 

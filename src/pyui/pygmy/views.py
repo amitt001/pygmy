@@ -5,10 +5,11 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django import forms
 from django.conf import settings
-from restclient.pygmy import PygmyApiClient
+from utils import pygmy_client_object
 from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired, \
     InvalidInput
 from restclient.error_msg import *
+
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
 AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
@@ -42,7 +43,7 @@ class URLForm(forms.Form):
 
 
 def link_shortener(request):
-    pygmy_client = PygmyApiClient(settings, request)
+    pygmy_client = pygmy_client_object(settings, request)
     if request.method == 'POST':
         form = URLForm(request.POST)
         context = dict(form=form)
@@ -100,7 +101,7 @@ def get_short_link(request, code):
 
 def link_unshorten(request, code):
     """This redirects to the long URL from short URL"""
-    pygmy_client = PygmyApiClient(settings, request)
+    pygmy_client = pygmy_client_object(settings, request)
     if request.method == 'GET':
         try:
             url_obj = pygmy_client.unshorten(code)
@@ -115,7 +116,7 @@ def link_unshorten(request, code):
 
 def short_link_stats(request, code):
     """Get stats about short code."""
-    pygmy_client = PygmyApiClient(settings, request)
+    pygmy_client = pygmy_client_object(settings, request)
     if request.method == 'GET':
         try:
             clickmeta = pygmy_client.link_stats(code)
@@ -149,7 +150,7 @@ def link_auth(request):
         return render(request, 'auth/link_auth.html')
 
     if request.method == 'POST':
-        pygmy_client = PygmyApiClient(settings, request)
+        pygmy_client = pygmy_client_object(settings, request)
         data = json.loads(request.body.decode('utf-8'))
         code = data['code']
         secret_key = data['secret_key']
@@ -177,7 +178,7 @@ def dashboard(request):
     access_token = request.COOKIES.get(AUTH_COOKIE_NAME)
     if not access_token:
         return render(request, '400.html', context=INVALID_TOKEN, status=400)
-    pygmy_client = PygmyApiClient(settings, request)
+    pygmy_client = pygmy_client_object(settings, request)
     try:
         links = pygmy_client.list_links(access_token=access_token)
     except UnAuthorized as e:
@@ -197,7 +198,7 @@ def index(request):
     response = render(request, 'pygmy/index.html')
     if (request.COOKIES.get(AUTH_COOKIE_NAME) and
             request.COOKIES.get('refresh_token')):
-        pygmy_client = PygmyApiClient(settings, request)
+        pygmy_client = pygmy_client_object(settings, request)
         access_token = pygmy_client.refresh_access_token()
         response.set_cookie(
             AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME))
@@ -208,6 +209,6 @@ def check_available(request):
     custom_code = request.GET.get('custom_code')
     if not custom_code:
         return JsonResponse(dict(ok=False))
-    pygmy_client = PygmyApiClient(settings, request)
+    pygmy_client = pygmy_client_object(settings, request)
     is_available = pygmy_client.is_available(custom_code)
     return JsonResponse(dict(ok=is_available))

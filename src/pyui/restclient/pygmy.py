@@ -1,51 +1,39 @@
 """Pygmy REST api client"""
 import requests
 
-from functools import wraps
-from django.conf import settings
-from restclient.errors import ObjectNotFound, RestAPIConnectionError, \
-    UnAuthorized, LinkExpired, InvalidInput
+from restclient.base import Client, catch_connection_error
+from restclient.errors import (
+    ObjectNotFound, UnAuthorized, LinkExpired, InvalidInput)
 
-AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
-REFRESH_COOKIE_NAME = settings.REFRESH_COOKIE_NAME
+__all__ = [
+    'PygmyApiClient'
+]
 
-
-def catch_connection_error(func):
-    @wraps(func)
-    def _wrapped(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except requests.ConnectionError:
-            # TODO: Error from the error class not hard coded.
-            raise RestAPIConnectionError("Connection to Pygmy API Failed.")
-
-    return _wrapped
+AUTH_COOKIE_NAME = 'access_token'
+REFRESH_COOKIE_NAME = 'refresh_token'
 
 
-class PygmyApiClient:
-    """Base class"""
+class PygmyApiClient(Client):
+    """Pygmy REST API wrapper class"""
 
-    def __init__(self, config, request=None):
-        """
-        :param config:
-        """
-        self.config = config
-        # Required parameters
-        self.rest_host = config.PYGMY_API_HOST
-        self.rest_port = str(config.PYGMY_API_PORT)
-        self.rest_auth_type = config.PYGMY_API_AUTH
-        self.rest_user = config.PYGMY_API_USER
-        self.rest_pass = config.PYGMY_API_PASSWORD
-        self.rest_url = 'http://' + self.rest_host + ':' + self.rest_port
-        self.HOSTNAME = config.HOSTNAME
+    def __init__(self, rest_url, username, password, hostname, request=None):
+        self.name = username
+        self.password = password
+        self.rest_url = rest_url
+        self.HOSTNAME = hostname
         self.request = request
         self.cookies = None if request is None else request.COOKIES
+        super().__init__(rest_url, username, password)
+
+    def __repr__(self):
+        return '<PygmyApiClient ({0.name}:{0.password}) {0.rest_url}>'.format(
+            self)
 
     @property
     def header(self):
         _header = dict()
         if self.cookies and self.cookies.get(AUTH_COOKIE_NAME):
-            _header = dict(Authorization='Bearer {}'.format(
+            _header = dict(JWT_Authorization='Bearer {}'.format(
                 self.cookies.get(AUTH_COOKIE_NAME)))
         remote_addr = self.request.META.get('REMOTE_ADDR')
         _header['Pygmy-App-User-Ip'] = self.request.META.get(
@@ -59,7 +47,7 @@ class PygmyApiClient:
     @property
     def refresh_header(self):
         if self.cookies and self.cookies.get(REFRESH_COOKIE_NAME):
-            return dict(Authorization='Bearer {}'.format(
+            return dict(JWT_Authorization='Bearer {}'.format(
                 self.cookies.get(REFRESH_COOKIE_NAME)))
 
     @catch_connection_error
@@ -103,26 +91,17 @@ class PygmyApiClient:
                        expire_after=expire_after,
                        secret_key=secret,
                        owner=owner)
-        r = requests.post(
-            self.rest_url + url_path, json=payload, headers=self.header)
+        r = self.call(url_path, data=payload, return_for_status=401)
         resp = r.json()
         if int(r.status_code) == 401:
             if resp['sub_status'] == 101:
                 self.refresh_access_token()
                 if self.header is None:
                     raise UnAuthorized('Please login again to continue')
-                r = requests.post(self.rest_url + url_path,
-                                  json=payload,
-                                  headers=self.header)
-        if int(r.status_code // 100) != 2:
-            if r.status_code == 401:
-                raise UnAuthorized('Please login again to continue')
-            if r.status_code == 400:
-                raise InvalidInput(r.json())
-            raise ObjectNotFound(r.json())
-        resp = r.json()
+                r = self.call(url_path, data=payload)
+                resp = r.json()
         if resp.get('short_url'):
-            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+            resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
 
     @catch_connection_error
@@ -145,39 +124,21 @@ class PygmyApiClient:
         :return:
         """
         url_path = '/api/unshorten?url=' + self.rest_url + '/' + short_url_code
-        headers = self.header
-        headers.update(dict(secret_key=secret_key))
-        r = requests.get(self.rest_url + url_path,
-                         headers=headers)
-        if r.status_code == 403:
-            raise UnAuthorized(r.json())
-        if r.status_code == 410:
-            raise LinkExpired(r.json())
-        if r.status_code // 100 != 2:
-            raise ObjectNotFound(r.json())
+        r = self.call(url_path, header_param=dict(secret_key=secret_key))
         resp = r.json()
         if resp.get('short_url'):
-            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+            resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
 
     @catch_connection_error
     def login(self, email, password):
-        """
-        :param email:
-        :param password:
-        :return:
-        """
+        """User login"""
         url_path = '/api/login'
         payload = dict(email=email, password=password)
-        r = requests.post(
-            self.rest_url + url_path, json=payload, headers=self.header)
-        if r.status_code == 400:
-            raise InvalidInput(r.json())
-        if r.status_code // 100 != 2:
-            raise ObjectNotFound(r.json())
+        r = self.call(url_path, data=payload)
         resp = r.json()
         if resp.get('short_url'):
-            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+            resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
 
     @catch_connection_error
@@ -188,13 +149,10 @@ class PygmyApiClient:
         """
         _ = data.pop('confirm_password')
         url_path = '/api/user'
-        r = requests.post(
-            self.rest_url + url_path, json=data, headers=self.header)
-        if r.status_code // 100 != 2:
-            raise ObjectNotFound(r.json())
+        r = self.call(url_path, data=data)
         resp = r.json()
         if resp.get('short_url'):
-            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+            resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
 
     @catch_connection_error
@@ -205,7 +163,8 @@ class PygmyApiClient:
         """
         user_path = '/api/user/links'
         headers = self.header
-        headers.update(dict(Authorization='Bearer {}'.format(access_token)))
+        headers.update(
+            dict(JWT_Authorization='Bearer {}'.format(access_token)))
         r = requests.get(self.rest_url + user_path, headers=headers)
         resp_obj = r.json()
         if int(r.status_code) == 401:
@@ -223,7 +182,8 @@ class PygmyApiClient:
         links = resp_obj
         for link in links:
             if link.get('short_code'):
-                link['short_url'] = self.HOSTNAME + '/' + link['short_code']
+                link['short_url'] = self.makeurl(
+                    self.HOSTNAME, link['short_code'])
         return links
 
     @catch_connection_error
@@ -251,26 +211,19 @@ class PygmyApiClient:
         :param secret_key:
         :return: dict
         """
-        # make sure + is added in code
+        # make sure + is added in the code
         short_code = short_code.strip('+') + '+'
         headers = self.header
         headers.update(dict(secret_key=secret_key))
-        r = requests.get(self.rest_url + '/' + short_code, headers=headers)
+        r = self.call(short_code, return_for_status=401)
         resp = r.json()
         if int(r.status_code) == 401:
             if resp['sub_status'] == 101:
                 self.refresh_access_token()
                 if self.header is None:
                     raise UnAuthorized('Please login again to continue')
-                r = requests.get(self.rest_url + '/' + short_code,
-                                 headers=self.header)
-        if r.status_code == 403:
-            raise UnAuthorized(r.json())
-        if r.status_code == 410:
-            raise LinkExpired(r.json())
-        if r.status_code // 100 != 2:
-            raise ObjectNotFound(r.json())
-        resp = r.json()
-        if resp.get('short_url'):
-            resp['short_url'] = self.HOSTNAME + '/' + resp['short_code']
+                r = self.call(short_code)
+                resp = r.json()
+        if resp.get('short_code'):
+            resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
