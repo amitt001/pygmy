@@ -3,7 +3,8 @@ import requests
 
 from restclient.base import Client, catch_connection_error
 from restclient.errors import (
-    ObjectNotFound, UnAuthorized, LinkExpired, InvalidInput)
+    ObjectNotFound, UnAuthorized, LinkExpired)
+from urllib.parse import urlparse
 
 __all__ = [
     'PygmyApiClient'
@@ -20,7 +21,8 @@ class PygmyApiClient(Client):
         self.name = username
         self.password = password
         self.rest_url = rest_url
-        self.HOSTNAME = hostname
+        scheme = 'http://' if not urlparse(hostname).scheme else ''
+        self.HOSTNAME = '{}{}'.format(scheme, hostname)
         self.request = request
         self.cookies = None if request is None else request.COOKIES
         super().__init__(rest_url, username, password)
@@ -32,6 +34,8 @@ class PygmyApiClient(Client):
     @property
     def header(self):
         _header = dict()
+        if self.request is None:
+            return _header
         if self.cookies and self.cookies.get(AUTH_COOKIE_NAME):
             _header = dict(JWT_Authorization='Bearer {}'.format(
                 self.cookies.get(AUTH_COOKIE_NAME)))
@@ -71,11 +75,11 @@ class PygmyApiClient(Client):
             return 'PONG'
 
     @catch_connection_error
-    def shorten(self, long_url, custom_url=None, description=None,
+    def shorten(self, long_url, custom_code=None, description=None,
                 owner=None, secret=None, expire_after=None):
         """Create the post payload for create short URL REST API.
         :param long_url:
-        :param custom_url:
+        :param custom_code:
         :param description:
         :param owner:
         :param secret:
@@ -84,8 +88,8 @@ class PygmyApiClient(Client):
         """
         url_path = '/api/shorten'
         payload = dict(long_url=long_url,
-                       short_code=custom_url,
-                       is_custom=custom_url is not None and custom_url != '',
+                       short_code=custom_code,
+                       is_custom=custom_code is not None and custom_code != '',
                        description=description,
                        is_protected=secret is not None and secret != '',
                        expire_after=expire_after,
@@ -117,16 +121,17 @@ class PygmyApiClient(Client):
         return r.json()
 
     @catch_connection_error
-    def unshorten(self, short_url_code, secret_key=None):
+    def unshorten(self, short_url_code, secret=None):
         """
         :param short_url_code:
-        :param secret_key:
+        :param secret:
         :return:
         """
-        url_path = '/api/unshorten?url=' + self.rest_url + '/' + short_url_code
-        r = self.call(url_path, header_param=dict(secret_key=secret_key))
+        short_code = urlparse(short_url_code).path.strip('/')
+        url_path = '/api/unshorten?url=' + self.rest_url + '/' + short_code
+        r = self.call(url_path, header_param=dict(secret_key=secret))
         resp = r.json()
-        if resp.get('short_url'):
+        if resp.get('short_code'):
             resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])
         return resp
 
@@ -212,6 +217,7 @@ class PygmyApiClient(Client):
         :return: dict
         """
         # make sure + is added in the code
+        short_code = urlparse(short_code).path.strip('/')
         short_code = short_code.strip('+') + '+'
         headers = self.header
         headers.update(dict(secret_key=secret_key))
