@@ -36,6 +36,7 @@ try:
         # switch between the two process
         counter = counter % 2
         print_err(process[counter])
+        counter += 1
 except KeyboardInterrupt:
     pass
 except Exception as e:

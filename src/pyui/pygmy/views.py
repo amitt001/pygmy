@@ -51,7 +51,7 @@ def link_shortener(request):
             try:
                 resp = pygmy_client.shorten(
                     long_url=form.cleaned_data['long_url'],
-                    custom_url=form.cleaned_data['custom_url'],
+                    custom_code=form.cleaned_data['custom_url'],
                     secret=form.cleaned_data['secret_key'],
                     expire_after=form.cleaned_data['remember_time']
                 )

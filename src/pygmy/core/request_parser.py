@@ -1,5 +1,5 @@
 """Fetch info from the short url click"""
-
+import geoip2.database
 
 def parse_request(request):
     """Pass request object and returns parsed data dict.
@@ -40,7 +40,6 @@ def ip_country(ip):
     :return: None/str
     """
     try:
-        import geoip2.database
         reader = geoip2.database.Reader('pygmy/app/GeoLite2-Country.mmdb')
         c = reader.country(ip)
     except Exception as e:
