@@ -22,8 +22,8 @@ Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://py
 - [Shell Usage](#shell-usage)
 - [How Link Stats Are Generated?](#how-link-stats-are-generated)
 - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
-- [File Issues](#file-issues)
 - [Development](#development)
+- [Sponsorship](#sponsorship)
 - [License](#license)
 
 Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
@@ -221,13 +221,6 @@ How Pygmy Auth Token Works?
 
 It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auht token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
 
-File Issues
-===========
-
-Something is not working or you have question or you want to see a new feature?
-
-[Open a new issue](https://github.com/amitt001/pygmy/issues)
-
 Development
 ===========
 
@@ -238,6 +231,13 @@ Run tests and generate a coverage report:
 See coverage report:
 
 `coverage report`
+
+Sponsorship
+===========
+
+I would like to thank DigitalOcean for providing initial hosting to Pygmy project. Pygy.co is hosted on DigitalOcean.
+
+<a href="https://www.digitalocean.com/"><img src="https://i.imgur.com/6cYodyH.png"></a>
 
 License
 =======
