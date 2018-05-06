@@ -59,12 +59,14 @@ Technical Info
 Installaton/Setup
 =================
 
+NOTE: **This module only supports Python 3. Make sure pip and virtualenv are both python 3 based versions.**
+      **To install Python 3 on Mac: http://docs.python-guide.org/en/latest/starting/install3/osx/**
+
 1. Clone `git clone https://github.com/amitt001/pygmy.git & cd pygmy`
 2. (Optional) Install virtualenv (optional but recommended)
-    - `pip install virtualenv`
-    - `virtualenv env`
+    - `virtualenv -p python3 env`
     - `source env/bin/activate`
-3. Install dependencies: `pip install -r requirements.txt` (if you are using MySQL or PostgreSQL check [DB setup](#db-setup) section)
+3. Install dependencies: `pip3 install -r requirements.txt` (if you are using MySQL or PostgreSQL check [DB setup](#db-setup) section)
 4. `cd src`
 5. `python run.py` (It runs Flask and Django servers using gunicorn)
 6. Visit `127.0.0.1:8000` to use the app
