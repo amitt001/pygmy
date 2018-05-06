@@ -1,3 +1,5 @@
+<p align="center"><img src="src/pyui/static/logo/logo.png" alt="pygmy" height="200px"></p>
+
 Pygmy
 =====
 
