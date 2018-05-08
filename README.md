@@ -25,6 +25,7 @@ Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://py
 - [How Link Stats Are Generated?](#how-link-stats-are-generated)
 - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
 - [Development](#development)
+- [Contributions](#contributions)
 - [Sponsorship](#sponsorship)
 - [License](#license)
 
@@ -235,6 +236,11 @@ Run tests and generate a coverage report:
 See coverage report:
 
 `coverage report`
+
+Contributions
+=============
+
+Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
 
 Sponsorship
 ===========
