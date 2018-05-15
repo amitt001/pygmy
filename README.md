@@ -1,7 +1,7 @@
-<p align="center"><img src="src/pyui/static/logo/logo.png" alt="pygmy" height="200px"></p>
-
 Pygmy
 =====
+
+<p align="center"><img src="src/pyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy) [![Coverage Status](https://coveralls.io/repos/github/amitt001/pygmy/badge.svg?branch=master)](https://coveralls.io/github/amitt001/pygmy?branch=master) [![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)
 
