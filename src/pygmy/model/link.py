@@ -13,6 +13,7 @@ from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection, utcnow
 from pygmy.exception.error import ShortURLUnavailable
 from pygmy.model.clickmeta import ClickMeta
+from pygmy.config import config
 
 
 class Link(Model):
@@ -26,7 +27,10 @@ class Link(Model):
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
     long_url_hash = Column(BigInteger, index=True)
-    short_code = Column(Unicode(6, collation="utf8_bin"), unique=True, index=True, default=None)
+    if config.database['engine'] == 'mysql':
+        short_code = Column(Unicode(6, collation="utf8_bin"), unique=True, index=True, default=None)
+    else:
+        short_code = Column(Unicode(6), unique=True, index=True, default=None)
     description = Column(String(1000), default=None)
     owner = Column(Integer, default=None)
     clickmeta = relationship(
