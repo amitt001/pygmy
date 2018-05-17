@@ -26,7 +26,7 @@ class Link(Model):
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
     long_url_hash = Column(BigInteger, index=True)
-    short_code = Column(Unicode(6), unique=True, index=True, default=None)
+    short_code = Column(Unicode(6, collation="utf8_bin"), unique=True, index=True, default=None)
     description = Column(String(1000), default=None)
     owner = Column(Integer, default=None)
     clickmeta = relationship(
@@ -244,7 +244,7 @@ class LinkManager:
             Link.is_custom.is_(False),
             Link.short_code.isnot(None),
             Link.short_code != ''
-        )).order_by(Link.created_at.desc()).first()
+        )).order_by(Link.id.desc()).first()
 
     @dbconnection
     def find(self, db, **kwargs):
