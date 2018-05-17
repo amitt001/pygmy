@@ -1,7 +1,7 @@
+<p align="center"><img src="src/pyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
+
 Pygmy
 =====
-
-<p align="center"><img src="src/pyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy) [![Coverage Status](https://coveralls.io/repos/github/amitt001/pygmy/badge.svg?branch=master)](https://coveralls.io/github/amitt001/pygmy?branch=master) [![Requirements Status](https://requires.io/github/amitt001/pygmy/requirements.svg?branch=master)](https://requires.io/github/amitt001/pygmy/requirements/?branch=master)
 
@@ -90,20 +90,26 @@ DB Setup:
 Use MySQL
 ---------
 
+First install `pymysql`:
+
 `pip install pymysql`
 
 Check correct port:
 
 `mysqladmin variables | grep port`
 
-Enter below line in src/pygmy/core/pygmy.cfg fro database->url value
+Change below line in `src/pygmy/core/pygmy.cfg`:
 
-`mysql+pymysql://root:root@127.0.0.1:3306/pygmy`
+```
+engine: mysql
+url: mysql+pymysql://root:root@127.0.0.1:3306/pygmy
+```
 
 Enter MySQL URL
 
 `CREATE DATABASE pygmy;`
 
+Note: Better using Mysql with version > `5.6.5` to use default value of `CURRENT_TIMESTAMP` for `DATETIME`.
 
 Use Postgresql
 --------------

@@ -2,6 +2,7 @@ from pygmy.model import *
 from pygmy.config import config
 from pygmy.database.sqlite import SqliteDatabase
 from pygmy.database.postgresql import PostgreSQLDatabase
+from pygmy.database.mysql import MySQLDatabase
 from pygmy.database.base import Model
 
 
@@ -15,6 +16,8 @@ class DatabaseFactory:
             database = SqliteDatabase()
         elif config.database['engine'] == 'postgresql':
             database = PostgreSQLDatabase()
+        elif config.database['engine'] == 'mysql':
+            database = MySQLDatabase()
         else:
             raise Exception(
                 "Unsupported DB type. Supported types are "

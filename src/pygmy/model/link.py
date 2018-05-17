@@ -2,7 +2,7 @@ import time
 import binascii
 import datetime
 
-from sqlalchemy import event, and_, or_
+from sqlalchemy import event, and_, or_, DDL
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 from sqlalchemy import (Column, String, Integer, Boolean,
@@ -67,6 +67,17 @@ class Link(Model):
 
 event.listen(Link, 'after_insert', Link.generate_short_code)
 
+# adding event to modify field `short_code` when using mysql
+event.listen(
+    Link.__table__,
+    "after_create",
+    DDL(
+        "alter table {table} modify short_code varchar(6) "
+        "CHARACTER SET utf8 COLLATE utf8_bin default null".format(
+            table=Link.__tablename__
+        )
+    ).execute_if(dialect='mysql')
+)
 
 class LinkManager:
     """Link model manager"""
@@ -244,7 +255,7 @@ class LinkManager:
             Link.is_custom.is_(False),
             Link.short_code.isnot(None),
             Link.short_code != ''
-        )).order_by(Link.created_at.desc()).first()
+        )).order_by(Link.id.desc()).first()
 
     @dbconnection
     def find(self, db, **kwargs):
