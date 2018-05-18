@@ -2,7 +2,7 @@ import time
 import binascii
 import datetime
 
-from sqlalchemy import event, and_, or_
+from sqlalchemy import event, and_, or_, DDL
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 from sqlalchemy import (Column, String, Integer, Boolean,
@@ -13,7 +13,6 @@ from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection, utcnow
 from pygmy.exception.error import ShortURLUnavailable
 from pygmy.model.clickmeta import ClickMeta
-from pygmy.config import config
 
 
 class Link(Model):
@@ -27,10 +26,7 @@ class Link(Model):
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
     long_url_hash = Column(BigInteger, index=True)
-    if config.database['engine'] == 'mysql':
-        short_code = Column(Unicode(6, collation="utf8_bin"), unique=True, index=True, default=None)
-    else:
-        short_code = Column(Unicode(6), unique=True, index=True, default=None)
+    short_code = Column(Unicode(6), unique=True, index=True, default=None)
     description = Column(String(1000), default=None)
     owner = Column(Integer, default=None)
     clickmeta = relationship(
@@ -71,6 +67,16 @@ class Link(Model):
 
 event.listen(Link, 'after_insert', Link.generate_short_code)
 
+# adding event to modify field `short_code` when using mysql
+event.listen(
+    Link.__table__,
+    "after_create",
+    DDL(
+        "alter table {table} modify short_code varchar(6) CHARACTER SET utf8 COLLATE utf8_bin default null".format(
+            table=Link.__tablename__
+        )
+    ).execute_if(dialect='mysql')
+)
 
 class LinkManager:
     """Link model manager"""
