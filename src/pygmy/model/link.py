@@ -72,7 +72,8 @@ event.listen(
     Link.__table__,
     "after_create",
     DDL(
-        "alter table {table} modify short_code varchar(6) CHARACTER SET utf8 COLLATE utf8_bin default null".format(
+        "alter table {table} modify short_code varchar(6) "
+        "CHARACTER SET utf8 COLLATE utf8_bin default null".format(
             table=Link.__tablename__
         )
     ).execute_if(dialect='mysql')

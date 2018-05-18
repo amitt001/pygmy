@@ -1,4 +1,4 @@
-<p align="center"><img src="src/pyui/static/logo/logo.png" alt="pygmy" height="200px"></p>
+<p align="center"><img src="src/pyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 Pygmy
 =====
