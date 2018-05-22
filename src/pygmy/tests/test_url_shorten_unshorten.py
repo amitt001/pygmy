@@ -3,7 +3,6 @@ import tempfile
 from unittest import TestCase
 
 from pygmy.core.initialize import initialize_test
-from pygmy.app.link import shorten, unshorten
 from pygmy.config import config
 from pygmy.exception.auth import URLAuthFailed
 
@@ -30,6 +29,7 @@ class URLShortenUnshortenTestCases(TestCase):
         assert self.DBPath is not None
 
     def test_aaa_long_url_shorten(self):
+        from pygmy.app.link import shorten, unshorten
         data = shorten(self.long_url)
         assert isinstance(data, dict) is True
         assert data['short_code'] == 'b'
@@ -38,6 +38,7 @@ class URLShortenUnshortenTestCases(TestCase):
         assert data['is_custom'] is False
 
     def test_custom_short_url(self):
+        from pygmy.app.link import shorten, unshorten
         short_code = 'test'
         data = shorten(self.long_url, short_code=short_code)
         assert data['short_code'] == short_code
@@ -46,6 +47,7 @@ class URLShortenUnshortenTestCases(TestCase):
         assert udata['long_url'] == self.long_url
 
     def test_secret_short_url(self):
+        from pygmy.app.link import shorten, unshorten
         secret_key = 123
         data = shorten(self.long_url, secret_key=secret_key)
         assert data['is_protected'] is True
@@ -57,12 +59,14 @@ class URLShortenUnshortenTestCases(TestCase):
         assert udata['long_url'] == data['long_url']
 
     def test_short_url_unshorten(self):
+        from pygmy.app.link import shorten, unshorten
         data = shorten(self.long_url)
         udata = unshorten(data['short_code'])
         assert isinstance(udata, dict)
         assert udata['long_url'] == self.long_url
 
     def test_http_non_http_url(self):
+        from pygmy.app.link import shorten, unshorten
         urls = [
             'http://example.com',
             'example.com'
