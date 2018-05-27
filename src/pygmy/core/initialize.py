@@ -2,7 +2,7 @@ import sys
 import os
 
 from pygmy.config import config
-from pygmy.database.factory import DatabaseFactory
+
 
 _CONFIG_ENV_VAR = 'PYGMY_CONFIG_FILE'
 _CFG_PATHS = ['pygmy/config/pygmy.cfg', 'pygmy.cfg',
@@ -34,6 +34,7 @@ def initialize_config(config_path=None):
 
 
 def initialize_db():
+    from pygmy.database.factory import DatabaseFactory
     database = DatabaseFactory()
     config.db = database.create()
 

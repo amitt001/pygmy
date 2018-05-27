@@ -9,6 +9,7 @@ from sqlalchemy import (Column, String, Integer, Boolean,
                         BigInteger, Unicode, DateTime)
 from urllib.parse import urlparse
 
+from pygmy.config import config
 from pygmy.database.base import Model
 from pygmy.database.dbutil import dbconnection, utcnow
 from pygmy.exception.error import ShortURLUnavailable
@@ -26,7 +27,13 @@ class Link(Model):
     protocol = Column(String(10), default='http://')
     domain = Column(String(300), )
     long_url_hash = Column(BigInteger, index=True)
-    short_code = Column(Unicode(6), unique=True, index=True, default=None)
+
+    if config.database['engine'] == 'mysql':
+        short_code_data_type = Unicode(6, collation="utf8_bin")
+    else:
+        short_code_data_type = Unicode(6)
+    
+    short_code = Column(short_code_data_type, unique=True, index=True, default=None)
     description = Column(String(1000), default=None)
     owner = Column(Integer, default=None)
     clickmeta = relationship(

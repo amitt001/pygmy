@@ -2,7 +2,6 @@ import os
 import tempfile
 from unittest import TestCase
 
-from pygmy.app.link import shorten, unshorten, link_stats
 from pygmy.core.initialize import initialize_test
 from pygmy.config import config
 
@@ -29,6 +28,7 @@ class URLClickStatsTest(TestCase):
         assert self.DBPath is not None
 
     def test_clickmeta(self):
+        from pygmy.app.link import shorten, unshorten, link_stats
         data = shorten(self.long_url)
         assert isinstance(data, dict) is True
         assert link_stats(data['short_code'] + 'abc+') is None
