@@ -162,7 +162,7 @@ def link_auth(request):
                     code, secret_key=secret_key)
                 response = dict(clickmeta=clickmeta)
             else:
-                url_obj = pygmy_client.unshorten(code, secret_key=secret_key)
+                url_obj = pygmy_client.unshorten(code, secret=secret_key)
                 response = dict(long_url=url_obj['long_url'])
         except UnAuthorized:
             response = dict(error='Wrong secret key.')
