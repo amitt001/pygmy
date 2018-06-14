@@ -54,7 +54,7 @@ def login(request):
                            REFRESH_COOKIE_NAME: user_obj['refresh_token']}
             except InvalidInput as e:
                 return render(request, 'unauthorized.html',
-                              context=API_ERROR(e.args[0]))
+                              context=API_ERROR(e.args[0]), status=400)
             except ObjectNotFound as e:
                 return render(request, '404.html',
                               context=API_ERROR(e.args[0]), status=404)
@@ -77,8 +77,8 @@ def logout(request):
     if request.method == 'GET':
         response = redirect('/')
         cookie_keys = ['f_name', 'email', AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME]
-        _ = [response.delete_cookie(key=k) for k in cookie_keys]
-        response.delete_cookie(key=AUTH_COOKIE_NAME)
+        for k in cookie_keys:
+            response.delete_cookie(key=k)
         return response
 
 
@@ -98,7 +98,7 @@ def signup(request):
             context = {'email': user_obj['email'],
                        'f_name': user_obj['f_name'],
                        REFRESH_COOKIE_NAME: user_obj['refresh_token']}
-        except ObjectNotFound as e:
+        except (InvalidInput, ObjectNotFound) as e:
             return render(request, '400.html',
                           context=API_ERROR(e.args[0]), status=400)
         response = redirect('/')

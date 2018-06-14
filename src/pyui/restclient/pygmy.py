@@ -3,7 +3,7 @@ import requests
 
 from restclient.base import Client, catch_connection_error
 from restclient.errors import (
-    ObjectNotFound, UnAuthorized, LinkExpired)
+    ObjectNotFound, UnAuthorized, LinkExpired, InvalidInput)
 from urllib.parse import urlparse
 
 __all__ = [
