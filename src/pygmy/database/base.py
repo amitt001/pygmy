@@ -25,6 +25,7 @@ class BaseDatabase:
 
     def initialize(self, debug=False):
         self.url = config.database['url']
+        print(self.url)
         self._prepare(self.url)
         self.engine = create_engine(self.url, echo=debug)
         session = sessionmaker(bind=self.engine)

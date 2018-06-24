@@ -49,3 +49,7 @@ class Configuration:
         self.webservice_url = "{0}://{1}:{2}".format(
             self.schema, self.host, self.port)
 
+        if self.database['engine'] == 'sqlite3':
+            sqlite_path = os.path.abspath(self.database['data_dir'] + '/' + self.database['file_name'])
+            self.database['url'] = 'sqlite:///{}'.format(sqlite_path)
+
