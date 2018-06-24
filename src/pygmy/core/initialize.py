@@ -7,7 +7,7 @@ from pygmy.database.factory import DatabaseFactory
 _CONFIG_ENV_VAR = 'PYGMY_CONFIG_FILE'
 _CFG_PATHS = ['pygmy/config/pygmy.cfg', 'pygmy.cfg',
               '$HOME/.pygmy.cfg', '/etc/pygmy.cfg'
-              'tests/pygmy_test.cfg']
+              'tests/pygmy_test.cfg', 'pygmy/config/pygmy_test.cfg']
 
 
 def load_config_path(config_path=None):

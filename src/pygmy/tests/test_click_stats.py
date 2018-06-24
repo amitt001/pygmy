@@ -14,8 +14,8 @@ class URLClickStatsTest(unittest.TestCase):
 
     @classmethod
     def setup_class(cls):
-        currdir = os.path.dirname(os.path.abspath(__file__))
-        config_path = currdir + '/pygmy_test.cfg'
+        currdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_path = currdir + '/config/pygmy_test.cfg'
         db_path = tempfile.NamedTemporaryFile(suffix='.db').name
         cls.DBPath = "sqlite:///{}".format(db_path)
         initialize_test(config_path, db_url=cls.DBPath)
