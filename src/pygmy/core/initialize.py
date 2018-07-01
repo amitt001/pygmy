@@ -5,7 +5,7 @@ from pygmy.config import config
 from pygmy.database.factory import DatabaseFactory
 
 _CONFIG_ENV_VAR = 'PYGMY_CONFIG_FILE'
-_CFG_PATHS = ['pygmy/config/pygmy.cfg', 'pygmy.cfg',
+_CFG_PATHS = ['src/pygmy/config/pygmy.cfg', 'pygmy/config/pygmy.cfg', 'pygmy.cfg',
               '$HOME/.pygmy.cfg', '/etc/pygmy.cfg'
               'tests/pygmy_test.cfg', 'pygmy/config/pygmy_test.cfg']
 
@@ -29,6 +29,7 @@ def initialize_config(config_path=None):
         load_config_path(config_path)
     # If config not found, exit the program. Else call config initialize.
     if os.environ.get(_CONFIG_ENV_VAR) is None:
+        print('\nNo _CONFIG_ENV_VAR variable set. Exiting...')
         sys.exit(1)
     config.initialize()
 

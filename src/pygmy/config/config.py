@@ -50,6 +50,7 @@ class Configuration:
             self.schema, self.host, self.port)
 
         if self.database['engine'] == 'sqlite3':
-            sqlite_path = os.path.abspath(self.database['data_dir'] + '/' + self.database['file_name'])
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            sqlite_path = root_dir + '/' + self.database['data_dir'] + '/' + self.database['file_name']
             self.database['url'] = 'sqlite:///{}'.format(sqlite_path)
 

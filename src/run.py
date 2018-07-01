@@ -25,7 +25,7 @@ try:
     # Print any configuration error
     print_err(process[-1])
     print("Starting development server at http://127.0.0.1:8000/")
-    os.chdir('pyui')
+    os.chdir('src/pyui')
     process.append(subprocess.Popen(PYUI_ARGS, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE))
     # Print any configuration error
