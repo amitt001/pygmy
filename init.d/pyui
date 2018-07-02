@@ -1,13 +1,13 @@
 #!/bin/bash
-# init.d script for pyui app
+# init.d script for qolugo app
 
-NAME=pyui
+NAME=qolugo
 PIDFILE=/var/run/$NAME.pid
 
 PORT=8000
-APP_DIR=/opt/pygyco/src/pyui
+APP_DIR=/opt/pygyco/qolugo
 PYTHONPATH='/opt/pygyco/env/bin/gunicorn'
-APP_ARGS='--log-file /var/log/pygmy/uierror_logs.log --access-logfile /var/log/pygmy/uiacclogs.log --bind 127.0.0.1:8000 --workers 2 pyui.wsgi'
+APP_ARGS='--log-file /var/log/pygmy/uierror_logs.log --access-logfile /var/log/pygmy/uiacclogs.log --bind 127.0.0.1:8000 --workers 2 qolugo.wsgi'
 APP_STOP_ARGS='--stop $PIDFILE'
 APP_RELOAD_ARGS='--reload $PIDFILE'
 

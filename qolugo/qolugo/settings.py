@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'middleware.exception.ExceptionMiddleware'
 ]
 
-ROOT_URLCONF = 'pyui.urls'
+ROOT_URLCONF = 'qolugo.urls'
 
 TEMPLATES = [
     {
@@ -79,7 +79,7 @@ STATICFILES_FINDERS = (
 PROJECT_DIR = os.path.dirname(__file__)
 
 
-WSGI_APPLICATION = 'pyui.wsgi.application'
+WSGI_APPLICATION = 'qolugo.wsgi.application'
 
 
 # Database

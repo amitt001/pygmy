@@ -7,8 +7,10 @@ bootstrap.min.css
 # Directory
 *.egg-info/
 env
+env3
 .idea
 .vscode
 dist
 .DS_Store
 .cache
+.pytest_cache/

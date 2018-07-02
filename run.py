@@ -8,7 +8,7 @@ import subprocess
 
 
 PYGMY_API_ARGS = ['gunicorn', '-b 127.0.0.1:9119', '-w 1', 'pygmy.rest.wsgi:app']
-PYUI_ARGS = ['gunicorn', '-b 127.0.0.1:8000', '-w 1', 'pyui.wsgi']
+QOLUGO_ARGS = ['gunicorn', '-b 127.0.0.1:8000', '-w 1', 'qolugo.wsgi']
 process = []
 
 
@@ -25,8 +25,8 @@ try:
     # Print any configuration error
     print_err(process[-1])
     print("Starting development server at http://127.0.0.1:8000/")
-    os.chdir('src/pyui')
-    process.append(subprocess.Popen(PYUI_ARGS, stdout=subprocess.PIPE,
+    os.chdir('qolugo')
+    process.append(subprocess.Popen(QOLUGO_ARGS, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE))
     # Print any configuration error
     print_err(process[-1])

@@ -45,12 +45,12 @@ class Configuration:
         self.schema = self.cfg['pygmy']['schema']
         self.host = self.cfg['pygmy']['host']
         self.port = self.cfg['pygmy']['port']
-        self.secret = self.cfg['rest']['flask_secret']
+        self.secret = self.cfg['pygmy']['flask_secret']
         self.webservice_url = "{0}://{1}:{2}".format(
             self.schema, self.host, self.port)
 
         if self.database['engine'] == 'sqlite3':
-            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             sqlite_path = root_dir + '/' + self.database['data_dir'] + '/' + self.database['file_name']
             self.database['url'] = 'sqlite:///{}'.format(sqlite_path)
 

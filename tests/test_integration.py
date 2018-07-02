@@ -11,7 +11,7 @@ class PygmyIntegrationTest(unittest.TestCase):
 
     @classmethod
     def setup_class(cls):
-        cls.url = 'http://127.0.0.1:8000'
+        cls.url = 'http://127.0.0.1:8001'
 
     @classmethod
     def teardown_class(cls):

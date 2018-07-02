@@ -9,7 +9,7 @@ install:
     - pip install coveralls
 
 script:
-    - coverage run --source src/pygmy -m py.test
+    - coverage run --source pygmy -m py.test
 
 after_success:
     - coveralls

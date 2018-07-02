@@ -1,0 +1,1 @@
+from .link import LinkSchema

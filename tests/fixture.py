@@ -16,7 +16,7 @@ class PygmyApiTestServer:
     @classmethod
     def start_pygmy_api_server(cls):
         # os.chdir('src')
-        command = ['coverage', 'run', 'src/pygmy_api_run.py', 'test']
+        command = ['coverage', 'run', 'pygmy_api_run.py', 'test']
         cls.pygmyapi_proc = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Wait for server to start
@@ -36,8 +36,7 @@ class PygmyUiTestServer:
 
     @classmethod
     def start_pygmy_ui_server(cls):
-        # os.chdir('src/pyui')
-        command = ['gunicorn','-b 127.0.0.1:8000', '--chdir', 'src/pyui', '-w 1', 'pyui.wsgi']
+        command = ['gunicorn','-b 127.0.0.1:8001', '--chdir', 'qolugo', '-w 1', 'qolugo.wsgi']
         cls.pygmyui_proc = subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Wait for server to start

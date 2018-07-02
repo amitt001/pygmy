@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls import url, include
-import pyui.generic_views as views
+import qolugo.generic_views as views
 
 
 urlpatterns = [

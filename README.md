@@ -1,4 +1,4 @@
-<p align="center"><img src="src/pyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
+<p align="center"><img src="qolugo/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 Pygmy
 =====
@@ -55,7 +55,7 @@ Technical Info
 
 - Python 3, Javascript, JQuery, HTML, CSS
 - REST API: Flask
-- Pyui: Django(It serves the web user interface)
+- Qolugo: Django(It serves the web user interface)
 - DB: PostgreSQL/MySQL/SQLite
 - Others: SQLAlchmey, JWT
 
@@ -77,12 +77,12 @@ NOTE: **This module only supports Python 3. Make sure pip and virtualenv are bot
 Note:
 
 1. The project has two config files:
-    - pygmy.cfg: `src/pygmy/config/pygmy.cfg` rest API and pygmy core settings file
-    - settings.py: `src/pyui/pyui/settings.py` Django settings file
+    - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
+    - settings.py: `qolugo/qolugo/settings.py` Django settings file
 2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
-3. To modify config settings vim `src/pygmy/config/pygmy.cfg`
+3. To modify config settings vim `pygmy/config/pygmy.cfg`
 4. You can run pygmy shell present in src directory to run the program on terminal. `python shell`
-5. By default in `src/pyui/pyui/settings.py` DEBUG is set to True, set it to False in production
+5. By default in `qolugo/qolugo/settings.py` DEBUG is set to True, set it to False in production
 
 DB Setup:
 =========
@@ -98,7 +98,7 @@ Check correct port:
 
 `mysqladmin variables | grep port`
 
-Change below line in `src/pygmy/core/pygmy.cfg`:
+Change below line in `pygmy/core/pygmy.cfg`:
 
 ```
 engine: mysql
@@ -150,7 +150,7 @@ Get Link:
 Shell Usage
 ===========
 
-Open shell using ./pygmy/src/shell. Available context is pygmy, Config, DB, etc. See all context by using pygmy_context.
+Open shell using ./shell. Available context is pygmy, Config, DB, etc. See all context by using pygmy_context.
 
 Shorten a link:
 
@@ -225,7 +225,7 @@ Docstring:
 How Link Stats Are Generated?
 =============================
 
-For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://pygy.co/cm) database is used. It's in `src/pygmy/app` directory.
+For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://pygy.co/cm) database is used. It's in `pygmy/app` directory.
 
 How Pygmy Auth Token Works?
 ===========================
@@ -237,7 +237,7 @@ Development
 
 Run tests and generate a coverage report:
 
-`coverage run --source src/pygmy -m py.test`
+`coverage run --source pygmy -m py.test`
 
 See coverage report:
 
