@@ -8,6 +8,7 @@ from pygmy.exception.error import LinkExpired, ShortURLUnavailable
 from pygmy.model import LinkManager, UserManager
 from pygmy.validator import LinkSchema
 from pygmy.utilities.urls import validate_url
+from pygmy.core.logger import log
 
 
 class LongUrlApi(MethodView):
@@ -41,8 +42,13 @@ class LongUrlApi(MethodView):
                 return jsonify(dict(error='Invalid user')), 400
             data['owner'] = user.id
         if errors:
+            log.error('Error in the request payload %s', errors)
+            if errors.get('long_url'):
+                errors.update({'error': errors.get('long_url')})
             return jsonify(errors), 400
+
         long_url = data.pop('long_url')
+        log.info('Shortening url %s', long_url)
         link = self.manager.get(long_url)
         if link is None or (
                         data.get('is_custom') or
@@ -53,6 +59,7 @@ class LongUrlApi(MethodView):
             except ShortURLUnavailable as e:
                 return jsonify(dict(error=str(e))), 400
         result = self.schema.dump(link)
+        log.info('Url: %s shortened, response: %s', long_url, result.data.get('short_code'))
         return jsonify(result.data), 201
 
 

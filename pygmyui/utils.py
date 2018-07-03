@@ -1,6 +1,6 @@
 """A common util file to use methods across different django apps"""
 
-from restclient import PygmyApiClient
+from restclient.pygmy import PygmyApiClient
 from urllib.parse import urlparse
 
 

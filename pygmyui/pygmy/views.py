@@ -60,13 +60,6 @@ def link_shortener(request):
                               'unauthorized.html',
                               context=API_ERROR(e.args[0]),
                               status=401)
-            except InvalidInput as e:
-                context.update(dict(input_error=e.args[0]))
-                _ = [form.add_error(str(key), err)
-                     for key, err in e.args[0].items()]
-                # return render(request, 'pygmy/short_url.html', context=context)
-                return render(
-                    request, "invalid_form.html", context=context, status=400)
             except (ObjectNotFound, InvalidInput) as e:
                 return render(request, '400.html',
                               context=API_ERROR(e.args[0]), status=400)

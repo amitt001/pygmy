@@ -69,4 +69,3 @@ if __name__ == '__main__':
     for i in range(1000):
         sh = hd.shorten(1099)
         hd.decode(sh)
-    print(time.time() - t)

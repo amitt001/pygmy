@@ -1,4 +1,4 @@
-<p align="center"><img src="qolugo/static/logo/logov2.png" alt="pygmy" height="200px"></p>
+<p align="center"><img src="pygmyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 Pygmy
 =====
@@ -55,7 +55,7 @@ Technical Info
 
 - Python 3, Javascript, JQuery, HTML, CSS
 - REST API: Flask
-- Qolugo: Django(It serves the web user interface)
+- Pygmyui: Django(It serves the web user interface)
 - DB: PostgreSQL/MySQL/SQLite
 - Others: SQLAlchmey, JWT
 
@@ -78,11 +78,11 @@ Note:
 
 1. The project has two config files:
     - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
-    - settings.py: `qolugo/qolugo/settings.py` Django settings file
+    - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
 2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
 3. To modify config settings vim `pygmy/config/pygmy.cfg`
 4. You can run pygmy shell present in src directory to run the program on terminal. `python shell`
-5. By default in `qolugo/qolugo/settings.py` DEBUG is set to True, set it to False in production
+5. By default in `pygmyui/pygmyui/settings.py` DEBUG is set to True, set it to False in production
 
 DB Setup:
 =========
@@ -258,6 +258,26 @@ I would like to thank DigitalOcean for providing initial hosting to Pygmy projec
 License
 =======
 
-The MIT license (MIT)
+MIT License
+
+Copyright (c) 2017 Amit Tripathi(https://twitter.com/amitt019)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 [Read License Terms](https://github.com/amitt001/pygmy/blob/master/LICENSE)

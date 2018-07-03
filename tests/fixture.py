@@ -9,6 +9,9 @@ __all__ = [
     'run_test_server',
 ]
 
+_PYGMY_SUBPROCESS_LOG_FILE = 'pygmy/data/pygmy_subproc.log'
+_PYGMYUI_SUBPROCESS_LOG_FILE = 'pygmy/data/pygmyui_subproc.log'
+
 
 class PygmyApiTestServer:
     pygmyapi_proc = None
@@ -17,8 +20,9 @@ class PygmyApiTestServer:
     def start_pygmy_api_server(cls):
         # os.chdir('src')
         command = ['coverage', 'run', 'pygmy_api_run.py', 'test']
+        fobj = open(_PYGMY_SUBPROCESS_LOG_FILE, 'w')
         cls.pygmyapi_proc = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            command, stdout=fobj, stderr=fobj)
         # Wait for server to start
         time.sleep(1)
         # os.chdir('..')
@@ -36,9 +40,10 @@ class PygmyUiTestServer:
 
     @classmethod
     def start_pygmy_ui_server(cls):
-        command = ['gunicorn','-b 127.0.0.1:8001', '--chdir', 'qolugo', '-w 1', 'qolugo.wsgi']
+        command = ['gunicorn','-b 127.0.0.1:8001', '--chdir', 'pygmyui', '-w 1', 'pygmyui.wsgi']
+        fobj = open(_PYGMY_SUBPROCESS_LOG_FILE, 'w')
         cls.pygmyui_proc = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            command, stdout=fobj, stderr=fobj)
         # Wait for server to start
         time.sleep(1)
         return cls.pygmyui_proc

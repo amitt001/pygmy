@@ -4,6 +4,7 @@ import unittest
 import requests
 
 from pygmy.config import config
+from pygmyui.restclient.base import Client
 
 
 @pytest.mark.usefixtures('run_test_server')
@@ -12,6 +13,9 @@ class PygmyIntegrationTest(unittest.TestCase):
     @classmethod
     def setup_class(cls):
         cls.url = 'http://127.0.0.1:8001'
+        return_for_status = [200, 201, 205, 301, 302, 400, 401, 403, 404, 500, 502, 503]
+        Client.header = {}
+        cls.client = Client(cls.url, return_for_status=return_for_status, request_data_type='data')
 
     @classmethod
     def teardown_class(cls):
@@ -35,7 +39,7 @@ class PygmyIntegrationTest(unittest.TestCase):
     def token(self):
         if self._token is None:
             text = requests.get(self.url).text
-            self._token = text[2906:2878 + 92]
+            self._token = text[3003:3003+64]
         return self._token
 
     @property
@@ -79,19 +83,21 @@ class PygmyIntegrationTest(unittest.TestCase):
             'login-submit': 'Log In'
         }
 
-    def get_short_url_from_response(self, response):
+    def _get_short_url_from_response(self, response):
         """
         :param response: requests.response object
         :return: str
         """
+        # TODO: Fix this
         resp_text = response.text
         idx = resp_text.find(self.url)
-        return resp_text[idx:idx + 23]
+        idx_end = resp_text.find('" readonly autofocus id="short_url_blocked"')
+        return resp_text[idx:idx_end]
 
     def test_shorten(self):
         data = self.data
-        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
-        short_url = self.get_short_url_from_response(response)
+        response = self.client.call('/shorten', data=data, headers=self.headers)
+        short_url = self._get_short_url_from_response(response)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('value="{}"'.format(short_url) in response.text)
         self.assertTrue('Copy To Clipboard' in response.text)
@@ -106,7 +112,7 @@ class PygmyIntegrationTest(unittest.TestCase):
         # Test a different url
         data['long_url'] = 'https://www.python.org/'
         response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
-        short_url = self.get_short_url_from_response(response)
+        short_url = self._get_short_url_from_response(response)
         self.assertEqual(response.status_code, 200)
         self.assertTrue('value="{}"'.format(short_url) in response.text)
 
@@ -123,7 +129,7 @@ class PygmyIntegrationTest(unittest.TestCase):
         data['long_url'] = 'http://httpbin.com/'
         response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
-        short_url = self.get_short_url_from_response(response)
+        short_url = self._get_short_url_from_response(response)
 
         response = requests.get(short_url)
         self.assertEqual(response.status_code, 200)
@@ -203,7 +209,7 @@ class PygmyIntegrationTest(unittest.TestCase):
             data = self.data
             data['long_url'] = 'https://example.com/1'
             response = sess.post(self.url + '/shorten', data=data, headers=self.headers)
-            short_url = self.get_short_url_from_response(response)
+            short_url = self._get_short_url_from_response(response)
 
             self.assertEqual(response.status_code, 200)
             self.assertTrue('value="{}"'.format(short_url) in response.text)
@@ -226,35 +232,97 @@ class PygmyIntegrationTest(unittest.TestCase):
     # ###############
     # # Link Options
     # ###############
-    #
-    # def test_custom_links(self):
-    #     pass
-    #
+
+    def test_check_link_availability(self):
+        custom_code = 'logo'
+        requests.get(self.url + '/check?custom_code={}'.format(custom_code), 200)
+
+    def test_custom_taken_link_availability(self):
+        pass
+
+    def test_custom_taken_link_shorten(self):
+        pass
+
+    def test_custom_links(self):
+        data = self.data
+        data['custom_url'] = 'kaku'
+        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        short_url = self._get_short_url_from_response(response)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(data['custom_url'] in short_url)
+        self.assertEqual(requests.get(short_url).url, self.data['long_url'])
+        self.assertTrue('value="{}"'.format(short_url) in response.text)
+        self.assertTrue('{}+'.format(short_url) in response.text)
+
+        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        self.assertEqual(response.status_code, 400)
+
     # def test_secret_links(self):
-    #     pass
+    #     self._token = None
+    #     data = self.data
+    #     data['secret_key'] = 'saf3'
+    #     with requests.Session() as sess:
+    #         response = sess.post(self.url + '/shorten', data=data, headers=self.headers)
+    #         short_url = self._get_short_url_from_response(response)
+    #         self.assertEqual(response.status_code, 200)
+    #         secret_url = self.url + '/link/secret?next={}'.format(short_url.split('/')[-1])
+    #         resp = sess.get(short_url)
+    #         self.assertTrue(resp.url, secret_url)
     #
+    #         headers = self.headers
+    #         headers['Cookie'] = 'csrftoken={}'.format(resp.cookies['csrftoken'])
+    #         import pdb
+    #         pdb.set_trace()
+    #
+    #         resp = sess.post(self.url + '/link/secret', json={'code':short_url.split('/')[-1],'secret_key': data['secret_key'], 'csrfmiddlewaretoken': resp.cookies['csrftoken']}, headers=headers)
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertTrue('value="{}"'.format(short_url) in response.text)
+    #         self.assertTrue('{}+'.format(short_url) in response.text)
+
     # def test_expiry_links(self):
-    #     pass
+    #     data = self.data
+    #     data['remember_time'] = 1   # 1 second
+    #     response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+    #     short_url = self._get_short_url_from_response(response)
     #
-    # def test_custom_secret_links(self):
-    #     pass
-    #
-    # def test_custom_expiry_links(self):
-    #     pass
-    #
-    # def test_secret_expiry_links(self):
-    #     pass
-    #
-    # def test_custom_secret_expiry_links(self):
-    #     pass
-    #
+    #     self.assertEqual(requests.get(short_url).url, self.data['long_url'])
+    #     self.assertEqual(response.status_code, 200)
+    #     import time
+    #     time.sleep(1)
+    #     self.assertEqual(requests.get(short_url).status_code, 404)
+
+    def test_custom_secret_links(self):
+        pass
+
+    def test_custom_expiry_links(self):
+        pass
+
+    def test_secret_expiry_links(self):
+        pass
+
+    def test_custom_secret_expiry_links(self):
+        pass
+
+    def test_invalid_char_custom_link(self):
+        pass
+
     # ############
     # # Link stats
     # ############
-    #
-    # def test_link_hit(self):
-    #     pass
-    #
+
+    def test_link_hits(self):
+        data = self.data
+        data['long_url'] = 'http://example.com/index'
+        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        short_url = self._get_short_url_from_response(response)
+
+        # Open link
+        for i in range(2):
+            requests.get(short_url)
+            stats_page = requests.get(short_url + '+')
+            self.assertEqual(stats_page.status_code, 200)
+            self.assertTrue('Total Hits: {}'.format(i+1) in stats_page.text)
+
     # def test_link_stats(self):
     #     pass
     #
@@ -264,16 +332,27 @@ class PygmyIntegrationTest(unittest.TestCase):
     # def test_expired_link_stats(self):
     #     pass
     #
-    # def test_custom_link_stats(self):
-    #     pass
-    #
+    def test_custom_link_stats(self):
+        data = self.data
+        data['custom_url'] = 'ninja'
+        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        short_url = self._get_short_url_from_response(response)
+
+        # Open link
+        for i in range(2):
+            requests.get(short_url)
+            stats_page = requests.get(short_url + '+')
+            self.assertEqual(stats_page.status_code, 200)
+            self.assertTrue('Total Hits: {}'.format(i+1) in stats_page.text)
+
+    # #######################
     # # Test static resources
-    #
-    # def test_logo(self):
-    #     pass
-    #
-    # def test_logo_svg(self):
-    #     pass
-    #
-    # def test_favicon(self):
-    #     pass
+    # #######################
+
+    def test_logo_svg(self):
+        response = requests.get(self.url + '/static/logo/logov2.svg')
+        self.assertEqual(response.status_code, 200)
+
+    def test_logo_png(self):
+        response = requests.get(self.url + '/static/logo/logov2.png')
+        self.assertEqual(response.status_code, 200)

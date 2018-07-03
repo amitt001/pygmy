@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 from pygmy.config import config
+from pygmy.core.logger import log
 
 
 class BaseDatabase:
@@ -25,7 +26,7 @@ class BaseDatabase:
 
     def initialize(self, debug=False):
         self.url = config.database['url']
-        print(self.url)
+        log.info('DB URL: {}'.format(self.url))
         self._prepare(self.url)
         self.engine = create_engine(self.url, echo=debug)
         session = sessionmaker(bind=self.engine)

@@ -1,6 +1,10 @@
+import os
+import sys
 import requests
 
 from functools import wraps
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from restclient.errors import (
     RestAPIConnectionError, RestClientException, ObjectNotFound,
     LinkExpired, UnAuthorized, InvalidInput)
@@ -32,17 +36,22 @@ def catch_connection_error(func):
 class Client:
     """This is an Abstract Base Class"""
 
-    def __init__(self, rest_url, username, password):
+    def __init__(
+            self, base_url, basic_auth=False, username=None, password=None,
+            request_data_type='json', return_for_status=[]):
         """Pass username and password as None when basic auth is disabled"""
-        self.rest_url = rest_url
+        self.rest_url = base_url
         self.basic_auth = None
-        if password is None:
-            raise RestClientException(
-                '`username` is required when `password` is given')
-        if username is None:
-            raise RestClientException(
-                '`password` is required when `username` is given')
-        if not (username is None and password is None):
+        self.request_data_type = request_data_type
+        if return_for_status and not isinstance(return_for_status, list):
+            return_for_status = [return_for_status]
+        self.return_for_status = return_for_status
+
+        if basic_auth is True:
+            if password is None or username is None:
+                raise RestClientException(
+                    '`username` and `password` are required when `basic_auth` is True'
+                )
             self.basic_auth = requests.auth.HTTPBasicAuth(username, password)
 
     @property
@@ -54,7 +63,7 @@ class Client:
         return urljoin(base_url, path)
 
     def call(self, path, data=None, method=None,
-             return_for_status=[], header_param=None):
+             return_for_status=[], headers=None):
         """
         The wrapper over `requests` library.
         :param path: url_path
@@ -66,29 +75,37 @@ class Client:
             being handled here, so that calling method can handle it in it's
             own custom way.
         :type return_for_status: str/list
-        :param header_param: Add parameters to header
-        :type header_param: dict
+        :param headers: Add parameters to header
+        :type headers: dict
         :return:
         """
-        headers = self.header
-        headers.update({'User-Agent': 'Pygmy API REST client'})
-        if header_param:
-            headers.update(header_param)
+        header_params = self.header
+        header_params.update({'User-Agent': 'Pygmy API REST client'})
+        if headers:
+            header_params.update(headers)
+
         request_param = dict(
-            url=self.makeurl(self.rest_url, path),
-            auth=self.basic_auth, headers=headers)
+            url=self.makeurl(self.rest_url, path), auth=self.basic_auth, headers=header_params
+        )
+
         _call = requests.get
         if method is None:
             method = 'GET' if data is None else 'POST'
         if method.upper() == 'POST':
             _call = requests.post
-            request_param['json'] = data
+            if self.request_data_type == 'json':
+                request_param['json'] = data
+            else:
+                request_param['data'] = data
         # Make rest call and handle the response
         response = _call(**request_param)
+
         if return_for_status and not isinstance(return_for_status, list):
             return_for_status = [return_for_status]
+        return_for_status = self.return_for_status + return_for_status
         if response.status_code in return_for_status:
             return response
+
         error_object = self.error_object_from_response(response)
         if error_object is not None:
             raise error_object

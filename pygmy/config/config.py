@@ -9,18 +9,21 @@ class Configuration:
     def __init__(self):
         # default sqlite3
         # TODO: Take this from cfg files
+        self.default_config_path = 'pygmy/config/pygmy.cfg'
         self.cfg = None
         self.debug = False
         self.schema = None
         self.host = None
         self.port = None
         self.secret = None
+        self.logging = None
         self.webservice_url = None
         self.database = None
+        self.initialize()
 
     def _read_cfg(self):
         self.cfg = ConfigParser()
-        self.cfg.read(os.environ[_CONFIG_ENV_VAR])
+        self.cfg.read(os.environ.get(_CONFIG_ENV_VAR, self.default_config_path))
 
     def __getattr__(self, name):
         """Add sections dynamically. With this no need to define
@@ -46,6 +49,7 @@ class Configuration:
         self.host = self.cfg['pygmy']['host']
         self.port = self.cfg['pygmy']['port']
         self.secret = self.cfg['pygmy']['flask_secret']
+        self.logging = self.cfg['logging']
         self.webservice_url = "{0}://{1}:{2}".format(
             self.schema, self.host, self.port)
 

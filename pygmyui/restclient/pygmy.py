@@ -25,7 +25,7 @@ class PygmyApiClient(Client):
         self.HOSTNAME = '{}{}'.format(scheme, hostname)
         self.request = request
         self.cookies = None if request is None else request.COOKIES
-        super().__init__(rest_url, username, password)
+        super().__init__(rest_url, basic_auth=True, username=username, password=password)
 
     def __repr__(self):
         return '<PygmyApiClient ({0.name}:{0.password}) {0.rest_url}>'.format(
@@ -129,7 +129,7 @@ class PygmyApiClient(Client):
         """
         short_code = urlparse(short_url_code).path.strip('/')
         url_path = '/api/unshorten?url=' + self.rest_url + '/' + short_code
-        r = self.call(url_path, header_param=dict(secret_key=secret))
+        r = self.call(url_path, headers=dict(secret_key=secret))
         resp = r.json()
         if resp.get('short_code'):
             resp['short_url'] = self.makeurl(self.HOSTNAME, resp['short_code'])

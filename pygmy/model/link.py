@@ -177,6 +177,7 @@ class LinkManager:
         try:
             db.commit()
         except IntegrityError:
+            db.rollback()
             raise ShortURLUnavailable('Short URL already taken or unavailable')
         return self.link
 
