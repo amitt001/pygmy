@@ -1,9 +1,7 @@
 import pytest
-import sqlite3
 import unittest
 import requests
 
-from pygmy.config import config
 from pygmyui.restclient.base import Client
 
 
@@ -22,14 +20,14 @@ class PygmyIntegrationTest(unittest.TestCase):
         pass
 
     def teardown_method(self, _):
+        # self.conn = sqlite3.connect(config.database['url'])
+        # self.cur = self.conn.cursor()
+        # tables = ['clickmeta', 'link', 'user']
+        # for table in tables:
+        #     self.cur.execute('DELETE FROM {}'.format(table))
+        # self.conn.commit()
+        # self.conn.close()
         return
-        self.conn = sqlite3.connect(config.database['url'])
-        self.cur = self.conn.cursor()
-        tables = ['clickmeta', 'link', 'user']
-        for table in tables:
-            self.cur.execute('DELETE FROM {}'.format(table))
-        self.conn.commit()
-        self.conn.close()
 
     def setup_method(self, _):
         self._token = None
@@ -235,13 +233,34 @@ class PygmyIntegrationTest(unittest.TestCase):
 
     def test_check_link_availability(self):
         custom_code = 'logo'
-        requests.get(self.url + '/check?custom_code={}'.format(custom_code), 200)
+        response = requests.get(self.url + '/check?custom_code={}'.format(custom_code))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json().get('ok'))
 
     def test_custom_taken_link_availability(self):
-        pass
+        custom_code = 'logo'
+        response = requests.get(self.url + '/check?custom_code={}'.format(custom_code))
+        self.assertTrue(response.json().get('ok'))
+        data = self.data
+        data['custom_url'] = custom_code
+        requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        response = requests.get(self.url + '/check?custom_code={}'.format(custom_code))
+        self.assertFalse(response.json().get('ok'))
 
     def test_custom_taken_link_shorten(self):
-        pass
+        custom_code = 'go'
+        response = requests.get(self.url + '/check?custom_code={}'.format(custom_code))
+        self.assertTrue(response.json().get('ok'))
+
+        data = self.data
+        data['custom_url'] = custom_code
+        requests.post(self.url + '/shorten', data=data, headers=self.headers)
+
+        response = requests.get(self.url + '/check?custom_code={}'.format(custom_code))
+        self.assertFalse(response.json().get('ok'))
+
+        response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
+        self.assertEqual(response.status_code, 400)
 
     def test_custom_links(self):
         data = self.data

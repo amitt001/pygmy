@@ -130,6 +130,10 @@ def formatted_link_stats(link):
         'time_series_base': click_meta.get('time_base'),
         'time_stats': click_meta.get('timestamp_hits', {}),
     }
+
+    # Hide original/long_url in case of protected links
+    if link.is_protected is True:
+        link_info['long_url'] = ''
     return {**link_info, **click_info}
 
 

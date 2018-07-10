@@ -98,8 +98,6 @@ def resolve(code):
     secret_key = request.headers.get('secret_key')
     try:
         # check if link is not a secret link
-        long_url = resolve_short(
-            code.strip('+'), secret_key=secret_key)
         if code.startswith('+') or code.endswith('+'):
             stats = link_stats(code)
             response = jsonify(stats)
