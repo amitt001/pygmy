@@ -122,12 +122,6 @@ def short_link_stats(request, code):
                 key=operator.itemgetter(1),
                 reverse=True)
             context = dict(clickmeta=clickmeta)
-        except UnAuthorized:
-            # return redirect('/link/secret?next={}'.format(code))
-            return render(request, '404.html',
-                          context=API_ERROR(dict(
-                              error='Secret link stats are not yet supported.')
-                          ), status=404)
         except (ObjectNotFound, LinkExpired) as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)

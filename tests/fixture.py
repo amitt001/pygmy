@@ -58,6 +58,7 @@ class PygmyUiTestServer:
 @pytest.fixture(scope='class')
 def run_test_server(request):
     # Setup
+    os.environ.setdefault('PYGMYUI_TEST', 'true')
     request.cls.pygmyapi_proc = PygmyApiTestServer.start_pygmy_api_server()
     request.cls.pygmyui_proc = PygmyUiTestServer.start_pygmy_ui_server()
     yield
