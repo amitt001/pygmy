@@ -13,7 +13,7 @@ Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://py
 - [Pygmy](#pygmy)
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
-- [Technical Info](#tech-used)
+- [Technical Info](#technical-info)
 - [Installaton/Setup](#installatonsetup)
 - [DB Setup:](#db-setup)
     - [Use MySQL](#use-mysql)
@@ -73,12 +73,14 @@ NOTE: **This module only supports Python 3. Make sure pip and virtualenv are bot
 4. `cd src`
 5. `python run.py` (It runs Flask and Django servers using gunicorn)
 6. Visit `127.0.0.1:8000` to use the app
+7. Logs can be viewed at `pygmy/data/pygmy.log`
 
 Note:
 
 1. The project has two config files:
     - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
     - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
+2.Both the files have aparallel <name>_test.<ext> config files to configure it for tests.
 2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
 3. To modify config settings vim `pygmy/config/pygmy.cfg`
 4. You can run pygmy shell present in src directory to run the program on terminal. `python shell`
@@ -235,11 +237,13 @@ It uses JWT. When user logs in using username and password two tokens are genera
 Development
 ===========
 
+If you find any bug, have a question or a general feature request. Open an issue on the 'Issue' page.
+
 Run tests and generate a coverage report:
 
 `coverage run --source pygmy -m py.test`
 
-See coverage report:
+See coverage report(Coverage is bad because the coverage for integration tests is not generated yet):
 
 `coverage report`
 

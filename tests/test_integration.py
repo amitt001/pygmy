@@ -287,12 +287,12 @@ class PygmyIntegrationTest(unittest.TestCase):
     #         secret_url = self.url + '/link/secret?next={}'.format(short_url.split('/')[-1])
     #         resp = sess.get(short_url)
     #         self.assertTrue(resp.url, secret_url)
-    #
+
     #         headers = self.headers
     #         headers['Cookie'] = 'csrftoken={}'.format(resp.cookies['csrftoken'])
     #         import pdb
     #         pdb.set_trace()
-    #
+
     #         resp = sess.post(self.url + '/link/secret', json={'code':short_url.split('/')[-1],'secret_key': data['secret_key'], 'csrfmiddlewaretoken': resp.cookies['csrftoken']}, headers=headers)
     #         self.assertEqual(resp.status_code, 200)
     #         self.assertTrue('value="{}"'.format(short_url) in response.text)
@@ -303,27 +303,27 @@ class PygmyIntegrationTest(unittest.TestCase):
     #     data['remember_time'] = 1   # 1 second
     #     response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
     #     short_url = self._get_short_url_from_response(response)
-    #
+
     #     self.assertEqual(requests.get(short_url).url, self.data['long_url'])
     #     self.assertEqual(response.status_code, 200)
     #     import time
     #     time.sleep(1)
     #     self.assertEqual(requests.get(short_url).status_code, 404)
 
-    def test_custom_secret_links(self):
-        pass
+    # def test_custom_secret_links(self):
+    #     pass
 
-    def test_custom_expiry_links(self):
-        pass
+    # def test_custom_expiry_links(self):
+    #     pass
 
-    def test_secret_expiry_links(self):
-        pass
+    # def test_secret_expiry_links(self):
+    #     pass
 
-    def test_custom_secret_expiry_links(self):
-        pass
+    # def test_custom_secret_expiry_links(self):
+    #     pass
 
-    def test_invalid_char_custom_link(self):
-        pass
+    # def test_invalid_char_custom_link(self):
+    #     pass
 
     # ############
     # # Link stats
