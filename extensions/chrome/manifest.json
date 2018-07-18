@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "your ShortURL service (pygmy)",
+  "version": "0.4",
+    "description": "pygmy shorturl Chrome extension",
+  "icons": {
+    "16": "icon.png"
+  },
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Create short URLs",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "permissions": [
+    "tabs",
+    "clipboardWrite",
+    "activeTab",
+    "storage"
+  ]
+}

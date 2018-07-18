@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ShortURL</title>
+  <script src="clipboard.min.js"></script>
+  <script src="popup.js"></script>
+</head>
+<body>
+  <div align="center">
+    <fieldset>
+      <label for="long-url"><strong>Current tab URL:</strong></label>
+      <input type="text" size="40" id="long-url" value="long url"><br />
+      <input type="button" id="short" value="Make Short"><br /><br />
+      <label for="short-url"><strong>Short URL:</strong></label>
+      <div id="short-url">--- not defined ---</div><br />
+      <input type="button" id="cc" data-clipboard-target="#short-url" value="Copy to clipboard"><br / -->
+      <div id="status"></div>
+    </fieldset>
+    <br />
+    <div id="backend"></div>
+  </div>
+</body>
+</html>
