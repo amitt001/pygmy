@@ -59,7 +59,7 @@ Technical Info
 - DB: PostgreSQL/MySQL/SQLite
 - Others: SQLAlchmey, JWT
 
-Installaton/Setup
+Installation/Setup
 =================
 
 NOTE: **This module only supports Python 3. Make sure pip and virtualenv are both python 3 based versions.**
