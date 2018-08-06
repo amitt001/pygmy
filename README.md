@@ -25,6 +25,8 @@ Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://py
 - [How Link Stats Are Generated?](#how-link-stats-are-generated)
 - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
 - [Development](#development)
+- [Browser extension](#browser-extension)
+    - [Development of the extension](#development-of-the-extension)
 - [Contributions](#contributions)
 - [Sponsorship](#sponsorship)
 - [License](#license)
@@ -247,10 +249,24 @@ See coverage report(Coverage is bad because the coverage for integration tests i
 
 `coverage report`
 
+Browser extension
+=================
+
+Chrome extension is available on Chrome Store with the name: [your ShortURL service (pygmy)](https://chrome.google.com/webstore/detail/your-shorturl-service-pyg/kchefoihlnhfcaphckpopdknaolfegkp).
+
+Development of the extension
+----------------------------
+
+* Enable development switch button on Crhome extension manager section
+* Load extension from a folder
+* Now you can start evolving the code and reload it with just one click on the Chrome extensions
+
+
 Contributions
 =============
 
-Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
+* Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
+* [oriolrius](http://oriolrius.cat) Chrome extension.
 
 Sponsorship
 ===========
