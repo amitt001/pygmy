@@ -3,7 +3,6 @@ import time
 import atexit
 import pytest
 import subprocess
-import coverage.data
 
 __all__ = [
     'run_test_server',
@@ -19,7 +18,7 @@ class PygmyApiTestServer:
     @classmethod
     def start_pygmy_api_server(cls):
         # os.chdir('src')
-        command = ['coverage', 'run', 'pygmy_api_run.py', 'test']
+        command = ['python', 'pygmy_api_run.py', 'test']
         fobj = open(_PYGMY_SUBPROCESS_LOG_FILE, 'w')
         cls.pygmyapi_proc = subprocess.Popen(
             command, stdout=fobj, stderr=fobj)

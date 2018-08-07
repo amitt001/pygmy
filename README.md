@@ -1,7 +1,7 @@
 <p align="center"><img src="pygmyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
-Pygmy
-=====
+# Pygmy
+
 
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
 
@@ -14,7 +14,7 @@ Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://py
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Technical Info](#technical-info)
-- [Installaton/Setup](#installatonsetup)
+- [Installation/Setup](#installationsetup)
 - [DB Setup:](#db-setup)
     - [Use MySQL](#use-mysql)
     - [Use Postgresql](#use-postgresql)
@@ -39,8 +39,7 @@ The architecture is very loosely coupled which allows custom integrations easily
 - A REST API on top. Uses Flask framework
 - The UI layer for rendering the UI. It uses Django framework
 
-Features
-========
+## Features
 
 - URL shortner
 - Customized short URL's(ex: `pygy.co/pygmy`)
@@ -50,47 +49,48 @@ Features
 - User dashboard
 - Link Analytics(add + to the tiny URL to get link stats)
 
-Technical Info
-==============
+## Technical Info
 
 - Python 3, Javascript, JQuery, HTML, CSS
 - REST API: Flask
 - Pygmyui: Django(It serves the web user interface)
 - DB: PostgreSQL/MySQL/SQLite
 - Others: SQLAlchmey, JWT
+- Docker
 
-Installation/Setup
-=================
+## Installation/Setup
 
-NOTE: **This module only supports Python 3. Make sure pip and virtualenv are both python 3 based versions.**
-      **To install Python 3 on Mac: http://docs.python-guide.org/en/latest/starting/install3/osx/**
+### Docker
+
+1. `docker run -it -p 8000:8000 amit19/pygmy`
+2. Open http://localhost:8000 in your browser
+
+### Manual(from source)
 
 1. Clone `git clone https://github.com/amitt001/pygmy.git & cd pygmy`
 2. (Optional) Install virtualenv (optional but recommended)
     - `virtualenv -p python3 env`
     - `source env/bin/activate`
 3. Install dependencies: `pip3 install -r requirements.txt` (if you are using MySQL or PostgreSQL check [DB setup](#db-setup) section)
-4. `cd src`
-5. `python run.py` (It runs Flask and Django servers using gunicorn)
-6. Visit `127.0.0.1:8000` to use the app
-7. Logs can be viewed at `pygmy/data/pygmy.log`
+4. `python run.py` (It runs Flask and Django servers using gunicorn)
+5. Visit `127.0.0.1:8000` to use the app
+6. Logs can be viewed at `pygmy/data/pygmy.log`
 
 Note:
 
-1. The project has two config files:
+ - **This module only supports Python 3. Make sure pip and virtualenv are both python 3 based versions.**(To install Python 3 on Mac: http://docs.python-guide.org/en/latest/starting/install3/osx/)
+ - The project has two config files:
     - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
     - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
-2.Both the files have aparallel <name>_test.<ext> config files to configure it for tests.
-2. SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
-3. To modify config settings vim `pygmy/config/pygmy.cfg`
-4. You can run pygmy shell present in src directory to run the program on terminal. `python shell`
-5. By default in `pygmyui/pygmyui/settings.py` DEBUG is set to True, set it to False in production
+ - Both the files have aparallel <name>_test.<ext> config files to configure it for tests.
+ - SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
+ - To modify config settings vim `pygmy/config/pygmy.cfg`
+ - You can run pygmy shell present in src directory to run the program on terminal. `python shell`
+ - By default in `pygmyui/pygmyui/settings.py` DEBUG is set to True, set it to False in production
 
-DB Setup:
-=========
+## DB Setup:
 
-Use MySQL
----------
+### Use MySQL
 
 First install `pymysql`:
 
@@ -113,22 +113,19 @@ Enter MySQL URL
 
 Note: Better using Mysql with version > `5.6.5` to use default value of `CURRENT_TIMESTAMP` for `DATETIME`.
 
-Use Postgresql
---------------
+### Use Postgresql
 
 `pip install psycopg2`
 
 `postgres://amit@127.0.0.1:5432/pygmy`
 
-Use SQLite
-----------
+### Use SQLite
 
 SQLite is natively supported in Python
 
 `sqlite:////var/lib/pygmy/pygmy.db`
 
-Using Pygmy API
-===============
+## Using Pygmy API
 
 Create User:
 ------------
@@ -141,6 +138,8 @@ Create User:
     }'
 
 
+*To be updated soon*
+
 Get User:
 
 Get All User Link:
@@ -149,8 +148,7 @@ Create Link:
 
 Get Link:
 
-Shell Usage
-===========
+## Shell Usage
 
 Open shell using ./shell. Available context is pygmy, Config, DB, etc. See all context by using pygmy_context.
 
@@ -224,18 +222,15 @@ Docstring:
     URL value.
 ```
 
-How Link Stats Are Generated?
-=============================
+###### How Link Stats Are Generated?
 
 For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://pygy.co/cm) database is used. It's in `pygmy/app` directory.
 
-How Pygmy Auth Token Works?
-===========================
+###### How Pygmy Auth Token Works?
 
 It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auht token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
 
-Development
-===========
+## Development
 
 If you find any bug, have a question or a general feature request. Open an issue on the 'Issue' page.
 
@@ -247,20 +242,17 @@ See coverage report(Coverage is bad because the coverage for integration tests i
 
 `coverage report`
 
-Contributions
-=============
+## Contributions
 
 Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
 
-Sponsorship
-===========
+## Sponsorship
 
 I would like to thank DigitalOcean for providing initial hosting to Pygmy project. Pygy.co is hosted on DigitalOcean.
 
 <a href="https://www.digitalocean.com/"><img src="https://i.imgur.com/6cYodyH.png"></a>
 
-License
-=======
+## License
 
 MIT License
 

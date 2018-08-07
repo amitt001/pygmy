@@ -8,7 +8,7 @@ import subprocess
 
 
 PYGMY_API_ARGS = ['gunicorn', '-b 127.0.0.1:9119', '-w 1', 'pygmy.rest.wsgi:app']
-PYGMYUI_ARGS = ['gunicorn', '-b 127.0.0.1:8000', '-w 1', 'pygmyui.wsgi']
+PYGMYUI_ARGS = ['gunicorn', '-b 0.0.0.0:8000', '-w 1', 'pygmyui.wsgi']
 process = []
 
 
