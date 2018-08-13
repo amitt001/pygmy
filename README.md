@@ -2,32 +2,38 @@
 
 # Pygmy
 
-
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 
 Live version of this project @ [https://pygy.co](https://pygy.co)
 
 Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
+*Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any money out of this project or website.
+If you would like to supprt the project, I can be contacted on my email of sources listed on websites contact page.*
+
 # Table of Contents
 - [Pygmy](#pygmy)
 - [Table of Contents](#table-of-contents)
-- [Features](#features)
-- [Technical Info](#technical-info)
-- [Installation/Setup](#installationsetup)
-- [DB Setup:](#db-setup)
-    - [Use MySQL](#use-mysql)
-    - [Use Postgresql](#use-postgresql)
-    - [Use SQLite](#use-sqlite)
-- [Using Pygmy API](#using-pygmy-api)
+    - [Features](#features)
+    - [Technical Info](#technical-info)
+    - [Installation/Setup](#installationsetup)
+        - [Docker](#docker)
+        - [Manual(from source)](#manualfrom-source)
+    - [DB Setup:](#db-setup)
+        - [Use MySQL](#use-mysql)
+        - [Use Postgresql](#use-postgresql)
+        - [Use SQLite](#use-sqlite)
+    - [Using Pygmy API](#using-pygmy-api)
     - [Create User:](#create-user)
-- [Shell Usage](#shell-usage)
-- [How Link Stats Are Generated?](#how-link-stats-are-generated)
-- [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
-- [Development](#development)
-- [Contributions](#contributions)
-- [Sponsorship](#sponsorship)
-- [License](#license)
+    - [Shell Usage](#shell-usage)
+                    - [How Link Stats Are Generated?](#how-link-stats-are-generated)
+                    - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
+    - [Development](#development)
+    - [Contributions](#contributions)
+    - [Sponsorship](#sponsorship)
+    - [License](#license)
 
 Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
 
@@ -62,8 +68,9 @@ The architecture is very loosely coupled which allows custom integrations easily
 
 ### Docker
 
-1. `docker run -it -p 8000:8000 amit19/pygmy`
-2. Open http://localhost:8000 in your browser
+1. In terminal run this command: `docker pull amit19/pygmy`
+2. Then run the container: `docker run -it -p 8000:8000 amit19/pygmy`
+3. Open http://localhost:8000 in your browser
 
 ### Manual(from source)
 
@@ -233,6 +240,13 @@ It uses JWT. When user logs in using username and password two tokens are genera
 ## Development
 
 If you find any bug, have a question or a general feature request. Open an issue on the 'Issue' page.
+
+To contribute to project:
+
+1. Clone the repo and make changes
+2. Build the code: `docker build pygmy`
+3. Test the chnages by running: `docker run -it -p 8000:8000 pygmy`
+4. The website will be available at: http://127.0.0.1:8000/
 
 Run tests and generate a coverage report:
 

@@ -8,8 +8,9 @@ LABEL vendor="Amit Tripathi"
 RUN apt update -y && apt install python3-pip -y
 
 WORKDIR /pygmy
-ADD . /pygmy
+ADD ./requirements.txt /pygmy/requirements.txt
 RUN pip3 install -r requirements.txt
+ADD . /pygmy
 
 EXPOSE 8000
 
