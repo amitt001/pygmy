@@ -32,6 +32,7 @@ If you would like to supprt the project, I can be contacted on my email of sourc
                     - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
     - [Development](#development)
     - [Contributions](#contributions)
+    - [Donations](#donations)
     - [Sponsorship](#sponsorship)
     - [License](#license)
 
@@ -134,7 +135,7 @@ SQLite is natively supported in Python
 
 ## Using Pygmy API
 
-Create User:
+## Create User:
 ------------
 
     curl -XPOST http://127.0.0.1:9119/api/user/1 -H 'Content-Type: application/json' -d '{
@@ -259,6 +260,11 @@ See coverage report(Coverage is bad because the coverage for integration tests i
 ## Contributions
 
 Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
+
+## Donations
+If this project help you reduce time to develop, you can buy me a cup of coffee :)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://pygy.co/palamit)
 
 ## Sponsorship
 
