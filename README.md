@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://pygy.co/palamit)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
 Live version of this project @ [https://pygy.co](https://pygy.co)
 
@@ -265,7 +265,7 @@ Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
 ## Donations
 If this project help you reduce time to develop, you can buy me a cup of coffee :)
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://pygy.co/palamit)
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
 ## Sponsorship
 
