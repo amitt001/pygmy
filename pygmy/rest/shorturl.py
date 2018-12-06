@@ -73,9 +73,6 @@ class ShortURLApi(MethodView):
     def get(self):
         secret = request.headers.get('secret_key')
         short_url = request.args.get('url')
-        is_valid = validate_url(short_url)
-        if is_valid is False:
-            return jsonify(dict(error='Invalid URL.')), 400
         try:
             long_url = unshorten(short_url, secret_key=secret,
                                  query_by_code=True, request=request)

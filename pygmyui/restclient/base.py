@@ -1,6 +1,7 @@
 import os
 import sys
 import requests
+import logging
 
 from functools import wraps
 
@@ -20,6 +21,8 @@ BAD_REQUEST = 400
 UNAUTHORIZED = 401
 FORBIDDEN = 403
 RESOURCE_EXPIRED = 410
+
+logger = logging.getLogger(__name__)
 
 
 def catch_connection_error(func):
@@ -108,6 +111,7 @@ class Client:
 
         error_object = self.error_object_from_response(response)
         if error_object is not None:
+            logger.debug('Reveived error response: %s', response.text)
             raise error_object
         return response
 

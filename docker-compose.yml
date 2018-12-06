@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+
+  database:
+    image: postgres:11
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+       - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: pygmy
+
+  pygmy:
+    image: pygmy:develop
+    restart: always
+    build: .
+    # ports:
+    #  - "9119:9119"
+    links:
+      - database
+    environment:
+      - DB_PASSWORD=root
+      - DB_USER=root
+      - DB_NAME=pygmy
+      - DB_HOST=database
+      - DB_PORT=5432
+    volumes:
+     - .:/pygmy
+    command: gunicorn --log-file /var/log/pygmy/error_logs.log --access-logfile /var/log/pygmy/acclogs.log --log-level DEBUG --bind 0.0.0.0:9119 --workers 2 pygmy.rest.wsgi:app
+    depends_on:
+      - database
+
+  pygmyui:
+    image: pygmy:develop
+    restart: always
+    build: .
+    ports:
+     - "8000:8000"
+    links:
+      - pygmy
+    environment:
+      - PYGMY_API_ADDRESS=pygmy
+    command: sh -c "cd pygmyui && gunicorn --log-file /var/log/pygmy/uierror_logs.log --access-logfile /var/log/pygmy/uiacclogs.log --bind 0.0.0.0:8000 --workers 2 pygmyui.wsgi && cd .."
+    depends_on:
+      - pygmy
+
+volumes:
+  pgdata:

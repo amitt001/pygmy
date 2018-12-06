@@ -18,6 +18,14 @@ class PygmyApiClient(Client):
     """Pygmy REST API wrapper class"""
 
     def __init__(self, rest_url, username, password, hostname, request=None):
+        """
+        Arguments:
+            rest_url {[type]} -- Pygmy API url
+            username {[type]} -- api username
+            password {[type]} -- api password
+            hostname {[type]} -- the pygmy website/ui hostname. Used to create the short url
+        """
+
         self.name = username
         self.password = password
         self.rest_url = rest_url

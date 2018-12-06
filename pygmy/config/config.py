@@ -55,6 +55,7 @@ class Configuration:
 
         if self.database['engine'] == 'sqlite3':
             root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            sqlite_path = root_dir + '/' + self.database['data_dir'] + '/' + self.database['file_name']
+            data_dir = self.database.get('sqlite_data_dir') or 'data'
+            file_name = self.database.get('sqlite_db_file_name') or 'pygmy.db'
+            sqlite_path = root_dir + '/' + data_dir + '/' + file_name
             self.database['url'] = 'sqlite:///{}'.format(sqlite_path)
-
