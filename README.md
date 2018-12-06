@@ -302,7 +302,10 @@ See coverage report(Coverage is bad because the coverage for integration tests i
 Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
 
 ## Donations
-If this project help you reduce time to develop, you can help me keep this project running by donating any amount you see fit :)
+
+I do not run any ads on this project. The server(currently paid by DigitalOcean till Jan 2019) or domain cost, I pay out of my pocket. However, this can't continue forever.
+
+If you find this project helpful, you can help me keep this project running in future by donating any amount you see fit :)
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
