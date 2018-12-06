@@ -15,7 +15,7 @@ services:
       POSTGRES_DB: pygmy
 
   pygmy:
-    image: pygmy:develop
+    image: amit19/pygmy
     restart: always
     build: .
     # ports:
@@ -35,7 +35,7 @@ services:
       - database
 
   pygmyui:
-    image: pygmy:develop
+    image: amit19/pygmy
     restart: always
     build: .
     ports:
