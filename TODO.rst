@@ -2,6 +2,12 @@
 TODO
 ====
 
+* Reduce image size from 550+MB to > 200MB
+
+* Complete docker compose setup
+
+* Deploy pygy.co demo website with docker compose
+
 * For same netloc same url, forward stash same url
 
 * If url pattern doesn't match. Show a 404 page

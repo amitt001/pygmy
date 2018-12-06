@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
+![Docker Pulls](https://img.shields.io/docker/pulls/amit19/pygmy.svg)
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
 Live version of this project @ [https://pygy.co](https://pygy.co)
@@ -26,6 +27,7 @@ If you would like to supprt the project, I can be contacted on my email of sourc
         - [Use MySQL](#use-mysql)
         - [Use Postgresql](#use-postgresql)
         - [Use SQLite](#use-sqlite)
+    - [Docker](#docker-1)
     - [Using Pygmy API](#using-pygmy-api)
     - [Create User:](#create-user)
     - [Shell Usage](#shell-usage)
@@ -65,6 +67,7 @@ The architecture is very loosely coupled which allows custom integrations easily
 - DB: PostgreSQL/MySQL/SQLite
 - Others: SQLAlchmey, JWT
 - Docker
+- Docker-compose
 
 ## Installation/Setup
 
@@ -99,6 +102,10 @@ Note:
 
 ## DB Setup:
 
+By default Pygmy uses SQLite but anoy of the SQLite, MySQL, PostgreSQL can be used. Configs are present on pygmy.cfg file in `pygmy/config` directory.
+
+Use db specific instruction below. Make sure to check and modify values in pygmy.cfg file according to your DB setup.
+
 ### Use MySQL
 
 First install `pymysql`:
@@ -112,8 +119,14 @@ Check correct port:
 Change below line in `pygmy/core/pygmy.cfg`:
 
 ```
+[database]
 engine: mysql
-url: mysql+pymysql://root:root@127.0.0.1:3306/pygmy
+url: {engine}://{user}:{password}@{host}:{port}/{db_name}
+user: root
+password: root
+host: 127.0.0.1
+port: 3306
+db_name: pygmy
 ```
 
 Enter MySQL URL
@@ -124,15 +137,41 @@ Note: Better using Mysql with version > `5.6.5` to use default value of `CURRENT
 
 ### Use Postgresql
 
-`pip install psycopg2`
+Change below line in `pygmy/core/pygmy.cfg`:
 
-`postgres://amit@127.0.0.1:5432/pygmy`
+```
+[database]
+engine: postgresql
+url: {engine}://{user}:{password}@{host}:{port}/{db_name}
+user: root
+password: root
+host: 127.0.0.1
+port: 5432
+db_name: pygmy
+```
 
 ### Use SQLite
 
 SQLite is natively supported in Python
 
 `sqlite:////var/lib/pygmy/pygmy.db`
+
+```
+[database]
+engine: sqlite3
+sqlite_data_dir: data
+sqlite_db_file_name: pygmy.db
+```
+
+## Docker
+
+Docker image name: amit19/pygmy
+
+Docker image can be build by: `docker build -t amit19/pygmy .`
+
+Both Dockerfile and docker-compose file are preset at the root of the project.
+
+To use docker-compose you need to pass DB credentials in docker-compose file 
 
 ## Using Pygmy API
 
@@ -263,7 +302,7 @@ See coverage report(Coverage is bad because the coverage for integration tests i
 Thanks [batarian71](https://github.com/batarian71) for providing the logo icon.
 
 ## Donations
-If this project help you reduce time to develop, you can buy me a cup of coffee :)
+If this project help you reduce time to develop, you can help me keep this project running by donating any amount you see fit :)
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
