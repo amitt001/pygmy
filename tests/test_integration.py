@@ -124,7 +124,7 @@ class PygmyIntegrationTest(unittest.TestCase):
 
     def test_unshorten(self):
         data = self.data
-        data['long_url'] = 'http://httpbin.com/'
+        data['long_url'] = 'https://github.com'
         response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
         short_url = self._get_short_url_from_response(response)
