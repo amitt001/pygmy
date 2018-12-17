@@ -12,32 +12,32 @@ Live version of this project @ [https://pygy.co](https://pygy.co)
 
 Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
-*Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any money out of this project or website.
-If you would like to supprt the project, I can be contacted on my email of sources listed on websites contact page.*
+*Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, the project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any money out of this project or website.
+If you would like to support the project, Please use the donate link in [Donations](#donations) section.*
 
 # Table of Contents
 - [Pygmy](#pygmy)
 - [Table of Contents](#table-of-contents)
-    - [Features](#features)
-    - [Technical Info](#technical-info)
-    - [Installation/Setup](#installationsetup)
-        - [Docker](#docker)
-        - [Manual(from source)](#manualfrom-source)
-    - [DB Setup:](#db-setup)
-        - [Use MySQL](#use-mysql)
-        - [Use Postgresql](#use-postgresql)
-        - [Use SQLite](#use-sqlite)
-    - [Docker](#docker-1)
-    - [Using Pygmy API](#using-pygmy-api)
-    - [Create User:](#create-user)
-    - [Shell Usage](#shell-usage)
-                    - [How Link Stats Are Generated?](#how-link-stats-are-generated)
-                    - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
-    - [Development](#development)
-    - [Contributions](#contributions)
-    - [Donations](#donations)
-    - [Sponsorship](#sponsorship)
-    - [License](#license)
+  - [Features](#features)
+  - [Technical Info](#technical-info)
+  - [Installation/Setup](#installationsetup)
+    - [Docker](#docker)
+    - [Manual(from source)](#manualfrom-source)
+  - [DB Setup:](#db-setup)
+    - [Use MySQL](#use-mysql)
+    - [Use Postgresql](#use-postgresql)
+    - [Use SQLite](#use-sqlite)
+  - [Docker](#docker-1)
+  - [Using Pygmy API](#using-pygmy-api)
+  - [## Create User:](#create-user)
+  - [Shell Usage](#shell-usage)
+          - [How Link Stats Are Generated?](#how-link-stats-are-generated)
+          - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
+  - [Development](#development)
+  - [Contributions](#contributions)
+  - [Donations](#donations)
+  - [Sponsorship](#sponsorship)
+  - [License](#license)
 
 Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
 
@@ -47,15 +47,15 @@ The architecture is very loosely coupled which allows custom integrations easily
 
 - The core URL shortening code
 - A REST API on top. Uses Flask framework
-- The UI layer for rendering the UI. It uses Django framework
+- The UI layer for rendering the UI. It uses the Django framework
 
 ## Features
 
-- URL shortner
+- URL shortener
 - Customized short URL's(ex: `pygy.co/pygmy`)
-- Support to create auto expiry URL after sometime.
+- Support to create auto expiry URL after some time.
 - Secret key protected URL's
-- User Login/Sign up to track shortned URL's and link stats
+- User Login/Sign up to track shortened URL's and link stats
 - User dashboard
 - Link Analytics(add + to the tiny URL to get link stats)
 
@@ -94,15 +94,13 @@ Note:
  - The project has two config files:
     - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
     - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
- - Both the files have aparallel <name>_test.<ext> config files to configure it for tests.
  - SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
- - To modify config settings vim `pygmy/config/pygmy.cfg`
- - You can run pygmy shell present in src directory to run the program on terminal. `python shell`
+ - You can run pygmy shell present in the root directory to run the program on the terminal. `python shell`
  - By default in `pygmyui/pygmyui/settings.py` DEBUG is set to True, set it to False in production
 
 ## DB Setup:
 
-By default Pygmy uses SQLite but anoy of the SQLite, MySQL, PostgreSQL can be used. Configs are present on pygmy.cfg file in `pygmy/config` directory.
+By default Pygmy uses SQLite but any of the SQLite, MySQL or PostgreSQL DB can be used. Configs are present in `pygmy/config/pygmy.cfg` directory.
 
 Use db specific instruction below. Make sure to check and modify values in pygmy.cfg file according to your DB setup.
 
@@ -133,7 +131,7 @@ Enter MySQL URL
 
 `CREATE DATABASE pygmy;`
 
-Note: Better using Mysql with version > `5.6.5` to use default value of `CURRENT_TIMESTAMP` for `DATETIME`.
+Note: It's better to use Mysql with version > `5.6.5` to use default value of `CURRENT_TIMESTAMP` for `DATETIME`.
 
 ### Use Postgresql
 
@@ -167,11 +165,11 @@ sqlite_db_file_name: pygmy.db
 
 Docker image name: amit19/pygmy
 
-Docker image can be build by: `docker build -t amit19/pygmy .`
+Docker image can be built by: `docker build -t amit19/pygmy .`
 
-Both Dockerfile and docker-compose file are preset at the root of the project.
+Both Dockerfile and docker-compose file are present at the root of the project.
 
-To use docker-compose you need to pass DB credentials in docker-compose file 
+To use docker-compose you need to pass DB credentials in the docker-compose file
 
 ## Using Pygmy API
 
@@ -276,18 +274,18 @@ For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://p
 
 ###### How Pygmy Auth Token Works?
 
-It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auht token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
+It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auth token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
 
 ## Development
 
 If you find any bug, have a question or a general feature request. Open an issue on the 'Issue' page.
 
-To contribute to project:
+To contribute to the project:
 
 1. Clone the repo and make changes
 2. Build the code: `docker build pygmy`
-3. Test the chnages by running: `docker run -it -p 8000:8000 pygmy`
-4. The website will be available at: http://127.0.0.1:8000/
+3. Test the changer by running: `docker run -it -p 8000:8000 pygmy`
+4. The website will be available at http://127.0.0.1:8000/
 
 Run tests and generate a coverage report:
 
@@ -311,7 +309,7 @@ If you find this project helpful, you can help me keep this project running in f
 
 ## Sponsorship
 
-I would like to thank DigitalOcean for providing initial hosting to Pygmy project. Pygy.co is hosted on DigitalOcean.
+I would like to thank DigitalOcean for providing initial hosting to the Pygmy project. Pygy.co is hosted on DigitalOcean.
 
 <a href="https://www.digitalocean.com/"><img src="https://i.imgur.com/6cYodyH.png"></a>
 
