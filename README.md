@@ -3,6 +3,7 @@
 # Pygmy
 
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
+[![Coverage Status](https://img.shields.io/coveralls/github/amitt001/pygmy.svg?color=yellowgreen)](https://coveralls.io/github/amitt001/pygmy?branch=master)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 ![Docker Pulls](https://img.shields.io/docker/pulls/amit19/pygmy.svg)
@@ -12,7 +13,8 @@ Live version of this project @ [https://pygy.co](https://pygy.co)
 
 Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
-*Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, the project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any money out of this project or website.
+*Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, the project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any financial gains out of this project or website. Website is
+free to use and is completely ad-free.
 If you would like to support the project, Please use the donate link in [Donations](#donations) section.*
 
 # Table of Contents
@@ -29,7 +31,7 @@ If you would like to support the project, Please use the donate link in [Donatio
     - [Use SQLite](#use-sqlite)
   - [Docker](#docker-1)
   - [Using Pygmy API](#using-pygmy-api)
-  - [## Create User:](#create-user)
+    - [Create User:](#create-user)
   - [Shell Usage](#shell-usage)
           - [How Link Stats Are Generated?](#how-link-stats-are-generated)
           - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
@@ -94,19 +96,19 @@ Note:
  - The project has two config files:
     - pygmy.cfg: `pygmy/config/pygmy.cfg` rest API and pygmy core settings file
     - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
- - SQLite is default db, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
- - You can run pygmy shell present in the root directory to run the program on the terminal. `python shell`
- - By default in `pygmyui/pygmyui/settings.py` DEBUG is set to True, set it to False in production
+ - SQLite is default DB, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
+ - You can run pygmy shell also. Present in the root directory. To run the program on the terminal: `python shell`
+ - By default, DEBUG is set to True in `pygmyui/pygmyui/settings.py` file, set it to False in production.
 
 ## DB Setup:
 
-By default Pygmy uses SQLite but any of the SQLite, MySQL or PostgreSQL DB can be used. Configs are present in `pygmy/config/pygmy.cfg` directory.
+By default, Pygmy uses SQLite but any of the DB, SQLite, MySQL or PostgreSQL, can be used. Configs is present at `pygmy/config/pygmy.cfg`.
 
-Use db specific instruction below. Make sure to check and modify values in pygmy.cfg file according to your DB setup.
+Use DB specific instruction below. Make sure to check and modify values in pygmy.cfg file according to your DB setup.
 
 ### Use MySQL
 
-First install `pymysql`:
+First, install `pymysql`:
 
 `pip install pymysql`
 
@@ -131,7 +133,7 @@ Enter MySQL URL
 
 `CREATE DATABASE pygmy;`
 
-Note: It's better to use Mysql with version > `5.6.5` to use default value of `CURRENT_TIMESTAMP` for `DATETIME`.
+Note: It's better to use Mysql with version > `5.6.5` to use the default value of `CURRENT_TIMESTAMP` for `DATETIME`.
 
 ### Use Postgresql
 
@@ -167,14 +169,13 @@ Docker image name: amit19/pygmy
 
 Docker image can be built by: `docker build -t amit19/pygmy .`
 
-Both Dockerfile and docker-compose file are present at the root of the project.
+Both the Dockerfile and docker-compose file are present at the root of the project.
 
 To use docker-compose you need to pass DB credentials in the docker-compose file
 
 ## Using Pygmy API
 
-## Create User:
-------------
+### Create User:
 
     curl -XPOST http://127.0.0.1:9119/api/user/1 -H 'Content-Type: application/json' -d '{
     "email": "amit@gmail.com",
@@ -249,7 +250,7 @@ Out[4]:
  'time_stats': 0,
  'total_hits': 0}
 
-In [5]: # check available context of the shell
+In [5]: # check the available context of the shell
 In [6]: pygmy_context
 
 In [7]: # Create custom short URL
@@ -274,7 +275,7 @@ For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://p
 
 ###### How Pygmy Auth Token Works?
 
-It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. Refresh token can only be used to generate new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auth token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
+It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. The refresh token can only be used to generate a new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auth token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
 
 ## Development
 
@@ -287,9 +288,13 @@ To contribute to the project:
 3. Test the changer by running: `docker run -it -p 8000:8000 pygmy`
 4. The website will be available at http://127.0.0.1:8000/
 
-Run tests and generate a coverage report:
+Run tests:
 
-`coverage run --source pygmy -m py.test`
+In root directory run this command: `py.test`
+
+Or with coverage report(`pip install coverage`):
+
+`coverage run --omit="*/templates*,*/venv*,*/tests*" -m py.test`
 
 See coverage report(Coverage is bad because the coverage for integration tests is not generated yet):
 

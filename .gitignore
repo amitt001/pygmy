@@ -9,6 +9,7 @@ bootstrap.min.css
 *.egg-info/
 env
 env3
+venv
 .idea
 .vscode
 dist
