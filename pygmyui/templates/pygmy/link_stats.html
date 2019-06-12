@@ -39,14 +39,14 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th class="col-md-9"><span title="Country">Referrer(code)</span></th>
+            <th class="col-md-9"><span title="Country">Referrer</span></th>
             <th><span title="Link Hits">Hits</span></th>
         </tr>
     </thead>
     <tbody>
-    {% for referrer_code, referrer_country,referrer_hits in clickmeta.referrer %}
+    {% for referrer,referrer_hits in clickmeta.referrer %}
         <tr>
-            <td>{{referrer_country}}({{referrer_code}})</td>
+            <td>{{referrer}}</td>
             <td>{{referrer_hits}}</td>
         </tr>
     {% endfor %}

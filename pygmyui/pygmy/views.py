@@ -127,10 +127,6 @@ def short_link_stats(request, code):
                 key=operator.itemgetter(1),
                 reverse=True)
 
-            refs = [(country,iso2full.get(country,"unknown"),hits) for (country,
-                                                hits) in clickmeta['referrer']]
-            clickmeta['referrer'] = refs
-
             context = dict(clickmeta=clickmeta)
         except (ObjectNotFound, LinkExpired) as e:
             return render(request, '404.html',
