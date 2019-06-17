@@ -17,9 +17,6 @@ body {
     margin-right: .2px;
 }
 
-a {
-}
-
 ul.dropdown-lr {
     width: 300px;
 }
@@ -112,7 +109,7 @@ margin-top: 3%;
 .navbar .nav > li > a:focus,
 .navbar .nav > li > a:active,
 .navbar .nav > li > a:visited {
-    background-color: #44EEBB;
+    background-color: #599B36;
 }
 
 .item-detail-title {

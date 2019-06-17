@@ -11,7 +11,7 @@ from pygmy.validator.link import LinkSchema
 
 def shorten(long_url, short_code=None, expire_after=None, description=None,
             secret_key=None, owner=None, request=None):
-    """Helper class that has been delicated the task of inserting the
+    """Helper class that has been deligated the task of inserting the
     passed url in DB, base 62 encoding from db id and return the short
     url value.
 

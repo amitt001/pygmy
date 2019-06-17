@@ -34,6 +34,13 @@ class LongUrlApi(MethodView):
     def post(self):
         payload = request.get_json()
         data, errors = self.schema.load(payload)
+
+        if errors:
+            log.error('Error in the request payload %s', errors)
+            if errors.get('long_url'):
+                errors.update({'error': errors.get('long_url')})
+            return jsonify(errors), 400
+
         # if authenticated request check valid user
         user_email = APITokenAuth.get_jwt_identity()
         if user_email:
@@ -41,11 +48,6 @@ class LongUrlApi(MethodView):
             if not user:
                 return jsonify(dict(error='Invalid user')), 400
             data['owner'] = user.id
-        if errors:
-            log.error('Error in the request payload %s', errors)
-            if errors.get('long_url'):
-                errors.update({'error': errors.get('long_url')})
-            return jsonify(errors), 400
 
         long_url = data.pop('long_url')
         log.info('Shortening url %s', long_url)
@@ -90,8 +92,6 @@ class ShortURLApi(MethodView):
 @APITokenAuth.token_optional
 def resolve(code):
     """Resolve the short url. code=301 PERMANENT REDIRECTION"""
-    # TODO not needed
-    user_email = APITokenAuth.get_jwt_identity()
     secret_key = request.headers.get('secret_key')
     try:
         # check if link is not a secret link
