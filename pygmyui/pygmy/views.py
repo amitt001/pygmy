@@ -9,7 +9,7 @@ from utils import pygmy_client_object
 from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired, \
     InvalidInput
 from restclient.error_msg import *
-
+from iso2full import iso2full
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
 AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
@@ -112,15 +112,21 @@ def short_link_stats(request, code):
     pygmy_client = pygmy_client_object(settings, request)
     if request.method == 'GET':
         try:
-            clickmeta = pygmy_client.link_stats(code)
+            clickmeta = pygmy_client.link_stats(code)   
             clickmeta['country_stats'] = sorted(
                 clickmeta['country_stats'].items(),
                 key=operator.itemgetter(1),
                 reverse=True)
+         
+            stats =[(country,iso2full.get(country,"unknown"),hits) for (country,
+                                                hits) in clickmeta['country_stats']]
+            clickmeta['country_stats'] = stats
+
             clickmeta['referrer'] = sorted(
                 clickmeta['referrer'].items(),
                 key=operator.itemgetter(1),
                 reverse=True)
+
             context = dict(clickmeta=clickmeta)
         except (ObjectNotFound, LinkExpired) as e:
             return render(request, '404.html',
