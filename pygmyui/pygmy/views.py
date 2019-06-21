@@ -61,12 +61,8 @@ def link_shortener(request):
                               context=API_ERROR(e.args[0]),
                               status=401)
             except (ObjectNotFound, InvalidInput) as e:
-                err = {}
-                err["error"] = (" ".join(API_ERROR(e.args[0])['error'])
-                            if isinstance(API_ERROR(e.args[0])['error'],list) 
-                            else API_ERROR(e.args[0])['error'])
                 return render(request, '400.html',
-                              context=err, status=400)
+                              context=API_ERROR(e.args[0]), status=400)
             short_code = resp['short_code']
         else:
             return render(
