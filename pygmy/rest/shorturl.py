@@ -44,7 +44,7 @@ class LongUrlApi(MethodView):
         if errors:
             log.error('Error in the request payload %s', errors)
             if errors.get('long_url'):
-                errors.update({'error': " ".join(errors.get('long_url'))})
+                errors.update({'error': errors.get('long_url')})
             return jsonify(errors), 400
 
         long_url = data.pop('long_url')
