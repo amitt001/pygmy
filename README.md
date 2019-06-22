@@ -13,7 +13,7 @@ Live version of this project @ [https://pygy.co](https://pygy.co)
 
 Check link stats by adding **+** to the URL. Example [pygy.co/pygmy+](https://pygy.co/pygmy+)
 
-Hackernews Thread: [https://news.ycombinator.com/item?id=17690559](https://pygy.co/shorten/pygmyHN)
+Hackernews Thread: [https://news.ycombinator.com/item?id=17690559](https://pygy.co/pygmyHN)
 
 *Note that pygy.co is a demo website for this project and should be used as such. While the website is going to be up for the foreseeable future, its future depends on the sponsorship and hosting that I get. Currently, the project is hosted on Digitalocean, as they were kind enough to offer me one year of sponsorship. I would like to keep the project website up and maintain the project but I do not make any financial gains out of this project or website. Website is
 free to use and is completely ad-free.
