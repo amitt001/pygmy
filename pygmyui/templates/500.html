@@ -3,8 +3,10 @@
 {% block content %}
 <h1 class="vcenter">500</h1><br>
 {% if error %}
-    <h3 class="vcenter">{{error}}</h3>
-{% else %}
+    {%for err in error%}
+        <h3 class="vcenter">{{err}}</h3>
+    {%endfor%}
+{% else %}  
     <h3 class="vcenter">Something Went Wrong</h3>
 {% endif %}
 {% endblock content %}
