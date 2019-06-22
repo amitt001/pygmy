@@ -15,7 +15,7 @@ def API_ERROR(error_message):
                 pass
         elif isinstance(error_message, dict):
             error_message = error_message.get('error')
-    except Exception as e:
+    except Exception:
         import traceback
         traceback.print_exc()
         error_message = INTERNAL_SERVER_ERROR_API

@@ -1,3 +1,4 @@
+import json
 import string
 import operator
 
@@ -8,7 +9,7 @@ from django.conf import settings
 from utils import pygmy_client_object
 from restclient.errors import ObjectNotFound, UnAuthorized, LinkExpired, \
     InvalidInput
-from restclient.error_msg import *
+from restclient.error_msg import API_ERROR, INVALID_TOKEN
 from iso2full import iso2full
 
 # TODO: [IMP] middleware to return 500 page when internal error occurs.
@@ -112,15 +113,15 @@ def short_link_stats(request, code):
     pygmy_client = pygmy_client_object(settings, request)
     if request.method == 'GET':
         try:
-            clickmeta = pygmy_client.link_stats(code)   
+            clickmeta = pygmy_client.link_stats(code)
             clickmeta['country_stats'] = sorted(
                 clickmeta['country_stats'].items(),
                 key=operator.itemgetter(1),
                 reverse=True)
-         
-            stats =[(country,iso2full.get(country,"unknown"),hits) for (country,
-                                                hits) in clickmeta['country_stats']]
-            clickmeta['country_stats'] = stats
+
+            country_stats = [(country, iso2full.get(country, "unknown"), hits)
+                             for (country, hits) in clickmeta['country_stats']]
+            clickmeta['country_stats'] = country_stats
 
             clickmeta['referrer'] = sorted(
                 clickmeta['referrer'].items(),

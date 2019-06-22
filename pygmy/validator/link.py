@@ -1,8 +1,7 @@
 import string
 
 from datetime import datetime
-from marshmallow import (
-    Schema, fields, post_dump, validate, ValidationError)
+from marshmallow import Schema, fields, post_dump, ValidationError
 
 from pygmy.model.clickmeta import ClickMetaManager
 from pygmy.utilities.urls import make_short_url, validate_url
@@ -49,7 +48,6 @@ class LinkSchema(Schema):
     owner = fields.Str(required=False, allow_none=True)
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime()
-
 
     def short_url_path(self, link):
         if link and link.short_code:
