@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/amitt001/pygmy.svg?branch=master)](https://travis-ci.org/amitt001/pygmy)
 [![Coverage Status](https://img.shields.io/coveralls/github/amitt001/pygmy.svg?color=yellowgreen)](https://coveralls.io/github/amitt001/pygmy?branch=master)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
-[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
+[![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/amitt001/pygmy/blob/master/LICENSE)
 ![Docker Pulls](https://img.shields.io/docker/pulls/amit19/pygmy.svg)
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/amit19)
 
