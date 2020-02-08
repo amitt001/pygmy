@@ -12,7 +12,7 @@ from restclient.errors import ObjectNotFound, InvalidInput
 
 AUTH_COOKIE_NAME = settings.AUTH_COOKIE_NAME
 REFRESH_COOKIE_NAME = settings.REFRESH_COOKIE_NAME
-
+PUBLIC_REGISTER = settings.PUBLIC_REGISTER
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label='Long URL', required=True,
@@ -86,7 +86,7 @@ def signup(request):
     if request.method == 'GET':
         return redirect('/')
 
-    if request.method == 'POST':
+    if request.method == 'POST' and PUBLIC_REGISTER is True:
         pygmy_client = pygmy_client_object(settings, request)
         form = SignUpForm(request.POST)
         context = dict(form=form)
@@ -107,4 +107,6 @@ def signup(request):
                 k, v, expires=expires) for k, v in context.items()]
         # access token lifetime till browser session
         response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])
-        return response
+    else:
+        response = render(request, "notallow.html")
+    return response
