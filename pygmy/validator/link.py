@@ -63,7 +63,7 @@ class LinkSchema(Schema):
             return click_manager.link_hit_count(dict(link_id=link.id))
 
     @post_dump
-    def format_data(self, data):
+    def format_data(self, data, **kwargs):
         if data and data.get('owner'):
             data['owner'] = make_url_from_id(data['owner'], 'user')
         if data and data.get('created_at'):

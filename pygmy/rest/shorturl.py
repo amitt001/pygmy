@@ -6,7 +6,7 @@ from pygmy.app.link import unshorten, resolve_short, link_stats
 from pygmy.exception import URLNotFound, URLAuthFailed
 from pygmy.exception.error import LinkExpired, ShortURLUnavailable
 from pygmy.model import LinkManager, UserManager
-from pygmy.validator import LinkSchema
+from pygmy.validator import LinkSchema, ValidationError
 from pygmy.utilities.urls import validate_url
 from pygmy.core.logger import log
 
@@ -28,17 +28,18 @@ class LongUrlApi(MethodView):
         if link is None:
             abort(404)
         result = self.schema.dump(link)
-        return jsonify(result.data), 200
+        return jsonify(result), 200
 
-    @APITokenAuth.token_optional
+    @APITokenAuth.token_required(optional=True)
     def post(self):
         payload = request.get_json()
-        data, errors = self.schema.load(payload)
-
-        if errors:
+        try:
+            data = self.schema.load(payload)
+        except ValidationError as errors:
             log.error('Error in the request payload %s', errors)
-            if errors.get('long_url'):
-                errors.update({'error': errors.get('long_url')})
+            err_msg = errors.message_dict
+            if err_msg.get('long_url'):
+                errors.update({'error': err_msg.get('long_url')})
             return jsonify(errors), 400
 
         # if authenticated request check valid user
@@ -61,8 +62,8 @@ class LongUrlApi(MethodView):
             except ShortURLUnavailable as e:
                 return jsonify(dict(error=str(e))), 400
         result = self.schema.dump(link)
-        log.info('Url: %s shortened, response: %s', long_url, result.data.get('short_code'))
-        return jsonify(result.data), 201
+        log.info('Url: %s shortened, response: %s', long_url, result.get('short_code'))
+        return jsonify(result), 201
 
 
 class ShortURLApi(MethodView):
@@ -86,10 +87,10 @@ class ShortURLApi(MethodView):
         except URLNotFound:
             return jsonify(
                 dict(error="URL Not Found Or Expired")), 404
-        return jsonify(result.data), 200
+        return jsonify(result), 200
 
 
-@APITokenAuth.token_optional
+@APITokenAuth.token_required(optional=True)
 def resolve(code):
     """Resolve the short url. code=301 PERMANENT REDIRECTION"""
     secret_key = request.headers.get('secret_key')
