@@ -4,6 +4,15 @@ from marshmallow import ValidationError
 from pygmy.config import config
 from urllib.parse import urljoin, urlparse
 
+filtered_urls = [
+    'pygy.co',
+    'bit.ly'
+    'rb.gy',
+    'tinyurl.com',
+    'ow.ly',
+    'is.gd'
+]
+
 
 def validate_url(url):
     """Simple URL validator."""
@@ -20,9 +29,12 @@ def validate_url(url):
     if is_valid:
         url = urlparse(url)
         allowed_path = ['contact', 'about', 'shorten', 'dashboard']
-        if url.netloc == 'pygy.co' and url.path.strip('/') not in allowed_path:
-            raise ValidationError('URL is already a pygmy shortened link.')
-    return is_valid
+        if url.netloc == 'pygy.co' and url.path.strip('/') in allowed_path:
+            return is_valid
+        elif url.netloc in filtered_urls and url.path.strip('/') not in allowed_path:
+            raise ValidationError('Already shortened links are not supported')
+        else:
+            return is_valid
 
 
 def make_short_url(short_path):

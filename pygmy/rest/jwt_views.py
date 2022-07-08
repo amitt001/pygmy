@@ -5,7 +5,7 @@ from pygmy.app.auth import APITokenAuth, TokenAuth
 
 
 @jwt.expired_token_loader
-def expire_token_loader():
+def expire_token_loader(jwt_header, jwt_payload):
     """Called in case an access token has expired. Reponse of this view is
     used to call the refresh token endpoint."""
     return jsonify(dict(

@@ -20,28 +20,28 @@ free to use and is completely ad-free.
 If you would like to support the project, Please use the donate link in [Donations](#donations) section.*
 
 # Table of Contents
-- [Pygmy](#Pygmy)
-- [Table of Contents](#Table-of-Contents)
-  - [Features](#Features)
-  - [Technical Info](#Technical-Info)
-  - [Installation/Setup](#InstallationSetup)
-    - [Docker](#Docker)
-    - [Manual(from source)](#Manualfrom-source)
-  - [DB Setup:](#DB-Setup)
-    - [Use MySQL](#Use-MySQL)
-    - [Use Postgresql](#Use-Postgresql)
-    - [Use SQLite](#Use-SQLite)
-  - [Docker](#Docker-1)
-  - [Using Pygmy API](#Using-Pygmy-API)
-    - [Create User:](#Create-User)
-  - [Shell Usage](#Shell-Usage)
-          - [How Link Stats Are Generated?](#How-Link-Stats-Are-Generated)
-          - [How Pygmy Auth Token Works?](#How-Pygmy-Auth-Token-Works)
-  - [Development](#Development)
-  - [Contributions](#Contributions)
-  - [Donations](#Donations)
-  - [Sponsorship](#Sponsorship)
-  - [License](#License)
+- [Pygmy](#pygmy)
+- [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Technical Info](#technical-info)
+  - [Installation/Setup](#installationsetup)
+    - [Docker](#docker)
+    - [Manual(from source)](#manualfrom-source)
+  - [DB Setup:](#db-setup)
+    - [Use MySQL](#use-mysql)
+    - [Use Postgresql](#use-postgresql)
+    - [Use SQLite](#use-sqlite)
+  - [Docker](#docker-1)
+  - [Using Pygmy API](#using-pygmy-api)
+    - [Create User:](#create-user)
+  - [Shell Usage](#shell-usage)
+          - [How Link Stats Are Generated?](#how-link-stats-are-generated)
+          - [How Pygmy Auth Token Works?](#how-pygmy-auth-token-works)
+  - [Development](#development)
+  - [Contributions](#contributions)
+  - [Donations](#donations)
+  - [Sponsorship](#sponsorship)
+  - [License](#license)
 
 Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
 
@@ -292,7 +292,8 @@ To contribute to the project:
 
 Run tests:
 
-In root directory run this command: `py.test`
+Install pytest(`pip install pytest`)
+In root directory run this command: `py.test` 
 
 Or with coverage report(`pip install coverage`):
 

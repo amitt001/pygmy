@@ -39,7 +39,7 @@ def shorten(long_url, short_code=None, expire_after=None, description=None,
         url_manager.add(**insert_dict)
     if request:
         return url_manager.link
-    return LinkSchema().dump(url_manager.link).data
+    return LinkSchema().dump(url_manager.link)
 
 
 def unshorten(short_url, secret_key=None,
@@ -76,7 +76,7 @@ def unshorten(short_url, secret_key=None,
     if request:
         save_clickmeta(request, link)
         return link
-    return LinkSchema().dump(link).data
+    return LinkSchema().dump(link)
 
 
 def resolve_short(short_code, request=None, secret_key=None):

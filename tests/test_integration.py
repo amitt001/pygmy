@@ -115,8 +115,9 @@ class PygmyIntegrationTest(unittest.TestCase):
         self.assertTrue('value="{}"'.format(short_url) in response.text)
 
     def test_already_shortened_url_error(self):
-        err_msg = 'URL is already a pygmy shortened link'
+        err_msg = 'Already shortened links are not supported'
         data = self.data
+        # Fix this, make a list of other url shortener and disable their usage
         data['long_url'] = 'https://pygy.co'
         response = requests.post(self.url + '/shorten', data=data, headers=self.headers)
         self.assertEqual(response.status_code, 400)

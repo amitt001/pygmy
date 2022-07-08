@@ -32,7 +32,7 @@ class UserApi(MethodView):
             data = self.schema.load(payload)
         except ValidationError as errors:
             log.error('Error in the request payload %s', errors)
-            err_msg = errors.message_dict
+            err_msg = errors.messages_dict
             return jsonify(err_msg), 400
 
         if manager.find(email=data['email']):

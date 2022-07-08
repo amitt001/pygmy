@@ -37,10 +37,10 @@ class LongUrlApi(MethodView):
             data = self.schema.load(payload)
         except ValidationError as errors:
             log.error('Error in the request payload %s', errors)
-            err_msg = errors.message_dict
+            err_msg = errors.messages_dict
             if err_msg.get('long_url'):
-                errors.update({'error': err_msg.get('long_url')})
-            return jsonify(errors), 400
+                err_msg.update({'error': err_msg.get('long_url')})
+            return jsonify(err_msg), 400
 
         # if authenticated request check valid user
         user_email = APITokenAuth.get_jwt_identity()
