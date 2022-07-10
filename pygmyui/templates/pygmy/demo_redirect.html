@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="vcenter">
+    <h1>Demo Page</h1>
+</div>
+<div>
+    <div class="item-detail-title">Link destination: {{linkmeta.long_url}}</div>
+    <div>
+        Short code: <a href="{{linkmeta.short_code}}" target="_blank">
+            <script type="text/javascript">
+                document.write(window.location.hostname+'/{{linkmeta.short_code}}')
+            </script>
+        </a>
+    </div>
+    <hr>
+    <code>
+        - Due to repeated spamming, the link redirection feature is disabled for demo website.
+        <br>
+        - The github version of <a href="https://github.com/amitt001/pygmy" target="_blank">pygmy</a> code will perform the link redirection.
+        <br>
+        - Please keep in mind that the links created through the demo website **can** be lost at anytime as they are stored in a volatile storage.
+    </code>
+    <br>
+    <hr>
+    <div class="text-center">
+        <div style="margin-top:20%;" class="big-text">
+            <p class="horizontal-center" style="font-size: 14px">Check link stats by adding + to the URL</p>
+            <a href="{{linkmeta.short_code}}+" target="_blank">
+                <script type="text/javascript">
+                    document.write(window.location.hostname+'/{{linkmeta.short_code}}+')
+                </script>
+            </a>
+            <br><br>
+            <p class="horizontal-center" style="font-size: 14px">Check project Github page for documentation and source code</p>
+            <a href="https://github.com/amitt001/pygmy" target="_blank">Pygmy</a>
+            <br><br>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

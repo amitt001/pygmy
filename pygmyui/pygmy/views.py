@@ -104,8 +104,9 @@ def link_unshorten(request, code):
         except (LinkExpired, ObjectNotFound) as e:
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
-        long_url = url_obj['long_url']
-        return redirect(long_url, permanent=True)
+        linkmeta = {'long_url': url_obj['long_url'], 'short_code': code}
+        context = dict(linkmeta=linkmeta)
+        return render(request, 'pygmy/demo_redirect.html', context=context)
 
 
 def short_link_stats(request, code):
