@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.urls import re_path as url, include
+from django.views.static import serve
 import pygmyui.generic_views as views
 
 
@@ -24,6 +25,7 @@ urlpatterns = [
     url(r'^contact', views.contact),
     url(r'', include('user_auth.urls')),
     url(r'', include('pygmy.urls')),
+    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]
 
 if settings.DEBUG is True:

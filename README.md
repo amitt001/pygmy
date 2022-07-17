@@ -30,7 +30,7 @@ Hackernews Thread: [https://news.ycombinator.com/item?id=17690559](https://pygy.
     - [Use SQLite](#use-sqlite)
   - [Docker](#docker-1)
   - [Using Pygmy API](#using-pygmy-api)
-    - [Create User:](#create-user)
+    - [Create User](#create-user)
   - [Shell Usage](#shell-usage)
 - [Development](#development)
   - [Run tests:](#run-tests)
@@ -159,7 +159,7 @@ Docker image name: `amit19/pygmy`. Docker image can be built by running `docker 
 
 ## Using Pygmy API
 
-### Create User:
+### Create User
 
     curl -XPOST http://127.0.0.1:9119/api/user/1 -H 'Content-Type: application/json' -d '{
     "email": "amit@gmail.com",
