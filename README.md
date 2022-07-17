@@ -10,9 +10,9 @@
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/amitt001/pygmy/blob/master/LICENSE)
 ![Docker Pulls](https://img.shields.io/docker/pulls/amit19/pygmy.svg)
 
-Demo Version: [https://pygy.co](https://demo.pygy.co)
+Demo Version: [https://demo.pygy.co](https://demo.pygy.co)
 
-Link stats(add **+** to the URL) example: [pygy.co/pygmy+](https://demo.pygy.co/pygmy+)
+Link stats(add **+** to the URL) example: [demo.pygy.co/pygmy+](https://demo.pygy.co/pygmy+)
 
 Hackernews Thread: https://news.ycombinator.com/item?id=17690559
 </div>
@@ -243,7 +243,7 @@ Docstring:
 ```
 
 Q. How Link Stats Are Generated?
-> For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://pygy.co/cm) database is used. It's in `pygmy/app` directory.
+> For getting geo location stats from IP maxminds' [GeoLite2-Country.mmd](http://demo.pygy.co/cm) database is used. It's in `pygmy/app` directory.
 
 Q. How Pygmy Auth Token Works?
 > It uses JWT. When user logs in using username and password two tokens are generated, refresh token and auth token. Auth token is used for authentication with the Pygmy API. The refresh token can only be used to generate a new auth token. Auth token has a very short TTL but refresh token has a longer TTL. After 30 minutes. When a request comes with the old auth token and a new token is generated from the refresh token API. User passwords are encrypted by [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) hash algorithm.
