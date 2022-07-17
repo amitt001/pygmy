@@ -10,11 +10,11 @@
 [![PyPI license](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/amitt001/pygmy/blob/master/LICENSE)
 ![Docker Pulls](https://img.shields.io/docker/pulls/amit19/pygmy.svg)
 
-Demo Version: [https://pygy.co](https://pygy.co)
+Demo Version: [https://pygy.co](https://demo.pygy.co)
 
-Link stats(add **+** to the URL) example: [pygy.co/pygmy+](https://pygy.co/pygmy+)
+Link stats(add **+** to the URL) example: [pygy.co/pygmy+](https://demo.pygy.co/pygmy+)
 
-Hackernews Thread: [https://news.ycombinator.com/item?id=17690559](https://pygy.co/pygmyHN)
+Hackernews Thread: https://news.ycombinator.com/item?id=17690559
 </div>
 
 # Table of Contents
