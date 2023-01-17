@@ -6,7 +6,7 @@ from pygmy.app.link import unshorten, resolve_short, link_stats
 from pygmy.exception import URLNotFound, URLAuthFailed
 from pygmy.exception.error import LinkExpired, ShortURLUnavailable
 from pygmy.model import LinkManager, UserManager
-from pygmy.validator import LinkSchema, ValidationError
+from pygmy.validator import LinkSchema, ValidationError, RemoveLinksSchema
 from pygmy.utilities.urls import validate_url
 from pygmy.core.logger import log
 
@@ -116,3 +116,35 @@ def resolve(code):
 
 def dummy():
     return '', 204
+
+
+class RemoveShortURLsApi(MethodView):
+    """View for removing short urls."""
+    schema = RemoveLinksSchema()
+    manager = LinkManager()
+
+    @APITokenAuth.token_required(optional=True)
+    def delete(self):
+        payload = request.get_json()
+        try:
+            data = self.schema.load(payload)
+        except ValidationError as errors:
+            log.error('Error in the request payload %s', errors)
+            err_msg = errors.messages_dict
+            if err_msg.get('long_url'):
+                err_msg.update({'error': err_msg.get('long_url')})
+            return jsonify(err_msg), 400
+
+        # if authenticated request check valid user
+        user_email = APITokenAuth.get_jwt_identity()
+        if user_email:
+            user = UserManager().find(email=user_email)
+            if not user:
+                return jsonify(dict(error='Invalid user')), 400
+            data['owner'] = user.id
+
+        links = data.pop('links')
+        log.info('Removing Short urls %s', links)
+        self.manager.remove(links)
+        result = self.schema.dump({"links":links})
+        return jsonify(result), 200

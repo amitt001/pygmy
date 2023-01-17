@@ -284,6 +284,10 @@ class LinkManager:
         return self.link
 
     @dbconnection
-    def remove(self, db, long_url):
-        """But why?"""
-        pass
+    def remove(self, db, links):
+        short_codes = [link['short_code'] for link in links]
+        query = db.query(Link).filter(Link.short_code.in_(short_codes)).delete(synchronize_session=False)
+        try:
+            db.commit()
+        except IntegrityError:
+            db.rollback()

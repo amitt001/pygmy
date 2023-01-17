@@ -71,3 +71,11 @@ class LinkSchema(Schema):
                 data['created_at'], '%Y-%m-%d %H:%M:%S'
             ).strftime('%d %b, %Y %H:%M:%S')
         return data
+
+
+class RemoveLinkSchema(Schema):
+    short_code = fields.Str(required=True,  validate=is_valid_custom_code_or_secret)
+
+
+class RemoveLinksSchema(Schema):
+    links = fields.Nested(RemoveLinkSchema, many=True)
