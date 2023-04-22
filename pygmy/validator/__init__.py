@@ -1,1 +1,1 @@
-from .link import LinkSchema
+from .link import LinkSchema, ValidationError

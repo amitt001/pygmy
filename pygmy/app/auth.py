@@ -1,7 +1,7 @@
 """Contains classes related to JWT based auth"""
 from flask_jwt_extended import (
-    jwt_optional, jwt_required, get_jwt_identity,
-    create_access_token, create_refresh_token, jwt_refresh_token_required)
+    jwt_required, get_jwt_identity,
+    create_access_token, create_refresh_token)
 
 
 class TokenAuth:
@@ -39,7 +39,5 @@ class APITokenAuth(TokenAuth):
     """Inherits from TokenAuth and add rest related functionality. Currently
     wrapper over flask jwt"""
 
-    token_optional = jwt_optional
     token_required = jwt_required
     get_jwt_identity = get_jwt_identity
-    jwt_refresh_token_required = jwt_refresh_token_required

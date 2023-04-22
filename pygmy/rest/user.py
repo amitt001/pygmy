@@ -4,7 +4,7 @@ from passlib.hash import bcrypt
 
 from pygmy.model import UserManager, LinkManager
 from pygmy.validator.user import UserSchema
-from pygmy.validator.link import LinkSchema
+from pygmy.validator.link import LinkSchema, ValidationError
 from pygmy.app.auth import APITokenAuth, TokenAuth
 
 
@@ -22,19 +22,23 @@ class UserApi(MethodView):
         if user is None:
             return jsonify(dict(error="User not found")), 404
         result = self.schema.dump(user)
-        return jsonify(result.data), 200
+        return jsonify(result), 200
 
     def post(self):
         # TODO: post should behave like upsert
         manager = UserManager()
         payload = request.get_json()
-        data, errors = self.schema.load(payload)
-        if errors:
-            return jsonify(errors), 400
+        try:
+            data = self.schema.load(payload)
+        except ValidationError as errors:
+            log.error('Error in the request payload %s', errors)
+            err_msg = errors.messages_dict
+            return jsonify(err_msg), 400
+
         if manager.find(email=data['email']):
             return jsonify(dict(error='User exists')), 400
         user = manager.add(**data)
-        result = self.schema.dump(user).data
+        result = self.schema.dump(user)
         tokens = TokenAuth().create_token(
             identity=payload.get('email'))
         result.update(tokens)
@@ -60,13 +64,13 @@ class Auth(MethodView):
                 error='No user found with email: {}'.format(email))), 404
         if email != user.email or not bcrypt.verify(password, user.password):
             return jsonify(dict(error="Invalid username or password.")), 400
-        result = self.schema.dump(user).data
+        result = self.schema.dump(user)
         tokens = TokenAuth().create_token(identity=email)
         result.update(tokens)
         return jsonify(result), 200
 
 
-@APITokenAuth.token_required
+@APITokenAuth.token_required()
 def get_links(user_id=None):
     """Get all links that belong to user `user_id`"""
     # TODO: get auth required from settings and get user links by id
@@ -84,4 +88,4 @@ def get_links(user_id=None):
         if not links:
             return jsonify([]), 200
         result = schema.dump(links, many=True)
-        return jsonify(result.data)
+        return jsonify(result)
