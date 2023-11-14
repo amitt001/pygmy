@@ -35,6 +35,7 @@ Hackernews Thread: https://news.ycombinator.com/item?id=17690559
 - [Development](#development)
   - [Run tests:](#run-tests)
       - [Run tests with coverage report](#run-tests-with-coverage-report)
+- [Sponsorship](#sponsorship)
 - [License](#license)
 
 Pygmy or `pygy.co` is an open-source, extensible & easy-to-use but powerful URL shortener. It's created keeping in mind that it should be easy to host and run your custom URL shortener without much effort. [Open-source Python URL shortener]
@@ -269,6 +270,11 @@ To contribute to the project:
 1. Install coverage `pip install coverage`
 2. Run command: `coverage run --omit="*/templates*,*/venv*,*/tests*" -m py.test`
 3. See coverage report(Coverage numbers are low as the coverage for integration tests is not generated): `coverage report`
+
+# Sponsorship
+The demo version of this website is made possible due to the generos sponsorship of DigitalOcean
+
+<img src="https://github.com/amitt001/pygmy/assets/7390944/e8df3143-d9a5-4582-8e73-6f1c1822d046" width="200" />
 
 # License
 
