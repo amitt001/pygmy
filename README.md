@@ -272,7 +272,7 @@ To contribute to the project:
 3. See coverage report(Coverage numbers are low as the coverage for integration tests is not generated): `coverage report`
 
 # Sponsorship
-The demo version of this website is made possible due to the generos sponsorship of DigitalOcean
+The demo version of this website is made possible due to the generous sponsorship of DigitalOcean
 
 <img src="https://github.com/amitt001/pygmy/assets/7390944/e8df3143-d9a5-4582-8e73-6f1c1822d046" width="200" />
 
