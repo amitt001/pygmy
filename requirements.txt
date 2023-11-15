@@ -3,7 +3,7 @@ aiosignal==1.2.0
 asgiref==3.5.2
 async-timeout==4.0.2
 attrs==21.4.0
-backports.zoneinfo==0.2.1
+backports.zoneinfo==0.2.1;python_version < "3.9"
 bcrypt==3.2.2
 certifi==2022.6.15
 cffi==1.15.1
