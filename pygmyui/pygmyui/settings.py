@@ -152,6 +152,10 @@ PYGMY_API_PASSWORD = 'admin'
 
 HOSTNAME = '127.0.0.1:8000'
 
+GUEST_ACCESS = True
+
+PUBLIC_REGISTER = True
+
 # Load tests if PYGMYUI_TEST environment variable is set
 if os.environ.get('PYGMYUI_TEST') is not None:
     from pygmyui.settings_tests import *    # pylint: disable=W0614, E0611, E0401

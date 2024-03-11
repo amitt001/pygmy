@@ -18,7 +18,7 @@ MAX_SHORT_CODE_LEN = 8
 INVALID_CUSTOM_CODE_ERROR = ("Invalid value. Length should be <= 8 and should"
                              " be a valid alphabat, digit or a mix of both")
 VALID_INPUT_CHARS = string.ascii_letters + string.digits
-
+GUEST_ACCESS = settings.GUEST_ACCESS
 
 class URLForm(forms.Form):
     long_url = forms.URLField(help_text='Long Link To Shorten',
@@ -189,15 +189,18 @@ def dashboard(request):
 
 def index(request):
     """Index page"""
-    response = render(request, 'pygmy/index.html')
-    if (request.COOKIES.get(AUTH_COOKIE_NAME) and
-            request.COOKIES.get('refresh_token')):
-        pygmy_client = pygmy_client_object(settings, request)
-        access_token = pygmy_client.refresh_access_token()
-        response.set_cookie(
-            AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME))
+    access_token = request.COOKIES.get(AUTH_COOKIE_NAME)
+    if GUEST_ACCESS is True or access_token:
+        response = render(request, 'pygmy/index.html')
+        if (request.COOKIES.get(AUTH_COOKIE_NAME) and
+                request.COOKIES.get('refresh_token')):
+            pygmy_client = pygmy_client_object(settings, request)
+            access_token = pygmy_client.refresh_access_token()
+            response.set_cookie(
+                AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME))
+    else:
+        response = render(request, 'pygmy/sorry.html')
     return response
-
 
 def check_available(request):
     custom_code = request.GET.get('custom_code')
