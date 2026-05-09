@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version:
+          - "3.5"
+          - "3.6"
+          - "3.7"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - run: pip install -r requirements.txt
+
+      - run: pip install coveralls
+
+      - run: coverage run --omit="*/templates*,*/venv*,*/tests*,*/python*" -m py.test
+
+      - run: coveralls
