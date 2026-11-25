@@ -20,7 +20,6 @@ class ResponseMiddleware:
                            settings.REFRESH_COOKIE_NAME]
             _ = [response.delete_cookie(key=k) for k in cookie_keys]
         elif request.COOKIES.get(settings.AUTH_COOKIE_NAME):
-            response.set_cookie(
-                settings.AUTH_COOKIE_NAME, request.COOKIES['access_token'])
+            response.set_cookie(settings.AUTH_COOKIE_NAME, request.COOKIES['access_token'], secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax')
         return response
 

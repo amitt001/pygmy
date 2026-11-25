@@ -1,5 +1,5 @@
 function copyToClipboard(className){
-    var clipboard = new Clipboard('.' + className);
+    var clipboard = new ClipboardJS('.' + className);
     clipboard.on('success', function(e) {
         console.log(e);
     });

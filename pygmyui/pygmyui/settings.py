@@ -21,10 +21,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fd(9^fy^sa$$g&a)lknmol!m6@w52h=46r(%-=%elcim9ycc1f'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY:
+    raise ValueError('Set a unique DJANGO_SECRET_KEY before starting Pygmy UI')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('PYGMY_DEBUG') == '1'
+PYGMY_DEMO_MODE = os.environ.get('PYGMY_DEMO_MODE') == '1'
+SESSION_COOKIE_SECURE = os.environ.get('PYGMY_COOKIE_SECURE', '1') == '1'
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+CSRF_TRUSTED_ORIGINS = [v for v in os.environ.get('PYGMY_CSRF_ORIGINS', '').split(',') if v]
+# Enable only behind a trusted proxy that overwrites this header.
+if os.environ.get('PYGMY_TRUST_PROXY') == '1':
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = []
 
@@ -41,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'middleware.demo.DemoMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # 'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,12 +69,13 @@ ROOT_URLCONF = 'pygmyui.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'pygmyui.context_processors.demo_mode',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -139,7 +152,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('PYGMY_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Pygmy Settings
 PYGMY_API_ADDRESS = 'http://127.0.0.1:9119'
@@ -150,7 +163,7 @@ PYGMY_API_USER = 'admin'
 
 PYGMY_API_PASSWORD = 'admin'
 
-HOSTNAME = '127.0.0.1:8000'
+HOSTNAME = os.environ.get('PYGMY_PUBLIC_URL', 'http://127.0.0.1:8000')
 
 # Load tests if PYGMYUI_TEST environment variable is set
 if os.environ.get('PYGMYUI_TEST') is not None:

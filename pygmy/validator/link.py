@@ -37,15 +37,15 @@ class LinkSchema(Schema):
                             validate=is_valid_custom_code_or_secret)
     short_url = fields.Method('short_url_path', dump_only=True)
     description = fields.Str(required=False, allow_none=True)
-    secret_key = fields.Str(required=False,
+    secret_key = fields.Str(load_only=True, required=False,
                             allow_none=True,
                             validate=is_valid_custom_code_or_secret)
     hits_counter = fields.Method('get_hits_counter', dump_only=True)
     expire_after = fields.Int(required=False, allow_none=True)
-    is_protected = fields.Bool(default=False, required=False, allow_none=True)
-    is_disabled = fields.Bool(default=False, required=False)
-    is_custom = fields.Bool(default=False, required=False)
-    owner = fields.Str(required=False, allow_none=True)
+    is_protected = fields.Bool(load_default=False, required=False, allow_none=True)
+    is_disabled = fields.Bool(load_default=False, required=False)
+    is_custom = fields.Bool(load_default=False, required=False)
+    owner = fields.Str(dump_only=True)
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime()
 

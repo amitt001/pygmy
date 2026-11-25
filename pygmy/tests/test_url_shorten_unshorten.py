@@ -49,7 +49,7 @@ class URLShortenUnshortenTestCases(TestCase):
         secret_key = 123
         data = shorten(self.long_url, secret_key=secret_key)
         assert data['is_protected'] is True
-        assert data['secret_key'] == str(secret_key)
+        assert 'secret_key' not in data
         with self.assertRaises(URLAuthFailed):
             unshorten(data['short_code'])
             unshorten(data['short_code'], secret_key='safe')

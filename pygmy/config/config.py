@@ -48,7 +48,9 @@ class Configuration:
         self.schema = self.cfg['pygmy']['schema']
         self.host = self.cfg['pygmy']['host']
         self.port = self.cfg['pygmy']['port']
-        self.secret = self.cfg['pygmy']['flask_secret']
+        self.secret = os.environ.get('PYGMY_SECRET_KEY') or self.cfg['pygmy']['flask_secret']
+        if not self.secret or self.secret == 'CHANGE_ME':
+            raise ValueError('Set a unique PYGMY_SECRET_KEY before starting Pygmy')
         self.logging = self.cfg['logging']
         self.webservice_url = "{0}://{1}:{2}".format(
             self.schema, self.host, self.port)

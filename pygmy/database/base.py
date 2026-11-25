@@ -80,7 +80,7 @@ class BaseDatabase:
 
 
     def initialize(self, debug=False):
-        log.info('DB URL: {}'.format(self.db_url))
+        log.info('Initializing database connection')
         self._prepare(self.db_url)
         self.engine = create_engine(self.db_url, echo=debug)
         session = sessionmaker(bind=self.engine)

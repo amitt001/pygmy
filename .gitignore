@@ -16,3 +16,9 @@ dist
 .DS_Store
 .cache
 .pytest_cache/
+
+.env
+.env.*
+*.pem
+*.key
+*.db-*

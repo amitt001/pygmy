@@ -60,10 +60,9 @@ def login(request):
                               context=API_ERROR(e.args[0]), status=404)
             response = redirect('dashboard')
             expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
-            _ = [response.set_cookie(
-                    k, v, expires=expires) for k, v in context.items()]
+            _ = [response.set_cookie(k, v, secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax', expires=expires) for k, v in context.items()]
             # access token lifetime till browser session
-            response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])
+            response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'], secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax')
         else:
             response = render(
                 request, "invalid_form.html", context=context, status=400)
@@ -103,8 +102,7 @@ def signup(request):
                           context=API_ERROR(e.args[0]), status=400)
         response = redirect('/')
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
-        _ = [response.set_cookie(
-                k, v, expires=expires) for k, v in context.items()]
+        _ = [response.set_cookie(k, v, secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax', expires=expires) for k, v in context.items()]
         # access token lifetime till browser session
-        response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])
+        response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'], secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax')
         return response

@@ -36,7 +36,7 @@ class PygmyApiClient(Client):
         super().__init__(rest_url, basic_auth=True, username=username, password=password)
 
     def __repr__(self):
-        return '<PygmyApiClient ({0.name}:{0.password}) {0.rest_url}>'.format(
+        return '<PygmyApiClient ({0.name}) {0.rest_url}>'.format(
             self)
 
     @property
@@ -66,7 +66,7 @@ class PygmyApiClient(Client):
     def refresh_access_token(self):
         access_token = None
         url_path = self.rest_url + '/token/refresh'
-        resp = requests.post(url_path, headers=self.refresh_header)
+        resp = requests.post(url_path, headers=self.refresh_header, timeout=(3, 10))
         if resp.status_code == 401:
             self.request.COOKIES[REFRESH_COOKIE_NAME] = None
             self.request.COOKIES[AUTH_COOKIE_NAME] = None
@@ -78,7 +78,7 @@ class PygmyApiClient(Client):
 
     @catch_connection_error
     def ping(self):
-        r = requests.get(self.rest_url, headers=self.header)
+        r = requests.get(self.rest_url, headers=self.header, timeout=(3, 10))
         if r.status_code // 100 == 2:
             return 'PONG'
 
@@ -123,7 +123,7 @@ class PygmyApiClient(Client):
         :return:
         """
         url_path = '/api/shorten?url=' + long_url
-        r = requests.get(self.rest_url + url_path, headers=self.header)
+        r = requests.get(self.rest_url + url_path, headers=self.header, timeout=(3, 10))
         if r.status_code // 100 != 2:
             raise ObjectNotFound(r.json())
         return r.json()
@@ -178,7 +178,7 @@ class PygmyApiClient(Client):
         headers = self.header
         headers.update(
             dict(JWT_Authorization='Bearer {}'.format(access_token)))
-        r = requests.get(self.rest_url + user_path, headers=headers)
+        r = requests.get(self.rest_url + user_path, headers=headers, timeout=(3, 10))
         resp_obj = r.json()
         if int(r.status_code) == 401:
             if resp_obj['sub_status'] == 101:
@@ -186,7 +186,7 @@ class PygmyApiClient(Client):
                 if self.header is None:
                     raise UnAuthorized('Please login again to continue')
                 r = requests.get(self.rest_url + user_path,
-                                 headers=self.header)
+                                 headers=self.header, timeout=(3, 10))
                 resp_obj = r.json()
         if r.status_code // 100 != 2:
             if r.status_code == 401:

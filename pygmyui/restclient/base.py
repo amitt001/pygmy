@@ -30,7 +30,7 @@ def catch_connection_error(func):
     def _wrapped(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except requests.ConnectionError:
+        except (requests.ConnectionError, requests.Timeout):
             # TODO: Error from the error class not hard coded.
             raise RestAPIConnectionError("Connection to Pygmy API Failed.")
     return _wrapped
@@ -88,7 +88,7 @@ class Client:
             header_params.update(headers)
 
         request_param = dict(
-            url=self.makeurl(self.rest_url, path), auth=self.basic_auth, headers=header_params
+            url=self.makeurl(self.rest_url, path), auth=self.basic_auth, headers=header_params, timeout=(3, 10)
         )
 
         _call = requests.get

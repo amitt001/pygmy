@@ -1,3 +1,10 @@
+> **Deployment update:** use Python 3.13+ and set independent `PYGMY_SECRET_KEY`
+> and `DJANGO_SECRET_KEY` values before starting. See [SECURITY.md](SECURITY.md)
+> for HTTPS, Docker, existing-database migration and demo-mode instructions.
+> Accounts remain enabled by default; `PYGMY_DEMO_MODE=1` disables them only
+> for public demo deployments. The Compose example now uses SQLite for fresh
+> installations; preserve existing PostgreSQL data and configuration separately.
+
 <p align="center"><img src="pygmyui/static/logo/logov2.png" alt="pygmy" height="200px"></p>
 
 <div align="center">

@@ -6,12 +6,14 @@ from pygmy.model import UserManager, LinkManager
 from pygmy.validator.user import UserSchema
 from pygmy.validator.link import LinkSchema, ValidationError
 from pygmy.app.auth import APITokenAuth, TokenAuth
+from pygmy.core.logger import log
 
 
 class UserApi(MethodView):
     """Signup and get user info"""
     schema = UserSchema()
 
+    @APITokenAuth.token_required()
     def get(self, user_id=None):
         params = dict()
         if user_id is not None:
@@ -21,6 +23,8 @@ class UserApi(MethodView):
             user = UserManager().find(**params)
         if user is None:
             return jsonify(dict(error="User not found")), 404
+        if user.email != APITokenAuth.get_jwt_identity():
+            return jsonify(error='Access denied'), 403
         result = self.schema.dump(user)
         return jsonify(result), 200
 

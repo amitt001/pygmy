@@ -57,7 +57,7 @@ class UserManager:
 
     @dbconnection
     def add(self, db, email, f_name, l_name, password, m_name=None):
-        password = bcrypt.encrypt(password)
+        password = bcrypt.hash(password)
         insert_values = dict(f_name=f_name, m_name=m_name, l_name=l_name,
                              email=email, password=password)
         if db.bind.name == 'mysql':

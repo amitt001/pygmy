@@ -105,6 +105,8 @@ def link_unshorten(request, code):
             return render(request, '404.html',
                           context=API_ERROR(e.args[0]), status=404)
         long_url = url_obj['long_url']
+        if settings.PYGMY_DEMO_MODE:
+            return render(request, 'pygmy/demo_link.html', {'long_url': long_url})
         return redirect(long_url, permanent=True)
 
 
@@ -194,8 +196,7 @@ def index(request):
             request.COOKIES.get('refresh_token')):
         pygmy_client = pygmy_client_object(settings, request)
         access_token = pygmy_client.refresh_access_token()
-        response.set_cookie(
-            AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME))
+        response.set_cookie(AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME), secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite='Lax')
     return response
 
 

@@ -10,15 +10,15 @@
     <title>Pygmy | URL Shortener </title>
     {% endif %}
     <!--Mobile Friendly-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
 
     <!--Favicon-->
     <link rel="shortcut icon" type="image/png" href="/static/logo/logov2.png"/>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
     <script src="/static/js/app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pygmy(pygy.co): Open-source, extensible & easy-to-use URL shortener. One of the most powerful, feature-rich open-source URL shortener. Pygy.co is written in python 3">
@@ -46,7 +46,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            {% if request.COOKIES.refresh_token %}
+            {% if not demo_mode and request.COOKIES.refresh_token %}
               <li><a href="/dashboard">DASHBOARD</a></li>
             {% endif %}
             <li><a href="/about">ABOUT</a></li>
@@ -54,6 +54,9 @@
             <li><a href="https://github.com/amitt001/pygmy">GITHUB</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+{% if demo_mode %}
+<li><p class="navbar-text">Demo: signup and login are unavailable. <a href="https://github.com/amitt001/pygmy">Self-host for accounts</a>.</p></li>
+{% else %}
 {% if not request.COOKIES.refresh_token %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">SIGN UP <span class="caret"></span></a>
@@ -141,6 +144,7 @@
                 <li><a href="/logout">Logout</a></li>
               </ul>
             </li>
+{% endif %}
 {% endif %}
         </ul>
         </div>
