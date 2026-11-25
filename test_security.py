@@ -85,6 +85,17 @@ class SecurityTests(unittest.TestCase):
                 self.assertTrue(response.cookies[name]['httponly'])
                 self.assertEqual(response.cookies[name]['samesite'], 'Lax')
 
+    @override_settings(PYGMY_DEMO_MODE=True)
+    def test_demo_preserves_csrf_cookie_for_shortening(self):
+        client = Client(enforce_csrf_checks=True)
+        client.get('/')
+        token = client.cookies['csrftoken'].value
+        with patch('pygmy.views.pygmy_client_object') as api:
+            api.return_value.shorten.return_value = {'short_code': 'test'}
+            response = client.post('/shorten', {'long_url': 'https://example.com', 'custom_url': '', 'secret_key': ''}, HTTP_X_CSRFTOKEN=token)
+            self.assertEqual(response.status_code, 302)
+            api.return_value.shorten.assert_called_once()
+
     def test_demo_preview_and_normal_redirect(self):
         with patch('pygmy.views.pygmy_client_object') as api:
             api.return_value.unshorten.return_value = {'long_url': 'https://example.com'}
