@@ -82,7 +82,7 @@ def get_short_link(request, code):
             schema = 'https://' if request.is_secure() else 'http://'
             url_obj = {}
             url_obj['short_url'] = (
-                schema + request.META['HTTP_HOST'] + '/' + url_obj.get(
+                schema + request.get_host() + '/' + url_obj.get(
                     'short_code', code)
             )
         except ObjectNotFound as e:

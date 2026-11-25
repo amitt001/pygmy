@@ -45,7 +45,7 @@ class LinkSchema(Schema):
     is_protected = fields.Bool(load_default=False, required=False, allow_none=True)
     is_disabled = fields.Bool(load_default=False, required=False)
     is_custom = fields.Bool(load_default=False, required=False)
-    owner = fields.Str(dump_only=True)
+    owner = fields.Str(required=False, allow_none=True)
     created_at = fields.DateTime(format='%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime()
 

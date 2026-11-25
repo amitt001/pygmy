@@ -42,6 +42,8 @@ class LongUrlApi(MethodView):
                 err_msg.update({'error': err_msg.get('long_url')})
             return jsonify(err_msg), 400
 
+        # Ownership comes only from the authenticated identity, never JSON.
+        data.pop('owner', None)
         # if authenticated request check valid user
         user_email = APITokenAuth.get_jwt_identity()
         if user_email:

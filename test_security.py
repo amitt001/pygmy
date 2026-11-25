@@ -41,8 +41,9 @@ class SecurityTests(unittest.TestCase):
                     response = getattr(client, method)(path)
                     self.assertEqual(response.status_code, 403, (path, method))
             self.assertEqual(client.get('/favicon.ico').status_code, 204)
-            response = client.post('/api/shorten', json={'long_url': 'https://example.com/demo'})
+            response = client.post('/api/shorten', json={'long_url': 'https://example.com/demo', 'owner': '999999'})
             self.assertEqual(response.status_code, 201, response.json)
+            self.assertIsNone(response.json['owner'])
 
     def test_self_hosted_accounts_work_and_password_is_hashed(self):
         with patch.dict(os.environ, PYGMY_DEMO_MODE='0'):
@@ -95,6 +96,26 @@ class SecurityTests(unittest.TestCase):
             response = client.post('/shorten', {'long_url': 'https://example.com', 'custom_url': '', 'secret_key': ''}, HTTP_X_CSRFTOKEN=token)
             self.assertEqual(response.status_code, 302)
             api.return_value.shorten.assert_called_once()
+
+    @override_settings(PYGMY_DEMO_MODE=True)
+    def test_demo_ui_and_api_shortening_contract(self):
+        import requests
+        from urllib.parse import urlsplit
+        def send(session, method, url, **kwargs):
+            target = urlsplit(url)
+            path = target.path + ('?' + target.query if target.query else '')
+            headers = {k: v for k, v in kwargs.get('headers', {}).items() if v is not None}
+            result = app.test_client().open(path, method=method, json=kwargs.get('json'), headers=headers)
+            response = requests.Response()
+            response.status_code = result.status_code
+            response._content = result.data
+            response.headers.update(result.headers)
+            response.url = url
+            return response
+        with patch.dict(os.environ, PYGMY_DEMO_MODE='1'), patch('requests.sessions.Session.request', new=send):
+            response = Client().post('/shorten', {'long_url': 'https://example.com/full-demo-contract', 'custom_url': '', 'secret_key': ''}, follow=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, 'Copy To Clipboard')
 
     def test_demo_preview_and_normal_redirect(self):
         with patch('pygmy.views.pygmy_client_object') as api:
