@@ -79,9 +79,20 @@ The architecture is very loosely coupled which allows custom integrations easily
 
 ## Docker
 
-1. In terminal run this command: `docker pull amit19/pygmy`
-2. Then run the container: `docker run -it -p 8000:8000 amit19/pygmy`
-3. Open http://localhost:8000 in your browser
+Build the updated source locally; the historical `amit19/pygmy` Docker Hub image
+is not updated by repository commits.
+
+```sh
+git clone https://github.com/amitt001/pygmy.git
+cd pygmy
+umask 077
+printf 'PYGMY_SECRET_KEY=%s\nDJANGO_SECRET_KEY=%s\nPYGMY_COOKIE_SECURE=0\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
+docker compose up -d --build
+```
+
+Open http://localhost:8000. `PYGMY_COOKIE_SECURE=0` is for local HTTP only;
+use HTTPS and secure cookies in production. See [SECURITY.md](SECURITY.md) for
+production configuration and demo mode. Keep `.env` private and untracked.
 
 ## Manual(from source)
 
@@ -102,7 +113,7 @@ Note:
     - settings.py: `pygmyui/pygmyui/settings.py` Django settings file
  - SQLite is default DB, if you are using PostgreSQL or MySQL with this project, make sure they are installed into the system.
  - You can run pygmy shell also. Present in the root directory. To run the program on the terminal: `python shell`
- - By default, DEBUG is set to True in `pygmyui/pygmyui/settings.py` file, set it to False in production.
+ - Debug is off by default. Enable `PYGMY_DEBUG=1` only for local development.
 
 ## DB Setup:
 

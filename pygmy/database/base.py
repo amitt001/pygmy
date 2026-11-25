@@ -77,6 +77,7 @@ class BaseDatabase:
         except KeyError as err:
             # Raised if one of the config is not passed
             raise KeyError('Key: {} not set in config file'.format(err))
+        return self._db_url
 
 
     def initialize(self, debug=False):

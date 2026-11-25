@@ -129,6 +129,12 @@ class SecurityTests(unittest.TestCase):
                 self.assertEqual(response.status_code, 301)
                 self.assertEqual(response['Location'], 'https://example.com')
 
+    def test_database_url_does_not_depend_on_logging(self):
+        from pygmy.database.base import BaseDatabase
+        database = {'engine': 'postgresql', 'url': '{engine}://{user}:{password}@{host}:{port}/{db_name}', 'user': 'synthetic', 'password': 'test-only', 'host': 'localhost', 'port': '5432', 'db_name': 'synthetic'}
+        with patch.dict(os.environ, {}, clear=True), patch.object(config, 'database', database):
+            self.assertEqual(BaseDatabase().db_url, 'postgresql://synthetic:test-only@localhost:5432/synthetic')
+
     def test_unknown_hosts_are_rejected(self):
         self.assertEqual(Client().get('/', HTTP_HOST='untrusted.example').status_code, 400)
 
