@@ -22,6 +22,8 @@ app.config.setdefault('JWT_ACCESS_TOKEN_EXPIRES', datetime.timedelta(minutes=1))
 app.config.setdefault('JWT_REFRESH_TOKEN_EXPIRES', datetime.timedelta(days=7))
 app.config.setdefault('JWT_HEADER_NAME', 'JWT_Authorization')
 app.secret_key = config.secret
+# Set the JWT key explicitly instead of relying on the SECRET_KEY fallback.
+app.config['JWT_SECRET_KEY'] = config.secret
 
 jwt = JWTManager(app)
 
